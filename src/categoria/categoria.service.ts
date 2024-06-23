@@ -1,26 +1,96 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { CreateCategoriaDto } from './dto/create-categoria.dto';
 import { UpdateCategoriaDto } from './dto/update-categoria.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
+import { Categoria } from './entities/categoria.entity';
 
 @Injectable()
 export class CategoriaService {
-  create(createCategoriaDto: CreateCategoriaDto) {
-    return 'This action adds a new categoria';
+  constructor(
+    @InjectRepository(Categoria)
+    private categoriaRepository: Repository<Categoria>,
+    private dataSource: DataSource
+  ) { }
+  async create(createCategoriaDto: CreateCategoriaDto) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+      const categoria = this.categoriaRepository.create(createCategoriaDto);
+      await queryRunner.manager.save(categoria);
+      await queryRunner.commitTransaction();
+      return categoria;
+    } catch (error) {
+      console.log(error);
+      await queryRunner.rollbackTransaction();
+      throw new HttpException(error, 500);
+    } finally {
+      await queryRunner.release();
+    }
   }
 
-  findAll() {
-    return `This action returns all categoria`;
+  async findAll() {
+    try {
+      return await this.categoriaRepository.find();
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, 500);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} categoria`;
+  async findOne(id: number) {
+    try {
+      return await this.categoriaRepository.findOneBy({ id });
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, 500);
+    }
   }
 
-  update(id: number, updateCategoriaDto: UpdateCategoriaDto) {
-    return `This action updates a #${id} categoria`;
+  async update(id: number, updateCategoriaDto: UpdateCategoriaDto) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+      const categoria = await this.categoriaRepository.findOneBy({ id });
+      if (!categoria) {
+        throw new HttpException('Categoria não encontrada', 404);
+      }
+      await queryRunner.manager.update(Categoria, id, updateCategoriaDto);
+      await queryRunner.commitTransaction();
+      return await this.categoriaRepository.findOneBy({ id });
+    } catch (error) {
+      console.log(error);
+      await queryRunner.rollbackTransaction();
+      throw new HttpException(error, 500);
+
+    } finally {
+      await queryRunner.release();
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} categoria`;
+  async remove(id: number) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+      const categoria = await this.categoriaRepository.findOneBy({ id });
+      if (!categoria) {
+        throw new HttpException('Categoria não encontrada', 404);
+      }
+      await queryRunner.manager.delete(Categoria, id);
+      await queryRunner.commitTransaction();
+      return {
+        message: 'Categoria deletada com sucesso',
+        nome: categoria.nome
+      }
+    } catch (error) {
+      console.log(error);
+      await queryRunner.rollbackTransaction();
+      throw new HttpException(error, 500);
+    } finally {
+      await queryRunner.release();
+    }
   }
 }

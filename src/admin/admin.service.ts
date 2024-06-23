@@ -29,10 +29,13 @@ export class AdminService {
       };
     } catch (error) {
       console.log(error)
+      await queryRunner.rollbackTransaction();
       if (error.code === 'ER_DUP_ENTRY') {
         throw new HttpException('Usuário ja existe', 400)
       }
       throw new HttpException(error, 500)
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -54,11 +57,58 @@ export class AdminService {
     }
   }
 
-  update(id: number, updateAdminDto: UpdateAdminDto) {
-    return `This action updates a #${id} admin`;
+  async update(id: number, updateAdminDto: UpdateAdminDto) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+      const admin = await this.adminRepository.findOneBy({ id });
+      if (!admin) {
+        throw new HttpException('Administrador não encontrado', 404)
+      }
+      if (updateAdminDto.senha) {
+        const salt = await bcrypt.genSalt();
+        const hashedPassword = await bcrypt.hash(updateAdminDto.senha, salt);
+        updateAdminDto.senha = hashedPassword;
+      }
+      await queryRunner.manager.update(AdminCred, id, updateAdminDto);
+      await queryRunner.commitTransaction();
+      const adminAtualizado = await this.adminRepository.findOneBy({ id })
+      return {
+        nome: adminAtualizado.nome,
+        usuario: adminAtualizado.usuario
+      }
+    } catch (error) {
+      console.log(error)
+      await queryRunner.rollbackTransaction();
+      throw new HttpException(error, 500)
+    } finally {
+      await queryRunner.release();
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} admin`;
+  async remove(id: number) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+      const admin = await this.adminRepository.findOneBy({ id });
+      if (!admin) {
+        throw new HttpException('Administrador não encontrado', 404)
+      }
+      await queryRunner.manager.delete(AdminCred, id);
+      await queryRunner.commitTransaction();
+      return {
+        message: 'Administrador deletado com sucesso',
+        nome: admin.nome,
+        usuario: admin.usuario
+      }
+    } catch (error) {
+      console.log(error);
+      await queryRunner.rollbackTransaction();
+      throw new HttpException(error, 500)
+    } finally {
+      await queryRunner.release();
+    }
   }
 }
