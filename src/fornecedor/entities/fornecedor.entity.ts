@@ -1,6 +1,6 @@
 import { ServicoSeguimentado } from "src/servico-seguimentado/entities/servico-seguimentado.entity";
 import { Servico } from "src/servico/entities/servico.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: 'fornecedores' })
 export class Fornecedor {
@@ -13,7 +13,7 @@ export class Fornecedor {
     @Column()
     url: string;
 
-    @Column()
+    @Column({ unique: true })
     key: string;
 
     @Column()
@@ -22,7 +22,7 @@ export class Fornecedor {
     @Column()
     moeda: string;
 
-    @Column()
+    @CreateDateColumn()
     cadastro: Date;
 
     @Column()

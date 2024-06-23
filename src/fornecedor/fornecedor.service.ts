@@ -1,26 +1,89 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { CreateFornecedorDto } from './dto/create-fornecedor.dto';
 import { UpdateFornecedorDto } from './dto/update-fornecedor.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Fornecedor } from './entities/fornecedor.entity';
+import { DataSource, Repository } from 'typeorm';
 
 @Injectable()
 export class FornecedorService {
-  create(createFornecedorDto: CreateFornecedorDto) {
-    return 'This action adds a new fornecedor';
+  constructor(
+    @InjectRepository(Fornecedor)
+    private fornecedorRepository: Repository<Fornecedor>,
+    private dataSource: DataSource
+  ) { }
+  async create(createFornecedorDto: CreateFornecedorDto) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+      const fornecedor = this.fornecedorRepository.create(createFornecedorDto);
+      await queryRunner.manager.save(fornecedor);
+      await queryRunner.commitTransaction();
+      return fornecedor;
+    } catch (error) {
+      console.log(error);
+      await queryRunner.rollbackTransaction();
+      throw new HttpException(error, 500);
+    } finally {
+      await queryRunner.release();
+    }
   }
 
-  findAll() {
-    return `This action returns all fornecedor`;
+  async findAll() {
+    try {
+      return await this.fornecedorRepository.find();
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, 500);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} fornecedor`;
+  async findOne(id: number) {
+    try {
+      return await this.fornecedorRepository.findOneBy({ id });
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, 500);
+    }
   }
 
-  update(id: number, updateFornecedorDto: UpdateFornecedorDto) {
-    return `This action updates a #${id} fornecedor`;
+  async update(id: number, updateFornecedorDto: UpdateFornecedorDto) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+      const fornecedor = await this.fornecedorRepository.findOneBy({ id });
+      if (!fornecedor) {
+        throw new HttpException('Fornecedor não encontrado', 404);
+      }
+      await queryRunner.manager.update(Fornecedor, id, updateFornecedorDto);
+      await queryRunner.commitTransaction();
+      return await this.fornecedorRepository.findOneBy({ id });
+    } catch (error) {
+      console.log(error);
+      await queryRunner.rollbackTransaction();
+      throw new HttpException(error, 500);
+    } finally {
+      await queryRunner.release();
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} fornecedor`;
+  async remove(id: number) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+      const fornecedor = await this.fornecedorRepository.findOneBy({ id });
+      if (!fornecedor) {
+        throw new HttpException('Fornecedor não encontrado', 404);
+      }
+      await queryRunner.manager.delete(Fornecedor, id);
+      await queryRunner.commitTransaction();
+      return await this.fornecedorRepository.findOneBy({ id });
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, 500);
+    }
   }
 }
