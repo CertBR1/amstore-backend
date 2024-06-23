@@ -1,1 +1,59 @@
-export class CreateConfigSistemaDto {}
+import { ApiProperty } from "@nestjs/swagger";
+import { IsHexColor, IsNotEmpty, IsString, IsUrl } from "class-validator";
+
+export class CreateConfigSistemaDto {
+    @ApiProperty({
+        description: 'Nome da loja',
+        example: 'Amstore'
+    })
+    @IsString({ message: 'O nome da loja deve ser uma string' })
+    @IsNotEmpty({ message: 'O nome da loja não pode ser vazio' })
+    nomeLoja: string;
+
+    @ApiProperty({
+        description: 'Url do chat do whatsapp',
+        example: 'https://chat.whatsapp.com/'
+    })
+    @IsUrl({}, { message: 'A url do whatsapp deve ser uma url válida' })
+    urlWhatsapp: string;
+
+    @ApiProperty({
+        description: 'Key do chat do whatsapp',
+        example: 'key'
+    })
+    @IsString({ message: 'A key do whatsapp deve ser uma string' })
+    @IsNotEmpty({ message: 'A key do whatsapp não pode ser vazia' })
+    keyWhatsapp: string;
+
+    @ApiProperty({
+        description: 'Cor da loja',
+        example: '#000000'
+    })
+    @IsHexColor({ message: 'A cor da loja deve ser uma cor hexadecimal válida' })
+    @IsNotEmpty({ message: 'A cor da loja não pode ser vazia' })
+    cor: string;
+
+    @ApiProperty({
+        description: 'Icone da loja',
+        example: 'https://example.com/icon.png'
+    })
+    @IsUrl({}, { message: 'O icone da loja deve ser uma url válida' })
+    @IsNotEmpty({ message: 'O icone da loja não pode ser vazio' })
+    icon: string;
+
+    @ApiProperty({
+        description: 'Logo da loja',
+        example: 'https://example.com/logo.png'
+    })
+    @IsUrl({}, { message: 'O logo da loja deve ser uma url válida' })
+    @IsNotEmpty({ message: 'O logo da loja não pode ser vazio' })
+    logo: string;
+
+    @ApiProperty({
+        description: 'Status da loja',
+        example: 'Ativo'
+    })
+    @IsString({ message: 'O status da loja deve ser uma string' })
+    @IsNotEmpty({ message: 'O status da loja não pode ser vazio' })
+    status: string;
+}

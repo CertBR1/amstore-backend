@@ -5,7 +5,7 @@ export class ConfigSistema {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({ unique: true })
     nomeLoja: string;
 
     @Column()
