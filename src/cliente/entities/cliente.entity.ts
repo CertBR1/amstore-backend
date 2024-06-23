@@ -9,10 +9,10 @@ export class Cliente {
     @Column()
     nome: string;
 
-    @Column()
+    @Column({ unique: true })
     whatsapp: string;
 
-    @Column()
+    @Column({ unique: true })
     email: string;
 
     @CreateDateColumn()
