@@ -1,6 +1,6 @@
 import { Categoria } from "src/categoria/entities/categoria.entity";
 import { Servico } from "src/servico/entities/servico.entity";
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: 'subcategorias' })
 export class Subcategoria {
@@ -10,7 +10,7 @@ export class Subcategoria {
     @Column()
     descricao: string;
 
-    @Column()
+    @CreateDateColumn()
     dataCriacao: Date;
 
     @Column()
