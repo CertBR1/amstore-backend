@@ -15,6 +15,8 @@ import { ServicoSeguimentadoModule } from './servico-seguimentado/servico-seguim
 import { ServicoPedidoModule } from './servico-pedido/servico-pedido.module';
 import { AdminModule } from './admin/admin.module';
 import { ConfigSistemaModule } from './config-sistema/config-sistema.module';
+import { HttpModule } from '@nestjs/axios';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -40,7 +42,8 @@ import { ConfigSistemaModule } from './config-sistema/config-sistema.module';
     ServicoSeguimentadoModule,
     ServicoPedidoModule,
     AdminModule,
-    ConfigSistemaModule
+    ConfigSistemaModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
