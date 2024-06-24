@@ -17,19 +17,21 @@ import { AdminModule } from './admin/admin.module';
 import { ConfigSistemaModule } from './config-sistema/config-sistema.module';
 import { HttpModule } from '@nestjs/axios';
 import { AuthModule } from './auth/auth.module';
+import { EmailModule } from './email/email.module';
+import { AxiosClientModule } from './axios-client/axios-client.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
-      type: 'mysql',
+      type: 'postgres',
       host: process.env.DATABASE_HOST,
-      port: 3306,
+      port: 5433,
       username: process.env.DATABASE_USER,
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,
       autoLoadEntities: true,
-      synchronize: false,
+      synchronize: true,
     }),
     ServicoModule,
     FornecedorModule,
@@ -44,6 +46,8 @@ import { AuthModule } from './auth/auth.module';
     AdminModule,
     ConfigSistemaModule,
     AuthModule,
+    EmailModule,
+    AxiosClientModule,
   ],
   controllers: [AppController],
   providers: [AppService],

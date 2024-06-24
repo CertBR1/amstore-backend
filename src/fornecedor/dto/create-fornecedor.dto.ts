@@ -32,32 +32,7 @@ export class CreateFornecedorDto {
     @IsString({ message: 'A chave do fornecedor deve ser uma string' })
     key: string;
 
-    @ApiProperty(
-        {
-            description: 'Saldo do Fornecedor',
-            example: '1000'
-        }
-    )
-    @IsCurrency({ allow_negatives: false }, { message: 'O saldo do fornecedor deve ser um número' })
-    saldo: number;
-
-    @ApiProperty(
-        {
-            description: 'Moeda do Fornecedor',
-            example: 'BRL'
-        }
-    )
-    @IsNotEmpty({ message: 'A moeda do fornecedor não pode ser vazia' })
-    @IsString({ message: 'A moeda do fornecedor deve ser uma string' })
+    saldo: string;
     moeda: string;
-
-    @ApiProperty(
-        {
-            description: "Status do Fornecedor",
-            example: 'Ativo'
-        }
-    )
-    @IsNotEmpty({ message: 'O status do fornecedor não pode ser vazio' })
-    @IsString({ message: 'O status do fornecedor deve ser uma string' })
     status: string;
 }

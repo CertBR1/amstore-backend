@@ -43,10 +43,10 @@ export class CreateServicoDto {
     @ApiProperty(
         {
             description: 'Id do Servico Fornecedor',
-            example: '1',
+            example: '"54654"',
         }
     )
-    idServicoFornecedor: number;
+    idServicoFornecedor: string;
 
     @ApiProperty(
         {
@@ -91,11 +91,14 @@ export class CreateServicoDto {
     @ApiProperty(
         {
             description: 'Multiplo do Servico',
-            example: '1',
+            example: 10,
         }
     )
     multiplo: number;
+
+
+    tagSeo: string[];
+
     reposicao: number;
-    tagSeo: string;
     status: string;
 }

@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Pedido } from './entities/pedido.entity';
 import { ConfigFormaPagamento } from './entities/config-forma-pagamento.entity';
 import { FormaPagamento } from './entities/forma-pagamento';
+import { Transacao } from 'src/transacao/entities/transacao.entity';
 
 @Module({
   imports: [
@@ -12,6 +13,8 @@ import { FormaPagamento } from './entities/forma-pagamento';
       FormaPagamento,
       ConfigFormaPagamento,
       Pedido,
+      Transacao,
+      FormaPagamento
     ]),
   ],
   controllers: [PedidoController],

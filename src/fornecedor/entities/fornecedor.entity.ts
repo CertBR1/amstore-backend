@@ -17,7 +17,7 @@ export class Fornecedor {
     key: string;
 
     @Column()
-    saldo: number;
+    saldo: string;
 
     @Column()
     moeda: string;

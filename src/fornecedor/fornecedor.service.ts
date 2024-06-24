@@ -1,15 +1,17 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { CreateFornecedorDto } from './dto/create-fornecedor.dto';
 import { UpdateFornecedorDto } from './dto/update-fornecedor.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Fornecedor } from './entities/fornecedor.entity';
 import { DataSource, Repository } from 'typeorm';
+import { AxiosClientService } from 'src/axios-client/axios-client.service';
 
 @Injectable()
 export class FornecedorService {
   constructor(
     @InjectRepository(Fornecedor)
     private fornecedorRepository: Repository<Fornecedor>,
+    private axiosClient: AxiosClientService,
     private dataSource: DataSource
   ) { }
   async create(createFornecedorDto: CreateFornecedorDto) {
@@ -17,7 +19,14 @@ export class FornecedorService {
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
-      const fornecedor = this.fornecedorRepository.create(createFornecedorDto);
+      const resposta = await this.axiosClient.obterSaldo(createFornecedorDto.url, createFornecedorDto.key);
+      createFornecedorDto.saldo = resposta.balance;
+      createFornecedorDto.moeda = resposta.currency;
+      const fornecedor = this.fornecedorRepository.create({
+        ...createFornecedorDto,
+        status: 'ATIVO',
+        cadastro: new Date(),
+      });
       await queryRunner.manager.save(fornecedor);
       await queryRunner.commitTransaction();
       return fornecedor;
