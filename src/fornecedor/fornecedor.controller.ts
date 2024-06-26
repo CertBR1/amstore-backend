@@ -5,7 +5,7 @@ import { UpdateFornecedorDto } from './dto/update-fornecedor.dto';
 
 @Controller('fornecedor')
 export class FornecedorController {
-  constructor(private readonly fornecedorService: FornecedorService) {}
+  constructor(private readonly fornecedorService: FornecedorService) { }
 
   @Post()
   create(@Body() createFornecedorDto: CreateFornecedorDto) {
@@ -30,5 +30,10 @@ export class FornecedorController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.fornecedorService.remove(+id);
+  }
+
+  @Get('/:id/servico')
+  getAllServicos(@Param('id') id: string) {
+    return this.fornecedorService.getAllServicos(+id);
   }
 }

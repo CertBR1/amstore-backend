@@ -6,7 +6,7 @@ export class AxiosClientController {
   constructor(private readonly axiosClientService: AxiosClientService) { }
   @Get('teste')
   async testFunc() {
-    return await this.axiosClientService.obterSaldo('https://painelamsocial.com/api/v2', '6e3e849acc870137457d03408796b294');
+    return await this.axiosClientService.oberServicos('https://painelamsocial.com/api/v2', '6e3e849acc870137457d03408796b294');
   }
 }
 

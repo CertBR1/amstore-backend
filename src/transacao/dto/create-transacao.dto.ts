@@ -8,7 +8,7 @@ export class CreateTransacaoDto {
             description: 'Identificador da transação',
         }
     )
-    idTransacao: string;
+    idTransacao: number;
 
     @ApiProperty(
         {

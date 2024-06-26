@@ -66,7 +66,12 @@ export class ServicoService {
   }
 
   findAll() {
-    return `This action returns all servico`;
+    try {
+      return this.servicoRepository.find();
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, 500);
+    }
   }
 
   findOne(id: number) {

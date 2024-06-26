@@ -9,7 +9,7 @@ export class Transacao {
     id: number;
 
     @Column()
-    idTransacao: string;
+    idTransacao: number;
 
     @OneToOne(() => ServicoPedido, pedido => pedido.idTransacao, { nullable: true, eager: false })
     @JoinColumn()

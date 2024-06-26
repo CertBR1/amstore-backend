@@ -10,6 +10,9 @@ export class Pedido {
     @Column()
     valor: number;
 
+    @Column()
+    numeroOrdem: number;
+
     @CreateDateColumn()
     data: Date;
 

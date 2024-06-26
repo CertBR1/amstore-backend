@@ -10,6 +10,9 @@ export class ConfigFormaPagamento {
     @Column()
     nome: string;
 
+    @Column()
+    key: string;
+
     @OneToOne(() => FormaPagamento, formaPagamento => formaPagamento.configuracao)
     @JoinColumn()
     formaPagamento: FormaPagamento;

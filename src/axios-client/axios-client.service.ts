@@ -23,4 +23,16 @@ export class AxiosClientService {
             throw new HttpException(error, 500);
         }
     }
+    async oberServicos(url: string, key: string): Promise<any> {
+        try {
+            const resposta = await this.axiosService.axiosRef.post(url, {
+                "key": key,
+                "action": "services",
+            });
+            return resposta.data;
+        } catch (error) {
+            console.log(error);
+            throw new HttpException(error, 500);
+        }
+    }
 }

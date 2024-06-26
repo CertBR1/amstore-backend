@@ -95,4 +95,17 @@ export class FornecedorService {
       throw new HttpException(error, 500);
     }
   }
+
+  async getAllServicos(id: number) {
+    try {
+      const fornecedor = await this.fornecedorRepository.findOneBy({ id });
+      if (!fornecedor) {
+        throw new HttpException('Fornecedor não encontrado', 404);
+      }
+      return await this.axiosClient.oberServicos(fornecedor.url, fornecedor.key);
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, 500);
+    }
+  }
 }

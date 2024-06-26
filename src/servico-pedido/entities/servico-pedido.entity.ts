@@ -25,9 +25,6 @@ export class ServicoPedido {
     @Column()
     quantidadeEntregue: number;
 
-    @Column()
-    numeroOrdem: number;
-
     @OneToOne(() => Transacao, transacao => transacao.idPedido, { nullable: true, eager: false })
     idTransacao: Transacao;
 }

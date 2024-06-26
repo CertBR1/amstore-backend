@@ -19,6 +19,7 @@ import { HttpModule } from '@nestjs/axios';
 import { AuthModule } from './auth/auth.module';
 import { EmailModule } from './email/email.module';
 import { AxiosClientModule } from './axios-client/axios-client.module';
+import { MercadoPagoModule } from './mercado-pago/mercado-pago.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { AxiosClientModule } from './axios-client/axios-client.module';
     AuthModule,
     EmailModule,
     AxiosClientModule,
+    MercadoPagoModule,
   ],
   controllers: [AppController],
   providers: [AppService],

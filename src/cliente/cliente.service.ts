@@ -7,6 +7,7 @@ import { DataSource, Repository } from 'typeorm';
 
 @Injectable()
 export class ClienteService {
+
   constructor(
     @InjectRepository(Cliente)
     private clienteRepository: Repository<Cliente>,
@@ -86,5 +87,8 @@ export class ClienteService {
       console.log(error);
       throw new HttpException(error, 500);
     }
+  }
+  login(createClienteDto: CreateClienteDto) {
+    throw new Error('Ainda nao implementado: Devera enviar um codigo por email ou whatsapp');
   }
 }

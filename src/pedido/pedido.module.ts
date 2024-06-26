@@ -6,6 +6,8 @@ import { Pedido } from './entities/pedido.entity';
 import { ConfigFormaPagamento } from './entities/config-forma-pagamento.entity';
 import { FormaPagamento } from './entities/forma-pagamento';
 import { Transacao } from 'src/transacao/entities/transacao.entity';
+import { Servico } from 'src/servico/entities/servico.entity';
+import { ServicoPedido } from 'src/servico-pedido/entities/servico-pedido.entity';
 
 @Module({
   imports: [
@@ -13,6 +15,8 @@ import { Transacao } from 'src/transacao/entities/transacao.entity';
       FormaPagamento,
       ConfigFormaPagamento,
       Pedido,
+      Servico,
+      ServicoPedido,
       Transacao,
       FormaPagamento
     ]),

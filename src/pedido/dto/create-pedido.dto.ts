@@ -1,21 +1,28 @@
 import { ApiProperty } from "@nestjs/swagger";
 
 export class CreatePedidoDto {
-    @ApiProperty(
-        {
-            example: 1,
-            description: 'Id do Servico',
-        }
-    )
-    idServico: number;
 
     @ApiProperty(
         {
-            example: 1,
-            description: 'Id do Fornecedor',
+            example: [
+                {
+                    idServico: 1,
+                    quantidadeSolicitada: 100
+                },
+                {
+                    idServico: 2,
+                    quantidadeSolicitada: 200
+                }
+            ],
+            description: 'Servicos Solicitados',
         }
     )
-    idPedido: number;
+    servicos: [
+        {
+            idServico: number,
+            quantidadeSolicitada: number
+        }
+    ];
 
     @ApiProperty(
         {
@@ -24,14 +31,6 @@ export class CreatePedidoDto {
         }
     )
     link: string;
-
-    @ApiProperty(
-        {
-            example: 1,
-            description: 'Quantidade do Servico',
-        }
-    )
-    quantidadeSolicitada: number;
 
     @ApiProperty(
         {
