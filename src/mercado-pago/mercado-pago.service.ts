@@ -15,9 +15,10 @@ export class MercadoPagoService {
         transaction_amount: number,
         description: string,
         payment_method_id: string,
+        notification_url: string,
         payer: {
             email: string
-        }
+        },
     }) {
         try {
             const pagamento = new Payment(client);

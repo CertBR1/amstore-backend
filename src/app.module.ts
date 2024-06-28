@@ -20,6 +20,8 @@ import { AuthModule } from './auth/auth.module';
 import { EmailModule } from './email/email.module';
 import { AxiosClientModule } from './axios-client/axios-client.module';
 import { MercadoPagoModule } from './mercado-pago/mercado-pago.module';
+import { WhastappClientModule } from './whastapp-client/whastapp-client.module';
+import { CacheManagerModule } from './cache-manager/cache-manager.module';
 
 @Module({
   imports: [
@@ -50,6 +52,8 @@ import { MercadoPagoModule } from './mercado-pago/mercado-pago.module';
     EmailModule,
     AxiosClientModule,
     MercadoPagoModule,
+    WhastappClientModule,
+    CacheManagerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

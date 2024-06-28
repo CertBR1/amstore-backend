@@ -13,6 +13,9 @@ export class ConfigFormaPagamento {
     @Column()
     key: string;
 
+    @Column({ nullable: true })
+    metodoPagamento: string;
+
     @OneToOne(() => FormaPagamento, formaPagamento => formaPagamento.configuracao)
     @JoinColumn()
     formaPagamento: FormaPagamento;

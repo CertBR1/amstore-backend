@@ -1,4 +1,4 @@
-import { AuthMiddleware } from './auth.middleware';
+import { AuthMiddleware } from './auth-cliente.middleware';
 
 describe('AuthMiddleware', () => {
   it('should be defined', () => {

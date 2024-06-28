@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { CreateClienteDto } from "src/cliente/dto/create-cliente.dto";
 
 export class CreatePedidoDto {
 
@@ -35,24 +36,25 @@ export class CreatePedidoDto {
     @ApiProperty(
         {
             example: 1,
-            description: 'Quantidade Entregue',
+            description: 'Forma de Pagamento',
         }
     )
+    idFormaPagamento: number
+
+    @ApiProperty(
+        {
+            example: 'Vendedor2000',
+            description: 'Usuario do vendedor em caso de venda por link',
+        }
+    )
+    origem?: string;
+
+    cliente: CreateClienteDto;
+
     quantidadeEntregue?: number;
 
-    @ApiProperty(
-        {
-            example: 1,
-            description: 'Numero da Ordem',
-        }
-    )
     numeroOrdem?: number;
 
-    @ApiProperty(
-        {
-            example: 1,
-            description: 'Id da Transacao',
-        }
-    )
     idTransacao?: number;
+
 }

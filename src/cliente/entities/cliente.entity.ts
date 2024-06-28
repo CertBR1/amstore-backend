@@ -1,5 +1,5 @@
 import { Pedido } from "src/pedido/entities/pedido.entity";
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, Index, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: 'clientes' })
 export class Cliente {
@@ -9,6 +9,7 @@ export class Cliente {
     @Column()
     nome: string;
 
+    @Index({ unique: true })
     @Column({ unique: true })
     whatsapp: string;
 

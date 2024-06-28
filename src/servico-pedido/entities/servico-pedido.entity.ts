@@ -22,7 +22,10 @@ export class ServicoPedido {
     @Column()
     quantidadeSolicitada: number;
 
-    @Column()
+    @Column({ nullable: true })
+    numeroOrdem: string;
+
+    @Column({ nullable: true })
     quantidadeEntregue: number;
 
     @OneToOne(() => Transacao, transacao => transacao.idPedido, { nullable: true, eager: false })

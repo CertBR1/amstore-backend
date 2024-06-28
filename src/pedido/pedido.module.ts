@@ -8,6 +8,10 @@ import { FormaPagamento } from './entities/forma-pagamento';
 import { Transacao } from 'src/transacao/entities/transacao.entity';
 import { Servico } from 'src/servico/entities/servico.entity';
 import { ServicoPedido } from 'src/servico-pedido/entities/servico-pedido.entity';
+import { AxiosClientService } from 'src/axios-client/axios-client.service';
+import { AxiosClientModule } from 'src/axios-client/axios-client.module';
+import { MercadoPagoModule } from 'src/mercado-pago/mercado-pago.module';
+import { Cliente } from 'src/cliente/entities/cliente.entity';
 
 @Module({
   imports: [
@@ -18,8 +22,11 @@ import { ServicoPedido } from 'src/servico-pedido/entities/servico-pedido.entity
       Servico,
       ServicoPedido,
       Transacao,
-      FormaPagamento
+      FormaPagamento,
+      Cliente
     ]),
+    AxiosClientModule,
+    MercadoPagoModule
   ],
   controllers: [PedidoController],
   providers: [PedidoService],

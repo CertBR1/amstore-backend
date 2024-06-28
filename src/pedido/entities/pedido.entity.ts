@@ -7,11 +7,8 @@ export class Pedido {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({ type: 'float', nullable: true })
     valor: number;
-
-    @Column()
-    numeroOrdem: number;
 
     @CreateDateColumn()
     data: Date;

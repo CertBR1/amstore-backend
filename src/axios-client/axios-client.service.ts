@@ -35,4 +35,40 @@ export class AxiosClientService {
             throw new HttpException(error, 500);
         }
     }
+
+    async obterUmServico(url: string, key: string, id: number): Promise<{
+        order: number
+    }> {
+        try {
+            const resposta = await this.axiosService.axiosRef.post(url, {
+                "key": key,
+                "action": "service",
+                "id": id
+            });
+            return resposta.data;
+        } catch (error) {
+            console.log(error);
+            throw new HttpException(error, 500);
+        }
+    }
+
+    async criarPedido(url: string, key: string, dados: {
+        link: string,
+        quantity: number,
+        runs?: number,
+        service: number,
+        interval?: number
+    }): Promise<any> {
+        try {
+            const resposta = await this.axiosService.axiosRef.post(url, {
+                "key": key,
+                "action": "add",
+                "data": dados
+            });
+            return resposta.data;
+        } catch (error) {
+            console.log(error);
+            throw new HttpException(error, 500);
+        }
+    }
 }

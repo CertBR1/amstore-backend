@@ -2,11 +2,21 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { PedidoService } from './pedido.service';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
+import { CreateFormaPagamentoDto } from './dto/create-forma-pagamento.dto';
 
 @Controller('pedido')
 export class PedidoController {
-  constructor(private readonly pedidoService: PedidoService) {}
+  constructor(private readonly pedidoService: PedidoService) { }
 
+  @Post('forma-pagamento')
+  createFormaPagamento(@Body() createFormaPagamento: CreateFormaPagamentoDto) {
+    return this.pedidoService.createFormaPagamento(createFormaPagamento);
+  }
+
+  @Get('forma-pagamento')
+  findAllFormaPagamento() {
+    return this.pedidoService.findAllFormaPagamento();
+  }
   @Post()
   create(@Body() createPedidoDto: CreatePedidoDto) {
     return this.pedidoService.create(createPedidoDto);
