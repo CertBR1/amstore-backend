@@ -1,6 +1,7 @@
 
 import { Cliente } from "src/cliente/entities/cliente.entity";
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { HistoricoTransacao } from "src/transacao/entities/historico-transcao.entity";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: 'pedidos' })
 export class Pedido {
@@ -24,4 +25,8 @@ export class Pedido {
 
     @ManyToOne(() => Cliente, cliente => cliente.pedidos)
     idCliente: Cliente;
+
+    @OneToOne(() => HistoricoTransacao)
+    @JoinColumn()
+    historicoTransacao: HistoricoTransacao;
 }

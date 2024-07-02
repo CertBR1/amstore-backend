@@ -8,23 +8,23 @@ export class Transacao {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
-    idTransacao: number;
+    @Column({ type: 'varchar' })
+    idTransacao: string;
 
     @OneToOne(() => ServicoPedido, pedido => pedido.idTransacao, { nullable: true, eager: false })
     @JoinColumn()
     idPedido: ServicoPedido;
 
-    @Column()
+    @Column({ type: 'float' })
     valor: number;
 
-    @Column()
+    @Column({ nullable: true })
     dataSolicitacao: Date;
 
-    @Column()
+    @Column({ nullable: true })
     dataStatus: Date;
 
-    @Column()
+    @Column({ nullable: true })
     dataAprovacao: Date;
 
     @ManyToOne(() => FormaPagamento, formaPagamento => formaPagamento.transacoes)

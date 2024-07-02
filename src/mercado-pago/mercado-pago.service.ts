@@ -1,5 +1,5 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import { MercadoPagoConfig, Payment } from 'mercadopago';
+import { MercadoPagoConfig, Payment, Preference } from 'mercadopago';
 @Injectable()
 export class MercadoPagoService {
     constructor() { }
@@ -20,6 +20,8 @@ export class MercadoPagoService {
             email: string
         },
     }) {
+        console.log(data);
+
         try {
             const pagamento = new Payment(client);
             return await pagamento.create({ body: data });
@@ -42,5 +44,34 @@ export class MercadoPagoService {
             throw new HttpException(error, 500);
         }
     }
-
+    async criarPagamentoCartao(client: any, preference: any) {
+        try {
+            const preference = new Preference(client);
+            return await preference.create({
+                body: {
+                    notification_url: process.env.WEBHOOK_URL,
+                    items: [
+                        {
+                            id: '1',
+                            title: 'Meu produto',
+                            quantity: 1,
+                            unit_price: 25
+                        }
+                    ],
+                }
+            });
+        } catch (error) {
+            throw new HttpException(error, 500);
+        }
+    }
+    async obterStatusPagamento(id: number, client: any) {
+        try {
+            const pagamento = new Payment(client);
+            const pagamentoEncontrado = await pagamento.get({ id: id });
+            return pagamentoEncontrado;
+        } catch (error) {
+            console.log(error);
+            throw new HttpException(error, 500);
+        }
+    }
 }

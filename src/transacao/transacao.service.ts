@@ -47,7 +47,12 @@ export class TransacaoService {
 
   async findAll() {
     try {
-      return await this.transacaoRepository.find();
+      return await this.transacaoRepository.find({
+        relations: {
+          idFormaPagamento: true,
+          idPedido: true,
+        },
+      });
     } catch (error) {
       console.log(error);
       throw new HttpException(error, 500);

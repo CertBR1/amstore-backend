@@ -12,6 +12,7 @@ import { AxiosClientService } from 'src/axios-client/axios-client.service';
 import { AxiosClientModule } from 'src/axios-client/axios-client.module';
 import { MercadoPagoModule } from 'src/mercado-pago/mercado-pago.module';
 import { Cliente } from 'src/cliente/entities/cliente.entity';
+import { HistoricoTransacao } from 'src/transacao/entities/historico-transcao.entity';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { Cliente } from 'src/cliente/entities/cliente.entity';
       ServicoPedido,
       Transacao,
       FormaPagamento,
-      Cliente
+      Cliente,
+      HistoricoTransacao
     ]),
     AxiosClientModule,
     MercadoPagoModule

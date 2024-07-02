@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ServicoModule } from './servico/servico.module';
@@ -22,6 +22,9 @@ import { AxiosClientModule } from './axios-client/axios-client.module';
 import { MercadoPagoModule } from './mercado-pago/mercado-pago.module';
 import { WhastappClientModule } from './whastapp-client/whastapp-client.module';
 import { CacheManagerModule } from './cache-manager/cache-manager.module';
+import { WebhookModule } from './webhook/webhook.module';
+import { applyRawBodyOnlyTo } from '@golevelup/nestjs-webhooks';
+
 
 @Module({
   imports: [
@@ -54,8 +57,16 @@ import { CacheManagerModule } from './cache-manager/cache-manager.module';
     MercadoPagoModule,
     WhastappClientModule,
     CacheManagerModule,
+    WebhookModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    applyRawBodyOnlyTo(consumer, {
+      method: RequestMethod.ALL,
+      path: '/webhook',
+    });
+  }
+}

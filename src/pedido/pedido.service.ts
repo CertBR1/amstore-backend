@@ -13,6 +13,7 @@ import { CreateFormaPagamentoDto } from './dto/create-forma-pagamento.dto';
 import { FormaPagamento } from './entities/forma-pagamento';
 import { ConfigFormaPagamento } from './entities/config-forma-pagamento.entity';
 import { Cliente } from 'src/cliente/entities/cliente.entity';
+import { HistoricoTransacao } from 'src/transacao/entities/historico-transcao.entity';
 
 @Injectable()
 export class PedidoService {
@@ -30,6 +31,8 @@ export class PedidoService {
     private readonly formaPagamentoRepository: Repository<FormaPagamento>,
     @InjectRepository(ConfigFormaPagamento)
     private readonly configFormaPagamentoRepository: Repository<ConfigFormaPagamento>,
+    @InjectRepository(HistoricoTransacao)
+    private readonly historicoTransacaoRepository: Repository<HistoricoTransacao>,
     @InjectRepository(Cliente)
     private readonly clienteRepository: Repository<Cliente>,
     private readonly axiosClient: AxiosClientService,
@@ -56,7 +59,7 @@ export class PedidoService {
         });
         cliente = await this.clienteRepository.save(novoCliente);
       }
-      console.log(cliente)
+      cliente.dataUltimaCompra = new Date();
       const pedido = this.pedidoRepository.create(
         {
           data: new Date(),
@@ -86,7 +89,7 @@ export class PedidoService {
           link: createPedidoDto.link,
           quantidadeSolicitada: servico.quantidadeSolicitada,
         });
-        valor += servicoEntity.preco;
+        valor += servicoEntity.precoPromocional == 0 ? (servicoEntity.preco / 1000) * servico.quantidadeSolicitada : (servicoEntity.precoPromocional / 1000) * servico.quantidadeSolicitada;
         await this.servicoPedidoRepository.save(servicoPedido);
       }
       await queryRunner.manager.update(Pedido, pedido.id, { valor });
@@ -98,25 +101,79 @@ export class PedidoService {
         }
       })
       const clientePagamento = this.mercadoPagoService.createClient(formaPagamento.configuracao.key)
-      const pagamento = await this.mercadoPagoService.criarPagamento(
-        clientePagamento,
-        {
-          transaction_amount: valor,
-          description: 'implementar a descricao do pedido aqui',
-          payment_method_id: 'pix',
-          notification_url: 'https://webhook.site/6ff3b1d1-3f97-4297-90ed-3db38536c40f',
-          payer: {
-            email: cliente.email,
+      let pagamento = {} as any
+      if (formaPagamento.configuracao.metodoPagamento === 'pix') {
+        pagamento = await this.mercadoPagoService.criarPagamento(
+          clientePagamento,
+          {
+            transaction_amount: valor,
+            description: 'implementar a descricao do pedido aqui',
+            payment_method_id: 'pix',
+            notification_url: process.env.WEBHOOK_URL,
+            payer: {
+              email: cliente.email,
+            },
           },
-        },
-      )
-      return {
-        id: pedido.id,
-        cliente: cliente,
-        valor: pagamento.transaction_amount,
-        qrCodeBase64: pagamento.point_of_interaction.transaction_data.qr_code_base64,
-        qrCode: pagamento.point_of_interaction.transaction_data.qr_code,
-      };
+        )
+        const transacao = this.transacaoRepository.create({
+          dataSolicitacao: new Date(),
+          idTransacao: pagamento.id,
+          idFormaPagamento: formaPagamento,
+          valor: valor,
+          idPedido: pedido
+        });
+        await this.transacaoRepository.save(transacao);
+        const historico = await queryRunner.manager.create(HistoricoTransacao, {
+          idTransacao: transacao.idTransacao,
+          data: new Date(),
+          status: 'Pendente',
+          idPedido: transacao.idPedido
+        })
+        await queryRunner.manager.save(historico);
+        await queryRunner.commitTransaction();
+        return {
+          id: pedido.id,
+          cliente: cliente,
+          valor: pagamento.transaction_amount,
+          url: pagamento,
+          qrCodeBase64: pagamento.point_of_interaction.transaction_data.qr_code_base64,
+          qrCode: pagamento.point_of_interaction.transaction_data.qr_code,
+        };
+      } else if (formaPagamento.configuracao.metodoPagamento === 'cartao') {
+        pagamento = await this.mercadoPagoService.criarPagamentoCartao(
+          clientePagamento,
+          {
+            items: [
+              {
+                title: 'implementar a descrição do pedido aqui',
+                unit_price: valor,
+                quantity: 1
+              }
+            ],
+            notification_url: process.env.WEBHOOK_URL
+          }
+        )
+        const transacao = this.transacaoRepository.create({
+          dataSolicitacao: new Date(),
+          idTransacao: pagamento.id,
+          idFormaPagamento: formaPagamento,
+          valor: valor,
+          idPedido: pedido
+        });
+        await this.transacaoRepository.save(transacao);
+        const historico = await queryRunner.manager.create(HistoricoTransacao, {
+          idTransacao: transacao.idTransacao,
+          data: new Date(),
+          status: 'Pendente',
+          idPedido: transacao.idPedido
+        })
+        await queryRunner.manager.save(historico);
+        await queryRunner.commitTransaction();
+        return {
+          id: pedido.id,
+          init_point: pagamento.init_point,
+        }
+      }
     } catch (error) {
       console.log(error);
       await queryRunner.rollbackTransaction();
@@ -160,6 +217,7 @@ export class PedidoService {
         formaPagamento: formaPagamento,
         key: createFormaPagamento.configuracao.key,
         nome: createFormaPagamento.configuracao.nome,
+        metodoPagamento: createFormaPagamento.configuracao.metodoPagamento
       })
       await this.configFormaPagamentoRepository.save(configFormaPagamento);
       await queryRunner.commitTransaction();
