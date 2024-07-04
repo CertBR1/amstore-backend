@@ -67,7 +67,7 @@ export class ServicoService {
 
   findAll() {
     try {
-      return this.servicoRepository.find();
+      return this.servicoRepository.find({ relations: { idFornecedor: true, idCategoria: true, idSubcategoria: true, tagSeo: true } });
     } catch (error) {
       console.log(error);
       throw new HttpException(error, 500);
@@ -75,11 +75,45 @@ export class ServicoService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} servico`;
+    try {
+      return this.servicoRepository.findOne({ where: { id }, relations: { idFornecedor: true, idCategoria: true, idSubcategoria: true, tagSeo: true } });
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, 500);
+    }
   }
 
-  update(id: number, updateServicoDto: UpdateServicoDto) {
-    return `This action updates a #${id} servico`;
+  async update(id: number, updateServicoDto: UpdateServicoDto) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+      await queryRunner.manager.update(Servico, id, {
+        idServicoFornecedor: updateServicoDto.idServicoFornecedor,
+        descricao: updateServicoDto.descricao,
+        multiplo: updateServicoDto.multiplo,
+        max: updateServicoDto.max,
+        min: updateServicoDto.min,
+        nome: updateServicoDto.nome,
+        preco: updateServicoDto.preco,
+        precoPromocional: updateServicoDto.precoPromocional,
+        reposicao: updateServicoDto.reposicao,
+        status: updateServicoDto.status,
+        tipo: updateServicoDto.tipo,
+        idFornecedor: await this.fornecedorRepository.findOneBy({ id: updateServicoDto.idFornecedor }),
+        idCategoria: await this.categoriaRepository.findOneBy({ id: updateServicoDto.idCategoria }),
+        idSubcategoria: await this.subcategoriaRepository.findOneBy({ id: updateServicoDto.idSubcategoria }),
+      });
+      await queryRunner.commitTransaction();
+      return await this.findOne(id);
+    }
+    catch (error) {
+      console.log(error);
+      await queryRunner.rollbackTransaction();
+      throw new HttpException(error, 500);
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   remove(id: number) {

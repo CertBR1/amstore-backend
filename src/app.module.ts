@@ -24,6 +24,17 @@ import { WhastappClientModule } from './whastapp-client/whastapp-client.module';
 import { CacheManagerModule } from './cache-manager/cache-manager.module';
 import { WebhookModule } from './webhook/webhook.module';
 import { applyRawBodyOnlyTo } from '@golevelup/nestjs-webhooks';
+import { AuthAdminMiddleware } from './auth/auth-admin.middleware';
+import { ServicoController } from './servico/servico.controller';
+import { SeguimentoController } from './seguimento/seguimento.controller';
+import { ServicoSeguimentadoController } from './servico-seguimentado/servico-seguimentado.controller';
+import { PedidoController } from './pedido/pedido.controller';
+import { ClienteController } from './cliente/cliente.controller';
+import { FornecedorController } from './fornecedor/fornecedor.controller';
+import { CategoriaController } from './categoria/categoria.controller';
+import { SubcategoriaController } from './subcategoria/subcategoria.controller';
+import { AdminController } from './admin/admin.controller';
+import { JwtModule } from '@nestjs/jwt';
 
 
 @Module({
@@ -32,12 +43,17 @@ import { applyRawBodyOnlyTo } from '@golevelup/nestjs-webhooks';
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DATABASE_HOST,
-      port: 5433,
+      port: parseInt(process.env.DATABASE_PORT),
       username: process.env.DATABASE_USER,
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,
       autoLoadEntities: true,
       synchronize: true,
+    }),
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '1d' },
+      global: true
     }),
     ServicoModule,
     FornecedorModule,
@@ -68,5 +84,19 @@ export class AppModule implements NestModule {
       method: RequestMethod.ALL,
       path: '/webhook',
     });
+    consumer
+      .apply(AuthAdminMiddleware)
+      .exclude({ path: '/(.*)', method: RequestMethod.GET, })
+      .forRoutes(
+        ServicoController,
+        SeguimentoController,
+        ServicoSeguimentadoController,
+        PedidoController,
+        ClienteController,
+        FornecedorController,
+        CategoriaController,
+        SubcategoriaController,
+        AdminController
+      )
   }
 }

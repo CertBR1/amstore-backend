@@ -39,6 +39,11 @@ export class WebhookController {
           relations: ['idFormaPagamento.configuracao', 'idPedido.idPedido'],
         })
         console.log('transacao: ', transacao);
+        const pedidoServico = await this.servicoPedidoRepository.find({
+          where: { idPedido: transacao.idPedido.idPedido },
+          relations: ['idServico.idFornecedor', 'idPedido']
+        })
+        console.log('pedidoServico: ', pedidoServico);
         switch (body.data.status) {
           case 'approved': {
             this.historicoTransacaoRepository.create({

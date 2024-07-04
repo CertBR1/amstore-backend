@@ -23,7 +23,7 @@ export class Cliente {
     dataUltimaCompra: Date;
 
     @Column()
-    status: string;
+    status: boolean;
 
     @OneToMany(() => Pedido, pedido => pedido.idCliente)
     pedidos: Pedido[];

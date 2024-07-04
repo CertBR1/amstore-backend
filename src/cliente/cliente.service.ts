@@ -18,7 +18,10 @@ export class ClienteService {
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
-      const cliente = this.clienteRepository.create(createClienteDto);
+      const cliente = this.clienteRepository.create({
+        ...createClienteDto,
+        status: true
+      });
       await queryRunner.manager.save(cliente);
       await queryRunner.commitTransaction();
       return cliente;

@@ -45,6 +45,7 @@ export class PedidoService {
       await queryRunner.connect();
       await queryRunner.startTransaction();
       let valor = 0;
+      let descricao = '';
       let cliente = await this.clienteRepository.findOne({
         where: {
           whatsapp: createPedidoDto.cliente.whatsapp
@@ -53,7 +54,7 @@ export class PedidoService {
       if (!cliente) {
         const novoCliente = this.clienteRepository.create({
           ...createPedidoDto.cliente,
-          status: 'Ativo',
+          status: true,
           dataUltimaCompra: new Date(),
           dataCriacao: new Date()
         });
@@ -89,6 +90,7 @@ export class PedidoService {
           link: createPedidoDto.link,
           quantidadeSolicitada: servico.quantidadeSolicitada,
         });
+        descricao += `${servicoEntity.descricao} - Quantidade: ${servico.quantidadeSolicitada} \n`;
         valor += servicoEntity.precoPromocional == 0 ? (servicoEntity.preco / 1000) * servico.quantidadeSolicitada : (servicoEntity.precoPromocional / 1000) * servico.quantidadeSolicitada;
         await this.servicoPedidoRepository.save(servicoPedido);
       }
@@ -107,7 +109,7 @@ export class PedidoService {
           clientePagamento,
           {
             transaction_amount: valor,
-            description: 'implementar a descricao do pedido aqui',
+            description: descricao,
             payment_method_id: 'pix',
             notification_url: process.env.WEBHOOK_URL,
             payer: {
@@ -143,15 +145,12 @@ export class PedidoService {
         pagamento = await this.mercadoPagoService.criarPagamentoCartao(
           clientePagamento,
           {
-            items: [
-              {
-                title: 'implementar a descrição do pedido aqui',
-                unit_price: valor,
-                quantity: 1
-              }
-            ],
-            notification_url: process.env.WEBHOOK_URL
+            id: pedido.id.toString(),
+            quantity: 1,
+            unit_price: valor,
+            title: descricao
           }
+
         )
         const transacao = this.transacaoRepository.create({
           dataSolicitacao: new Date(),

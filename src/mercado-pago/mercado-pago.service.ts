@@ -20,8 +20,6 @@ export class MercadoPagoService {
             email: string
         },
     }) {
-        console.log(data);
-
         try {
             const pagamento = new Payment(client);
             return await pagamento.create({ body: data });
@@ -44,7 +42,12 @@ export class MercadoPagoService {
             throw new HttpException(error, 500);
         }
     }
-    async criarPagamentoCartao(client: any, preference: any) {
+    async criarPagamentoCartao(client: any, itemData: {
+        id: string,
+        title: string,
+        quantity: number,
+        unit_price: number
+    }) {
         try {
             const preference = new Preference(client);
             return await preference.create({
@@ -52,10 +55,10 @@ export class MercadoPagoService {
                     notification_url: process.env.WEBHOOK_URL,
                     items: [
                         {
-                            id: '1',
-                            title: 'Meu produto',
-                            quantity: 1,
-                            unit_price: 25
+                            id: itemData.id,
+                            title: itemData.title,
+                            quantity: itemData.quantity,
+                            unit_price: itemData.unit_price
                         }
                     ],
                 }
