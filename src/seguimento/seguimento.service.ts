@@ -1,11 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { CreateSeguimentoDto } from './dto/create-seguimento.dto';
 import { UpdateSeguimentoDto } from './dto/update-seguimento.dto';
+import { Seguimento } from './entities/seguimento.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class SeguimentoService {
+  constructor(
+    @InjectRepository(Seguimento)
+    private seguimentoRepository: Repository<Seguimento>,
+  ) { }
   create(createSeguimentoDto: CreateSeguimentoDto) {
-    return 'This action adds a new seguimento';
+    try {
+
+    } catch (error) {
+      console.log(error)
+      throw new HttpException(error, 500)
+    }
   }
 
   findAll() {

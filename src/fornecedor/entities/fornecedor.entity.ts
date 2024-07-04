@@ -26,7 +26,7 @@ export class Fornecedor {
     cadastro: Date;
 
     @Column()
-    status: string;
+    status: boolean;
 
     @OneToMany(() => Servico, servico => servico.idFornecedor)
     servicos: Servico[];

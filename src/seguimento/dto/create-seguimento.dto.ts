@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { TipoSeguimento } from "../entities/tipo-seguimento.entity";
 
 export class CreateSeguimentoDto {
 
@@ -10,11 +11,11 @@ export class CreateSeguimentoDto {
     )
     nome: string;
 
-    @ApiProperty(
-        {
-            example: 1,
-            description: 'Id do tipo de seguimento',
-        }
-    )
-    idTipoSEguimento: number;
+    @ApiProperty({
+        example: {
+            nome: 'Seguimento 1',
+        },
+        description: 'Tipo de seguimento para ser cadastrado, se existir'
+    })
+    tipoSeguimento: TipoSeguimento
 }

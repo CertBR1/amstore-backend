@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { IsBoolean, IsEmail, IsNotEmpty, IsString } from "class-validator";
 
 export class CreateClienteDto {
     @ApiProperty(
@@ -31,4 +31,13 @@ export class CreateClienteDto {
     @IsEmail({}, { message: 'O email do cliente deve ser um email válido' })
     @IsNotEmpty({ message: 'O email do cliente não pode ser vazio' })
     email: string;
+
+    @ApiProperty(
+        {
+            description: 'Status do cliente',
+            example: true
+        }
+    )
+    @IsBoolean({ message: 'O status do cliente deve ser um booleano' })
+    status: boolean;
 }

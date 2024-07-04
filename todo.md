@@ -2,19 +2,19 @@
 
 - [x] Implentar autenticacao para admin
 
-- [x] Criar servicos
-- [X] Editar servicos
-    - [ ] Criar associaçoes com serviço seguimentados
-    - [ ] Editar serviços seguimentados
 - [ ] Criar seguimentados
 - [ ] Deletar seguimentos
-- [ ] Atualizar status de pedido
-- [ ] Mudar status de um cliente
-- [ ] Cadastrar fornecedores
-- [ ] Editar fornecedores
-- [ ] Cadastrar categoria
-- [ ] Editar categoria
-- [ ] Deletar (desativar) categoria
+- [x] Criar servicos
+- [x] Editar servicos
+    - [ ] Criar associaçoes com serviço seguimentados
+    - [ ] Editar serviços seguimentados
+- [ ] Atualizar status de pedido -> pode ser feito no endpoint de UPDATE
+- [ ] Mudar status de um cliente -> pode ser feito no endpoint de UPDATE
+- [x] Cadastrar fornecedores 
+- [x] Editar fornecedores
+- [x] Cadastrar categoria
+- [x] Editar categoria
+- [x] Deletar (desativar) categoria
 - [ ] Cadastrar subcategoria
 - [ ] Editar subcategoria
 - [ ] Deletar (desativar ) subcategoria
@@ -23,11 +23,8 @@
 - [ ] Aterar senha do administrador logado
 
 
+## BUG
 
-
-
-
-
-
+- [X] Nome do fornecedor nao esta cadastrando
 
 - [ ] Documentação do swagger

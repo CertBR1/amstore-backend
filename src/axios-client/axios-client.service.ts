@@ -20,7 +20,7 @@ export class AxiosClientService {
             return resposta.data;
         } catch (error) {
             console.log(error);
-            throw new HttpException(error, 500);
+            throw new HttpException('Erro ao obter saldo do painel', 500);
         }
     }
     async oberServicos(url: string, key: string): Promise<any> {
@@ -32,7 +32,7 @@ export class AxiosClientService {
             return resposta.data;
         } catch (error) {
             console.log(error);
-            throw new HttpException(error, 500);
+            throw new HttpException('Erro ao obter serviços do painel', 500);
         }
     }
 
@@ -48,7 +48,7 @@ export class AxiosClientService {
             return resposta.data;
         } catch (error) {
             console.log(error);
-            throw new HttpException(error, 500);
+            throw new HttpException('Erro ao obter um serviço do painel', 500);
         }
     }
 
@@ -68,7 +68,7 @@ export class AxiosClientService {
             return resposta.data;
         } catch (error) {
             console.log(error);
-            throw new HttpException(error, 500);
+            throw new HttpException('Erro ao criar pedido no painel', 500);
         }
     }
 }

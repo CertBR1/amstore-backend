@@ -24,15 +24,18 @@ export class FornecedorService {
       createFornecedorDto.moeda = resposta.currency;
       const fornecedor = this.fornecedorRepository.create({
         ...createFornecedorDto,
-        status: 'ATIVO',
+        status: true,
         cadastro: new Date(),
       });
       await queryRunner.manager.save(fornecedor);
       await queryRunner.commitTransaction();
       return fornecedor;
     } catch (error) {
-      console.log(error);
+      console.log('Error: ', error);
       await queryRunner.rollbackTransaction();
+      if (error.constraint === 'UQ_7273de3c5d34c7234fc3f63b3e6') {
+        throw new HttpException('Chave já cadastrada para outro fornecedor', 409);
+      }
       throw new HttpException(error, 500);
     } finally {
       await queryRunner.release();
@@ -66,7 +69,14 @@ export class FornecedorService {
       if (!fornecedor) {
         throw new HttpException('Fornecedor não encontrado', 404);
       }
-      await queryRunner.manager.update(Fornecedor, id, updateFornecedorDto);
+      await queryRunner.manager.update(Fornecedor, id, {
+        nome: updateFornecedorDto.nome,
+        key: updateFornecedorDto.key,
+        url: updateFornecedorDto.url,
+        saldo: updateFornecedorDto.saldo,
+        moeda: updateFornecedorDto.moeda,
+        status: updateFornecedorDto.status,
+      });
       await queryRunner.commitTransaction();
       return await this.fornecedorRepository.findOneBy({ id });
     } catch (error) {

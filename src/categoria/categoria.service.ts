@@ -57,7 +57,11 @@ export class CategoriaService {
       if (!categoria) {
         throw new HttpException('Categoria não encontrada', 404);
       }
-      await queryRunner.manager.update(Categoria, id, updateCategoriaDto);
+      await queryRunner.manager.update(Categoria, id, {
+        nome: updateCategoriaDto.nome,
+        status: updateCategoriaDto.status,
+        imagemUrl: updateCategoriaDto.imagemUrl,
+      });
       await queryRunner.commitTransaction();
       return await this.categoriaRepository.findOneBy({ id });
     } catch (error) {

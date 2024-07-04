@@ -17,7 +17,7 @@ export class Categoria {
     dataCriacao: Date;
 
     @Column()
-    status: string;
+    status: boolean;
 
     @OneToMany(() => Servico, servico => servico.idCategoria)
     servicos: Servico[];

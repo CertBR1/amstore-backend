@@ -34,5 +34,5 @@ export class CreateFornecedorDto {
 
     saldo: string;
     moeda: string;
-    status: string;
+    status: boolean;
 }
