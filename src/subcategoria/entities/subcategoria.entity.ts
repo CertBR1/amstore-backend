@@ -14,7 +14,7 @@ export class Subcategoria {
     dataCriacao: Date;
 
     @Column()
-    status: string;
+    status: boolean;
 
     @ManyToOne(() => Categoria, categoria => categoria.subcategorias)
     idCategoria: Categoria;

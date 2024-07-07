@@ -5,6 +5,6 @@ class ConfiguracaoDto {
 }
 export class CreateFormaPagamentoDto {
     descricao: string;
-    status: string;
+    status: boolean;
     configuracao: ConfiguracaoDto;
 }

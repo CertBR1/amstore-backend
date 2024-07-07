@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsPositive, IsString } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsPositive, IsString } from "class-validator";
 
 export class CreateSubcategoriaDto {
 
@@ -21,9 +21,14 @@ export class CreateSubcategoriaDto {
             type: String
         }
     )
-    @IsString({ message: 'Status deve ser uma string' })
+    @ApiProperty({
+        description: 'Status da subcategoria',
+        example: 'true',
+        type: Boolean
+    })
+    @IsBoolean({ message: 'Status deve ser um booleano' })
     @IsNotEmpty({ message: 'Status não pode ser vazio' })
-    status: string;
+    status: boolean;
 
     @ApiProperty(
         {

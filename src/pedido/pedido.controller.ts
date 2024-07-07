@@ -12,6 +12,10 @@ export class PedidoController {
   createFormaPagamento(@Body() createFormaPagamento: CreateFormaPagamentoDto) {
     return this.pedidoService.createFormaPagamento(createFormaPagamento);
   }
+  @Patch('forma-pagamento/:id')
+  updateFormaPagamento(@Param('id') id: string, @Body() updateFormaPagamento: CreateFormaPagamentoDto) {
+    return this.pedidoService.updateFormaPagamento(+id, updateFormaPagamento);
+  }
 
   @Get('forma-pagamento')
   findAllFormaPagamento() {

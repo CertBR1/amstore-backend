@@ -71,7 +71,11 @@ export class AdminService {
         const hashedPassword = await bcrypt.hash(updateAdminDto.senha, salt);
         updateAdminDto.senha = hashedPassword;
       }
-      await queryRunner.manager.update(AdminCred, id, updateAdminDto);
+      await queryRunner.manager.update(AdminCred, id, {
+        nome: updateAdminDto.nome,
+        senha: updateAdminDto.senha,
+        usuario: updateAdminDto.usuario,
+      });
       await queryRunner.commitTransaction();
       const adminAtualizado = await this.adminRepository.findOneBy({ id })
       return {

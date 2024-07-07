@@ -100,5 +100,5 @@ export class CreateServicoDto {
     tagSeo: string[];
 
     reposicao: number;
-    status: string;
+    status: boolean;
 }

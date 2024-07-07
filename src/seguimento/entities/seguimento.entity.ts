@@ -10,8 +10,8 @@ export class Seguimento {
     @Column()
     nome: string;
 
-    @OneToOne(() => TipoSeguimento, tipoSeguimento => tipoSeguimento.seguimento)
-    idTipoSEguimento: number;
+    @OneToMany(() => TipoSeguimento, tipoSeguimento => tipoSeguimento.idSeguimento)
+    tiposSeguimento: TipoSeguimento[];
 
     @OneToMany(() => ServicoSeguimentado, servicoSeguimentado => servicoSeguimentado.idSeguimento)
     servicosSeguimentados: ServicoSeguimentado[];

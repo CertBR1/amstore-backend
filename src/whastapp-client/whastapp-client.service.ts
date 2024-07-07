@@ -1,27 +1,26 @@
-import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { CacheManagerService } from 'src/cache-manager/cache-manager.service';
+import { CreateWhastappClientDto } from './dto/create-whastapp-client.dto';
+import { UpdateWhastappClientDto } from './dto/update-whastapp-client.dto';
 
 @Injectable()
 export class WhastappClientService {
-    private genetareCode(count: number) {
-        const randomNumbers = [];
-        for (let i = 0; i < count; i++) {
-            const randomNumber = Math.floor(Math.random() * 10);
-            randomNumbers.push(randomNumber);
-        }
-        return randomNumbers.map((number) => number.toString()).join('');
-    }
-    constructor(
-        private httpService: HttpService,
-        private cacheService: CacheManagerService
-    ) {
+  create(createWhastappClientDto: CreateWhastappClientDto) {
+    return 'This action adds a new whastappClient';
+  }
 
-    }
+  findAll() {
+    return `This action returns all whastappClient`;
+  }
 
-    async enviarCodigo(celular: string) {
-        const code = this.genetareCode(6);
-        console.log('Codigo Gerado: ', code);
-        this.cacheService.set('code', code);
-    }
+  findOne(id: number) {
+    return `This action returns a #${id} whastappClient`;
+  }
+
+  update(id: number, updateWhastappClientDto: UpdateWhastappClientDto) {
+    return `This action updates a #${id} whastappClient`;
+  }
+
+  remove(id: number) {
+    return `This action removes a #${id} whastappClient`;
+  }
 }

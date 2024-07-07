@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Seguimento } from "./seguimento.entity";
 import { ServicoSeguimentado } from "src/servico-seguimentado/entities/servico-seguimentado.entity";
 
@@ -11,9 +11,9 @@ export class TipoSeguimento {
     @Column()
     nome: string;
 
-    @OneToOne(() => Seguimento, seguimento => seguimento.idTipoSEguimento)
-    @JoinColumn()
-    seguimento: Seguimento;
+    @ManyToOne(() => Seguimento, seguimento => seguimento.tiposSeguimento)
+    @JoinColumn({ name: 'idSeguimento' })
+    idSeguimento: Seguimento;
 
     @OneToMany(() => ServicoSeguimentado, servicoSeguimentado => servicoSeguimentado.idTipoSeguimento)
     servicosSeguimentados: ServicoSeguimentado[];

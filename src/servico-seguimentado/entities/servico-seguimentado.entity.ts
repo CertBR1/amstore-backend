@@ -18,15 +18,15 @@ export class ServicoSeguimentado {
     @ManyToOne(() => Seguimento, seguimento => seguimento.servicosSeguimentados)
     idSeguimento: Seguimento;
 
-    @Column()
+    @Column({ nullable: true, type: "float" })
     preco: number;
 
-    @Column({ nullable: true })
+    @Column({ nullable: true, type: "float" })
     precoPromocional: number;
 
     @ManyToOne(() => Fornecedor, fornecedor => fornecedor.servicos)
     idFornecedor: Fornecedor;
 
     @Column({ nullable: true })
-    idServivoFornecedor: number;
+    idServicoFornecedor: string;
 }

@@ -71,4 +71,21 @@ export class AxiosClientService {
             throw new HttpException('Erro ao criar pedido no painel', 500);
         }
     }
+
+    async enviarMensagem(url: string, token: string, dados: { number: string, body: string }): Promise<any> {
+        try {
+            const resposta = await this.axiosService.axiosRef.post(url, {
+                ...dados
+            }, {
+                headers: {
+                    "X_TOKEN": token
+                }
+            })
+            console.log("resposta", resposta.data)
+            return 'OLHA O CONSOLE :V';
+        } catch (error) {
+            console.log(error);
+            throw new HttpException('Erro ao enviar mensagem no painel', 500);
+        }
+    }
 }

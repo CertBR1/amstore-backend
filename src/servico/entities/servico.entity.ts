@@ -52,7 +52,7 @@ export class Servico {
     reposicao: number;
 
     @Column()
-    status: string;
+    status: boolean;
 
     @ManyToMany(() => TagSeo, tag => tag.servicos)
     @JoinTable()

@@ -20,7 +20,6 @@ import { AuthModule } from './auth/auth.module';
 import { EmailModule } from './email/email.module';
 import { AxiosClientModule } from './axios-client/axios-client.module';
 import { MercadoPagoModule } from './mercado-pago/mercado-pago.module';
-import { WhastappClientModule } from './whastapp-client/whastapp-client.module';
 import { CacheManagerModule } from './cache-manager/cache-manager.module';
 import { WebhookModule } from './webhook/webhook.module';
 import { applyRawBodyOnlyTo } from '@golevelup/nestjs-webhooks';
@@ -35,6 +34,7 @@ import { CategoriaController } from './categoria/categoria.controller';
 import { SubcategoriaController } from './subcategoria/subcategoria.controller';
 import { AdminController } from './admin/admin.controller';
 import { JwtModule } from '@nestjs/jwt';
+import { WhastappClientModule } from './whastapp-client/whastapp-client.module';
 
 
 @Module({

@@ -230,5 +230,30 @@ export class PedidoService {
   async findAllFormaPagamento() {
     return await this.formaPagamentoRepository.find({ relations: { configuracao: true } });
   }
+
+
+  async updateFormaPagamento(id: number, updateFormaPagamento: CreateFormaPagamentoDto) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+      const formaPagamento = await this.formaPagamentoRepository.findOne({ where: { id }, relations: { configuracao: true } });
+      if (!formaPagamento) {
+        throw new HttpException('Forma de pagamento não encontrada', 404);
+      }
+      await this.formaPagamentoRepository.update({ id }, {
+        descricao: updateFormaPagamento.descricao,
+        status: updateFormaPagamento.status,
+      });
+      await queryRunner.commitTransaction();
+      return await this.formaPagamentoRepository.findOne({ where: { id }, relations: { configuracao: true } });
+    } catch (error) {
+      console.log(error);
+      await queryRunner.rollbackTransaction();
+      throw new HttpException(error, 500);
+    } finally {
+      await queryRunner.release();
+    }
+  }
 }
 

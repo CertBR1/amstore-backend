@@ -45,7 +45,7 @@ export class SubcategoriaService {
 
   async findAll() {
     try {
-      return await this.subcategoriaRepository.find();
+      return await this.subcategoriaRepository.find({ relations: { idCategoria: true } });
     } catch (error) {
       console.log(error);
       throw new HttpException(error, 500);
@@ -74,8 +74,9 @@ export class SubcategoriaService {
         id: updateSubcategoriaDto.idCategoria
       })
       await queryRunner.manager.update(Subcategoria, id, {
-        ...updateSubcategoriaDto,
-        idCategoria: categoria || subcategoria.idCategoria
+        descricao: updateSubcategoriaDto.descricao,
+        idCategoria: categoria || subcategoria.idCategoria,
+        status: updateSubcategoriaDto.status,
       });
       await queryRunner.commitTransaction();
       return await this.subcategoriaRepository.findOneBy({ id });

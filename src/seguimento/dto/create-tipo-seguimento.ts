@@ -8,4 +8,12 @@ export class CreateTipoSeguimentoDto {
         }
     )
     nome: string;
+
+    @ApiProperty(
+        {
+            description: 'Id do seguimento',
+            example: 1
+        }
+    )
+    idSeguimento: number
 }

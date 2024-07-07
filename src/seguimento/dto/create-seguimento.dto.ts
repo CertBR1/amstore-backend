@@ -11,11 +11,4 @@ export class CreateSeguimentoDto {
     )
     nome: string;
 
-    @ApiProperty({
-        example: {
-            nome: 'Seguimento 1',
-        },
-        description: 'Tipo de seguimento para ser cadastrado, se existir'
-    })
-    tipoSeguimento: TipoSeguimento
 }

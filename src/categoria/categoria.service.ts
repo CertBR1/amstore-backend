@@ -32,7 +32,9 @@ export class CategoriaService {
 
   async findAll() {
     try {
-      return await this.categoriaRepository.find();
+      return await this.categoriaRepository.find({
+        relations: { subcategorias: true }
+      });
     } catch (error) {
       console.log(error);
       throw new HttpException(error, 500);

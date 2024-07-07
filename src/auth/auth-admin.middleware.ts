@@ -13,8 +13,8 @@ export class AuthAdminMiddleware implements NestMiddleware {
         throw new HttpException('Token não informado', 401);
       }
       const token = req.headers.authorization.split(' ')[1];
-      const decoded = this.jwtService.verify(token);
-      req.body['user'] = decoded;
+      const decoded = this.jwtService.verify(token, { secret: `${process.env.JWT_SECRET}admin` });
+      // req.body['user'] = decoded; Removido por falta de uso e causa bugs nas rotas de update
       next();
     } catch (error) {
       console.log(error);
