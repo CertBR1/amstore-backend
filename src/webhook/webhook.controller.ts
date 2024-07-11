@@ -11,6 +11,7 @@ import { ServicoPedido } from 'src/servico-pedido/entities/servico-pedido.entity
 import { HistoricoTransacao } from 'src/transacao/entities/historico-transcao.entity';
 import { Fornecedor } from 'src/fornecedor/entities/fornecedor.entity';
 import { AxiosClientService } from 'src/axios-client/axios-client.service';
+import { ConfigFormaPagamento } from 'src/pedido/entities/config-forma-pagamento.entity';
 
 @Controller('webhook')
 export class WebhookController {
@@ -23,6 +24,8 @@ export class WebhookController {
     private readonly servicoPedidoRepository: Repository<ServicoPedido>,
     @InjectRepository(HistoricoTransacao)
     private readonly historicoTransacaoRepository: Repository<HistoricoTransacao>,
+    @InjectRepository(ConfigFormaPagamento)
+    private readonly configFormaPagamentoRepository: Repository<ConfigFormaPagamento>,
     @InjectRepository(Fornecedor)
     private readonly fornecedorRepository: Repository<Fornecedor>,
     private readonly mercadoPagoService: MercadoPagoService,
@@ -37,7 +40,10 @@ export class WebhookController {
     switch (body.type) {
       case 'payment': {
         const idPayment = body.data.id;
-
+        const configFormaPagamento = await this.configFormaPagamentoRepository.findOne({ where: { status: true } });
+        const client = this.mercadoPagoService.createClient(configFormaPagamento.key);
+        const payment = await this.mercadoPagoService.obterPagamento(client, idPayment);
+        console.log('NAO ERA WEBHOOK QUE VOCES QUERIAM: ', payment);
         switch (null) {
           case 'approved': {
 

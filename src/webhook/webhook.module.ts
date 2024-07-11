@@ -9,6 +9,7 @@ import { ServicoPedido } from 'src/servico-pedido/entities/servico-pedido.entity
 import { HistoricoTransacao } from 'src/transacao/entities/historico-transcao.entity';
 import { Fornecedor } from 'src/fornecedor/entities/fornecedor.entity';
 import { AxiosClientModule } from 'src/axios-client/axios-client.module';
+import { ConfigFormaPagamento } from 'src/pedido/entities/config-forma-pagamento.entity';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { AxiosClientModule } from 'src/axios-client/axios-client.module';
       ServicoPedido,
       HistoricoTransacao,
       Fornecedor,
+      ConfigFormaPagamento
     ]),
     AxiosClientModule,
     MercadoPagoModule
