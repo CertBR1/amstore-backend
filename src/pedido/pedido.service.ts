@@ -14,6 +14,8 @@ import { FormaPagamento } from './entities/forma-pagamento';
 import { ConfigFormaPagamento } from './entities/config-forma-pagamento.entity';
 import { Cliente } from 'src/cliente/entities/cliente.entity';
 import { HistoricoTransacao } from 'src/transacao/entities/historico-transcao.entity';
+import { PreferenceResponse } from 'mercadopago/dist/clients/preference/commonTypes';
+import { PaymentResponse } from 'mercadopago/dist/clients/payment/commonTypes';
 
 @Injectable()
 export class PedidoService {
@@ -39,35 +41,36 @@ export class PedidoService {
     private readonly mercadoPagoService: MercadoPagoService,
     private dataSource: DataSource
   ) { }
-  async create(createPedidoDto: CreatePedidoDto) {
+  async create(createPedidoDto: CreatePedidoDto, cliente: any) {
     const queryRunner = this.dataSource.createQueryRunner();
     try {
+
       await queryRunner.connect();
       await queryRunner.startTransaction();
       let valor = 0;
       let descricao = '';
-      let cliente = await this.clienteRepository.findOne({
+      let clienteEncontrado = await this.clienteRepository.findOne({
         where: {
-          whatsapp: createPedidoDto.cliente.whatsapp
+          id: cliente.id
         }
       });
-      if (!cliente) {
+      if (!clienteEncontrado) {
         const novoCliente = this.clienteRepository.create({
           ...createPedidoDto.cliente,
           status: true,
           dataUltimaCompra: new Date(),
           dataCriacao: new Date()
         });
-        cliente = await this.clienteRepository.save(novoCliente);
+        clienteEncontrado = await this.clienteRepository.save(novoCliente);
       }
-      cliente.dataUltimaCompra = new Date();
+      clienteEncontrado.dataUltimaCompra = new Date();
       const pedido = this.pedidoRepository.create(
         {
           data: new Date(),
           statusPedido: 'Pendente',
           statusPagamento: 'Pendente',
           valor: 0,
-          idCliente: cliente,
+          idCliente: clienteEncontrado,
           origem: createPedidoDto.origem || 'SITE'
         }
       );
@@ -98,28 +101,32 @@ export class PedidoService {
       const formaPagamento = await this.formaPagamentoRepository.findOne({
         where: {
           id: createPedidoDto.idFormaPagamento
-        }, relations: {
-          configuracao: true
         }
       })
-      const clientePagamento = this.mercadoPagoService.createClient(formaPagamento.configuracao.key)
+      const configFormaPagamento = await this.configFormaPagamentoRepository.findOne({
+        where: {
+          status: true,
+        }
+      })
+      const clientePagamento = this.mercadoPagoService.createClient(configFormaPagamento.key)
       let pagamento = {} as any
-      if (formaPagamento.configuracao.metodoPagamento === 'pix') {
-        pagamento = await this.mercadoPagoService.criarPagamento(
+      if (formaPagamento.metodoPagamento === 'pix') {
+        console.log(createPedidoDto, cliente);
+        pagamento = await this.mercadoPagoService.criarPagamentoPix(
           clientePagamento,
           {
             transaction_amount: valor,
+            external_reference: pedido.id.toString(),
             description: descricao,
-            payment_method_id: 'pix',
-            notification_url: process.env.WEBHOOK_URL,
+            id: pedido.id.toString(),
             payer: {
-              email: cliente.email,
+              email: clienteEncontrado.email,
             },
           },
         )
         const transacao = this.transacaoRepository.create({
+          idTransacao: pagamento.id.toString(),
           dataSolicitacao: new Date(),
-          idTransacao: pagamento.id,
           idFormaPagamento: formaPagamento,
           valor: valor,
           idPedido: pedido
@@ -133,28 +140,31 @@ export class PedidoService {
         })
         await queryRunner.manager.save(historico);
         await queryRunner.commitTransaction();
-        return {
-          id: pedido.id,
-          cliente: cliente,
-          valor: pagamento.transaction_amount,
-          url: pagamento,
-          qrCodeBase64: pagamento.point_of_interaction.transaction_data.qr_code_base64,
-          qrCode: pagamento.point_of_interaction.transaction_data.qr_code,
-        };
-      } else if (formaPagamento.configuracao.metodoPagamento === 'cartao') {
+        // return {
+        //   id: pedido.id,
+        //   cliente: clienteEncontrado,
+        //   link: pagamento.init_point,
+
+        // };
+        return pagamento;
+      } else if (formaPagamento.metodoPagamento === 'cartao') {
         pagamento = await this.mercadoPagoService.criarPagamentoCartao(
           clientePagamento,
           {
             id: pedido.id.toString(),
             quantity: 1,
+            external_reference: pedido.id.toString(),
             unit_price: valor,
-            title: descricao
+            title: descricao,
+            payer: {
+              email: clienteEncontrado.email,
+            },
           }
-
         )
+        console.log(pagamento);
         const transacao = this.transacaoRepository.create({
           dataSolicitacao: new Date(),
-          idTransacao: pagamento.id,
+          idTransacao: pagamento.merchantOrder.id.toString(),
           idFormaPagamento: formaPagamento,
           valor: valor,
           idPedido: pedido
@@ -168,10 +178,9 @@ export class PedidoService {
         })
         await queryRunner.manager.save(historico);
         await queryRunner.commitTransaction();
-        return {
-          id: pedido.id,
-          init_point: pagamento.init_point,
-        }
+        return pagamento;
+      } else {
+        throw new HttpException('Forma de pagamento inválida', 404);
       }
     } catch (error) {
       console.log(error);
@@ -186,7 +195,8 @@ export class PedidoService {
     try {
       return this.pedidoRepository.find({
         relations: {
-          idCliente: true
+          idCliente: true,
+          historicoTransacao: true,
         }
       });
     } catch (error) {
@@ -216,7 +226,7 @@ export class PedidoService {
         formaPagamento: formaPagamento,
         key: createFormaPagamento.configuracao.key,
         nome: createFormaPagamento.configuracao.nome,
-        metodoPagamento: createFormaPagamento.configuracao.metodoPagamento
+        status: createFormaPagamento.status,
       })
       await this.configFormaPagamentoRepository.save(configFormaPagamento);
       await queryRunner.commitTransaction();

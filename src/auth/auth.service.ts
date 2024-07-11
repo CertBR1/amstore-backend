@@ -14,6 +14,7 @@ import { EmailService } from 'src/email/email.service';
 import { CacheManagerService } from 'src/cache-manager/cache-manager.service';
 import { Functions } from 'src/utils/func.util';
 import { CodeVerificationDto } from './dto/code-verification.dto';
+import { ConfigSistema } from 'src/config-sistema/entities/config-sistema.entity';
 @Injectable()
 export class AuthService {
 
@@ -22,10 +23,13 @@ export class AuthService {
     private readonly adminCredRepository: Repository<AdminCred>,
     @InjectRepository(Cliente)
     private readonly clienteRepository: Repository<Cliente>,
+    @InjectRepository(ConfigSistema)
+    private readonly configSistemaRepository: Repository<ConfigSistema>,
     private readonly emailService: EmailService,
     private readonly jwtService: JwtService,
     private readonly axiosClient: AxiosClientService,
     private readonly cacheManagerService: CacheManagerService,
+    private readonly whastappClientService: WhastappClientService,
     private dataSource: DataSource,
   ) { }
   async login(createAuthDto: CreateAuthDto) {
@@ -72,7 +76,6 @@ export class AuthService {
 
   async whatsappLogin(LoginDto: LoginDto) {
     console.log(LoginDto);
-
     try {
       const cliente = await this.clienteRepository.findOne({
         where: { whatsapp: LoginDto.whatsapp },
@@ -80,7 +83,14 @@ export class AuthService {
       if (!cliente) {
         throw new HttpException('Cliente não encontrado', 404);
       }
-      this.axiosClient.enviarMensagem
+      const codigo = Functions.genetareCode(6);
+      const info = await this.whastappClientService.enviarMensagem(
+        {
+          number: cliente.whatsapp,
+          body: `Olá *${cliente.nome}*, seu codigo de verificação: *${codigo}*`
+        });
+      await this.cacheManagerService.set(cliente.whatsapp, codigo);
+      return info;
     } catch (error) {
       console.log(error);
       throw new HttpException(error, 500);

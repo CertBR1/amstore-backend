@@ -8,6 +8,7 @@ import { Transacao } from 'src/transacao/entities/transacao.entity';
 import { ServicoPedido } from 'src/servico-pedido/entities/servico-pedido.entity';
 import { HistoricoTransacao } from 'src/transacao/entities/historico-transcao.entity';
 import { Fornecedor } from 'src/fornecedor/entities/fornecedor.entity';
+import { AxiosClientModule } from 'src/axios-client/axios-client.module';
 
 @Module({
   imports: [
@@ -16,8 +17,9 @@ import { Fornecedor } from 'src/fornecedor/entities/fornecedor.entity';
       Transacao,
       ServicoPedido,
       HistoricoTransacao,
-      Fornecedor
+      Fornecedor,
     ]),
+    AxiosClientModule,
     MercadoPagoModule
   ],
   controllers: [WebhookController],

@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsHexColor, IsNotEmpty, IsString, IsUrl } from "class-validator";
+import { IsBoolean, IsHexColor, IsNotEmpty, IsString, IsUrl } from "class-validator";
 
 export class CreateConfigSistemaDto {
     @ApiProperty({
@@ -53,7 +53,7 @@ export class CreateConfigSistemaDto {
         description: 'Status da loja',
         example: 'Ativo'
     })
-    @IsString({ message: 'O status da loja deve ser uma string' })
+    @IsBoolean({ message: 'O status da loja deve ser uma string' })
     @IsNotEmpty({ message: 'O status da loja não pode ser vazio' })
-    status: string;
+    status: boolean;
 }

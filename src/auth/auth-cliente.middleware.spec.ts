@@ -1,7 +1,7 @@
-import { AuthMiddleware } from './auth-cliente.middleware';
+import { ClienteAuthMiddleware } from './auth-cliente.middleware';
 
 describe('AuthMiddleware', () => {
   it('should be defined', () => {
-    expect(new AuthMiddleware()).toBeDefined();
+    expect(new ClienteAuthMiddleware()).toBeDefined();
   });
 });

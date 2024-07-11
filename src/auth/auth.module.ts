@@ -9,20 +9,23 @@ import { Cliente } from 'src/cliente/entities/cliente.entity';
 import { AxiosClientModule } from 'src/axios-client/axios-client.module';
 import { EmailModule } from 'src/email/email.module';
 import { CacheManagerModule } from 'src/cache-manager/cache-manager.module';
+import { ConfigSistema } from 'src/config-sistema/entities/config-sistema.entity';
+import { WhastappClientModule } from 'src/whastapp-client/whastapp-client.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true
     }),
-    TypeOrmModule.forFeature([AdminCred, Cliente]),
+    TypeOrmModule.forFeature([AdminCred, Cliente, ConfigSistema]),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1d' },
     }),
     AxiosClientModule,
     EmailModule,
-    CacheManagerModule
+    CacheManagerModule,
+    WhastappClientModule
   ],
   controllers: [AuthController],
   providers: [AuthService],

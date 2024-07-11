@@ -28,16 +28,17 @@
     - [x] Deve gerar um numero de 6 digitos aleatorio
     - [x] Armazenar isso em cache por N tempo -> tempo padrao 60 segundos
     - [ ] Enviar o codigo para o numero do cliente
-        - [ ] Criar interface de comunicação com o serviço externo que vai enviar a mensagem
+        - [X] Criar interface de comunicação com o serviço externo que vai enviar a mensagem
         - [ ]
-    - [ ] Receber em um endpoint o numero de whatsapp do cliente 
-        - [ ] Validar se o codigo recebido e o mesmo armazenado em cache
-        - [ ] Devolver um JWT que deve ser enviado para conclusao do pedido
-- [ ] Implementar um login por email usando a mesma logica        
+    - [ ] Receber em um endpoint o numero de whatsapp/email e o codigo enviado para cliente 
+        - [x] Validar se o codigo recebido e o mesmo armazenado em cache
+        - [X] Devolver um JWT que deve ser enviado para conclusao do pedido
+- [X] Implementar um login por email usando a mesma logica        
+- [ ] Implementar login por whatsapp usando a mesma logica
 
 ## Implementação do gateway de pagamentos do Mercado Pago
 
-- [ ] Criar pagamentos
+- [     ] Criar pagamentos
 - [ ] Buscar pagamentos  
 - [ ] Buscar status de pagamento
 

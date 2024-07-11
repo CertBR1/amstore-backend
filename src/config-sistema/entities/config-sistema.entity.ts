@@ -24,7 +24,7 @@ export class ConfigSistema {
     logo: string;
 
     @Column()
-    status: string;
+    status: boolean;
 
     @CreateDateColumn()
     dataCriacao: Date;

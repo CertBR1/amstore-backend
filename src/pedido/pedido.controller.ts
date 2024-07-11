@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/common';
 import { PedidoService } from './pedido.service';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
@@ -22,8 +22,9 @@ export class PedidoController {
     return this.pedidoService.findAllFormaPagamento();
   }
   @Post()
-  create(@Body() createPedidoDto: CreatePedidoDto) {
-    return this.pedidoService.create(createPedidoDto);
+  create(@Body() createPedidoDto: CreatePedidoDto, @Req() req: any) {
+    const { cliente } = req.body;
+    return this.pedidoService.create(createPedidoDto, cliente);
   }
 
   @Get()

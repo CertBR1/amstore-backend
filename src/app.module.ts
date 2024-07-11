@@ -35,6 +35,7 @@ import { SubcategoriaController } from './subcategoria/subcategoria.controller';
 import { AdminController } from './admin/admin.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { WhastappClientModule } from './whastapp-client/whastapp-client.module';
+import { ClienteAuthMiddleware } from './auth/auth-cliente.middleware';
 
 
 @Module({
@@ -87,6 +88,7 @@ export class AppModule implements NestModule {
     consumer
       .apply(AuthAdminMiddleware)
       .exclude({ path: '/(.*)', method: RequestMethod.GET, })
+      .exclude({ path: '/pedido', method: RequestMethod.POST, })
       .forRoutes(
         ServicoController,
         SeguimentoController,
@@ -98,5 +100,8 @@ export class AppModule implements NestModule {
         SubcategoriaController,
         AdminController
       )
+    consumer
+      .apply(ClienteAuthMiddleware)
+      .forRoutes({ path: '/pedido', method: RequestMethod.POST, })
   }
 }

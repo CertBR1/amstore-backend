@@ -5,7 +5,7 @@ import { UpdateWhastappClientDto } from './dto/update-whastapp-client.dto';
 
 @Controller('whastapp-client')
 export class WhastappClientController {
-  constructor(private readonly whastappClientService: WhastappClientService) {}
+  constructor(private readonly whastappClientService: WhastappClientService) { }
 
   @Post()
   create(@Body() createWhastappClientDto: CreateWhastappClientDto) {

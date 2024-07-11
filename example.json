@@ -1,0 +1,163 @@
+{
+    accounts_info: null,
+    acquirer_reconciliation: [],
+    additional_info: {
+      authentication_code: null,
+      available_balance: null,
+      bank_info: { is_same_bank_account_owner: true
+        },
+      nsu_processadora: null
+    },
+    authorization_code: null,
+    binary_mode: false,
+    brand_id: null,
+    build_version: '3.60.0',
+    call_for_authorize_id: null,
+    callback_url: null,
+    captured: true,
+    card: {},
+    charges_details: [],
+    collector_id: 232977222,
+    corporation_id: null,
+    counter_currency: null,
+    coupon_amount: 0,
+    currency_id: 'BRL',
+    date_approved: '2024-07-10T15: 38: 17.000-04: 00',
+    date_created: '2024-07-10T15: 34: 39.000-04: 00',
+    date_last_updated: '2024-07-10T15: 38: 21.000-04: 00',
+    date_of_expiration: '2024-07-11T15: 34: 39.000-04: 00',
+    deduction_schema: null,
+    description: 'Descricao Servico teste 01 - Quantidade: 500 ',
+    differential_pricing_id: null,
+    external_reference: null,
+    fee_details: [],
+    financing_group: null,
+    id: 82517161810,
+    installments: 1,
+    integrator_id: null,
+    issuer_id: '12501',
+    live_mode: true,
+    marketplace_owner: null,
+    merchant_account_id: null,
+    merchant_number: null,
+    metadata: {},
+    money_release_date: '2024-07-10T15: 38: 17.000-04: 00',
+    money_release_schema: null,
+    money_release_status: 'released',
+    notification_url: 'https: //webhook.site/b2d0d731-9285-43f9-93e5-7ca844716600?source_news=ipn',
+    operation_type: 'regular_payment',
+    order: {},
+    payer: {
+      email: 'XXXXXXXXXXX',
+      entity_type: null,
+      first_name: null,
+      id: '1543626882',
+      identification: { number: null, type: null
+        },
+      last_name: null,
+      operator_id: null,
+      phone: { number: null, extension: null, area_code: null
+        },
+      type: null
+    },
+    payment_method: { id: 'pix', issuer_id: '12501', type: 'bank_transfer'
+    },
+    payment_method_id: 'pix',
+    payment_type_id: 'bank_transfer',
+    platform_id: null,
+    point_of_interaction: {
+      application_data: { name: null, version: null
+        },
+      business_info: { branch: null, sub_unit: 'sdk', unit: 'online_payments'
+        },
+      location: { source: null, state_id: null
+        },
+      sub_type: 'INTER_PSP',
+      transaction_data: {
+        bank_info: [Object
+            ],
+        bank_transfer_id: 19440864610,
+        e2e_id: null,
+        financial_institution: 1,
+        infringement_notification: [Object
+            ],
+        qr_code: '00020126580014br.gov.bcb.pix01362fd35d09-f020-4c20-a2e8-e45f509c5e6952040000530398654040.505802BR5925HENRIQUEMONTEIRODASILVAFE6012Pirassununga62240520mpqrinter8251716181063041E59',
+        qr_code_base64: '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',
+        ticket_url: 'https: //www.mercadopago.com.br/payments/82517161810/ticket?caller_id=1543626882&hash=6651d190-b8af-4548-b086-3010ecf64d79',
+        transaction_id: 'PIXE0000000020240710193609098131972'
+        },
+      type: 'OPENPLATFORM'
+    },
+    pos_id: null,
+    processing_mode: 'aggregator',
+    refunds: [],
+    release_info: null,
+    shipping_amount: 0,
+    sponsor_id: null,
+    statement_descriptor: null,
+    status: 'approved',
+    status_detail: 'accredited',
+    store_id: null,
+    tags: null,
+    taxes_amount: 0,
+    transaction_amount: 0.5,
+    transaction_amount_refunded: 0,
+    transaction_details: {
+      acquirer_reference: null,
+      bank_transfer_id: 19440864610,
+      external_resource_url: null,
+      financial_institution: '1',
+      installment_amount: 0,
+      net_received_amount: 0.5,
+      overpaid_amount: 0,
+      payable_deferral_period: null,
+      payment_method_reference_id: null,
+      total_paid_amount: 0.5,
+      transaction_id: 'PIXE0000000020240710193609098131972'
+    },
+    api_response: {
+      status: 200,
+      headers: [Object: null prototype
+        ] {
+        date: [Array
+            ],
+        'content-type': [Array
+            ],
+        'transfer-encoding': [Array
+            ],
+        connection: [Array
+            ],
+        vary: [Array
+            ],
+        'cache-control': [Array
+            ],
+        'x-content-type-options': [Array
+            ],
+        'x-request-id': [Array
+            ],
+        'x-xss-protection': [Array
+            ],
+        'strict-transport-security': [Array
+            ],
+        'access-control-allow-origin': [Array
+            ],
+        'access-control-allow-headers': [Array
+            ],
+        'access-control-allow-methods': [Array
+            ],
+        'access-control-max-age': [Array
+            ],
+        'timing-allow-origin': [Array
+            ],
+        'content-encoding': [Array
+            ]
+        }
+    }
+}
+  {
+    cause: null,
+    code: 'invalid_format',
+    error: 'bad_request',
+    message: 'Invalid Id.',
+    status: 400
+}

@@ -13,6 +13,9 @@ export class FormaPagamento {
     @Column()
     status: boolean
 
+    @Column({ nullable: true })
+    metodoPagamento: string;
+
     @OneToOne(() => ConfigFormaPagamento, configuracao => configuracao.formaPagamento, { nullable: true })
     configuracao: ConfigFormaPagamento;
 

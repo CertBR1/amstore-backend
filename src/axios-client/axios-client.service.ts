@@ -56,14 +56,18 @@ export class AxiosClientService {
         link: string,
         quantity: number,
         runs?: number,
-        service: number,
+        service: string,
         interval?: number
     }): Promise<any> {
         try {
             const resposta = await this.axiosService.axiosRef.post(url, {
                 "key": key,
                 "action": "add",
-                "data": dados
+                "service": dados.service,
+                "link": dados.link,
+                "quantity": dados.quantity,
+                "runs": dados.runs,
+                "interval": dados.interval
             });
             return resposta.data;
         } catch (error) {
@@ -78,11 +82,22 @@ export class AxiosClientService {
                 ...dados
             }, {
                 headers: {
-                    "X_TOKEN": token
+                    "Authorization": `Bearer ${token}`,
+                    "X-Token": token
                 }
             })
             console.log("resposta", resposta.data)
             return 'OLHA O CONSOLE :V';
+        } catch (error) {
+            console.log(error);
+            throw new HttpException('Erro ao enviar mensagem no painel', 500);
+        }
+    }
+
+    async post(url: string, headers: any, dados: any): Promise<any> {
+        try {
+            const resposta = await this.axiosService.axiosRef.post(url, dados, { headers: headers });
+            return resposta.data;
         } catch (error) {
             console.log(error);
             throw new HttpException('Erro ao enviar mensagem no painel', 500);
