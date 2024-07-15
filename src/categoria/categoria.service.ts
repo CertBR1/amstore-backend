@@ -17,7 +17,14 @@ export class CategoriaService {
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
-      const categoria = this.categoriaRepository.create(createCategoriaDto);
+      const categoria = this.categoriaRepository.create(
+        {
+          nome: createCategoriaDto.nome,
+          status: true,
+          imagemUrl: createCategoriaDto.imagemUrl,
+          dataCriacao: new Date(),
+        }
+      );
       await queryRunner.manager.save(categoria);
       await queryRunner.commitTransaction();
       return categoria;
