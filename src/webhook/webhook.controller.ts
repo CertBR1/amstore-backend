@@ -1,10 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Inject, Req, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Inject, Req, Query, HttpException } from '@nestjs/common';
 import { WebhookService } from './webhook.service';
 import { CreateWebhookDto } from './dto/create-webhook.dto';
 import { UpdateWebhookDto } from './dto/update-webhook.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Pedido } from 'src/pedido/entities/pedido.entity';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Transacao } from 'src/transacao/entities/transacao.entity';
 import { MercadoPagoService } from 'src/mercado-pago/mercado-pago.service';
 import { ServicoPedido } from 'src/servico-pedido/entities/servico-pedido.entity';
@@ -28,6 +28,7 @@ export class WebhookController {
     private readonly configFormaPagamentoRepository: Repository<ConfigFormaPagamento>,
     @InjectRepository(Fornecedor)
     private readonly fornecedorRepository: Repository<Fornecedor>,
+    private readonly dataSource: DataSource,
     private readonly mercadoPagoService: MercadoPagoService,
     private readonly webhookService: WebhookService,
     private readonly axiosClient: AxiosClientService
@@ -39,17 +40,81 @@ export class WebhookController {
     console.log('Webhook request: ', body);
     switch (body.type) {
       case 'payment': {
+        const queryRunner = this.dataSource.createQueryRunner();
         const idPayment = body.data.id;
         const configFormaPagamento = await this.configFormaPagamentoRepository.findOne({ where: { status: true } });
         const client = this.mercadoPagoService.createClient(configFormaPagamento.key);
         const payment = await this.mercadoPagoService.obterPagamento(client, idPayment);
-        console.log('NAO ERA WEBHOOK QUE VOCES QUERIAM: ', payment);
-        switch (null) {
+        switch (payment.status) {
           case 'approved': {
+            try {
+              await queryRunner.connect();
+              await queryRunner.startTransaction();
+              console.log('Processando pedido: ' + payment.external_reference + '-' + new Date());
+              const pedido = await this.pedidoRepository.find({ where: { id: +payment.external_reference } });
+              if (pedido) {
+                const resposta = []
+                for (let i = 0; i < pedido.length; i++) {
+                  const pedidoEntity = pedido[i];
+                  const servicoPedido = await this.servicoPedidoRepository.findOne({ where: { idPedido: pedidoEntity }, relations: ['idServico.idFornecedor'] });
+                  const fornecedor = servicoPedido.idServico.idFornecedor;
+                  console.log('Executando pedido:' + pedidoEntity.id + new Date().getUTCMilliseconds());
+                  console.log('Chamando painel de seguidores com o id de servico: ' + servicoPedido.idServico.idFornecedor + 'no painel de seguidores: ' + fornecedor.url);
+                  const repostaPainel = await this.axiosClient.criarPedido(fornecedor.url, fornecedor.key, {
+                    link: servicoPedido.link,
+                    service: servicoPedido.idServico.idServicoFornecedor,
+                    quantity: servicoPedido.quantidadeSolicitada,
+                  })
+                  console.log("Resposta do painel: " + repostaPainel, + "para o pedido: " + pedidoEntity.id);
+                  if (!repostaPainel.error) {
+                    await queryRunner.manager.update(Pedido, pedidoEntity.id, {
+                      statusPedido: 'Aprovado',
+                      statusPagamento: 'Aprovado',
+                    })
+                    await queryRunner.manager.save(HistoricoTransacao, {
+                      idTransacao: idPayment,
+                      status: 'Aprovado',
+                      idPedido: pedidoEntity,
+                      data: new Date(),
+                    })
+                    await queryRunner.manager.update(Transacao, servicoPedido.id, {
+                      dataAprovacao: new Date(),
+                      dataStatus: new Date(),
+                    })
+                    await queryRunner.manager.update(ServicoPedido, servicoPedido.id, {
+                      numeroOrdem: repostaPainel.order,
+                    })
+                    console.log("Adicionado o numero de ordem: " + repostaPainel.id + "para o servico: " + servicoPedido.idServico.idFornecedor);
+                    resposta.push({
+                      link: servicoPedido.link,
+                      numeroDeOrdem: repostaPainel.order,
+                    });
+                  } else {
+                    await queryRunner.manager.update(Pedido, pedidoEntity.id, {
+                      statusPedido: 'ERRO',
+                      statusPagamento: 'ERRO',
+                    })
+                    await queryRunner.manager.save(HistoricoTransacao, {
+                      idTransacao: idPayment,
+                      status: 'ERRO',
+                      idPedido: pedidoEntity,
+                      data: new Date(),
+                    })
+                  }
+                  await queryRunner.commitTransaction();
+                  return 'OK';
+                }
+              }
+            } catch (error) {
+              console.log(error);
 
+              throw new HttpException('Erro ao processar o pedido', 500);
+            } finally {
+              await queryRunner.release();
+            }
           }
+            break;
         }
-        break;
       }
     }
   }

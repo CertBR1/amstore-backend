@@ -69,6 +69,7 @@ export class AxiosClientService {
                 "runs": dados.runs,
                 "interval": dados.interval
             });
+            console.log("Resposta do pedido no axiosClient: ", resposta);
             return resposta.data;
         } catch (error) {
             console.log(error);
