@@ -56,6 +56,10 @@
 - [ ] Executar o pedido no painel
 - [ ] 
 
+## Melhorias de retorno
+
+- [ ] Consulta de todos fornecedores deve atualizar o saldo de cada fornecedor antes de retornar para o frontend 
+- [ ] Implementar validação por token no GET /cliente
 
 ## BUG
 

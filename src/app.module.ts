@@ -89,6 +89,7 @@ export class AppModule implements NestModule {
       .apply(AuthAdminMiddleware)
       .exclude({ path: '/(.*)', method: RequestMethod.GET, })
       .exclude({ path: '/pedido', method: RequestMethod.POST, })
+      .exclude({ path: '/admin', method: RequestMethod.POST, })
       .forRoutes(
         ServicoController,
         SeguimentoController,
