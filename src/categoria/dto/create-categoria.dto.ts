@@ -27,7 +27,5 @@ export class CreateCategoriaDto {
         description: 'Status da categoria',
         required: true
     })
-    @IsNotEmpty({ message: 'Status da categoria é obrigatório' })
-    @IsBoolean({ message: 'Status da categoria deve ser um booleano' })
     status: boolean;
 }
