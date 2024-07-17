@@ -34,14 +34,19 @@ export class ServicoService {
   ) { }
   async create(createServicoDto: CreateServicoDto) {
     const queryRunner = this.dataSource.createQueryRunner();
+    console.log('CREATE SERVICO', createServicoDto)
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
+      let tags = undefined;
+      if (createServicoDto.tagSeo) {
+        tags = await this.createTagSeo(createServicoDto.tagSeo);
+      }
       const servico = this.servicoRepository.create({
         idFornecedor: await this.fornecedorRepository.findOneBy({ id: createServicoDto.idFornecedor }),
         idCategoria: await this.categoriaRepository.findOneBy({ id: createServicoDto.idCategoria }),
         idSubcategoria: await this.subcategoriaRepository.findOneBy({ id: createServicoDto.idSubcategoria }),
-        tagSeo: await this.createTagSeo(createServicoDto.tagSeo),
+        tagSeo: tags,
         idServicoFornecedor: createServicoDto.idServicoFornecedor,
         descricao: createServicoDto.descricao,
         multiplo: createServicoDto.multiplo,
@@ -57,13 +62,13 @@ export class ServicoService {
       if (createServicoDto.infoPrincipais) {
         createServicoDto.infoPrincipais.idServico = servico.id;
         const info = await this.createInfoPrincipais(createServicoDto.infoPrincipais);
-        servico.informacoesPrincipais.push(info);
+        servico.informacoesPrincipais = [info];
       }
       if (createServicoDto.infoAdcionais) {
         createServicoDto.infoAdcionais.forEach(async (element) => {
           element.idServico = servico.id;
           const info = await this.createInfoAdicionais(element);
-          servico.informacoesAdcionais.push(info);
+          servico.informacoesAdcionais = [info];
         });
       }
       await queryRunner.manager.save(servico);
@@ -80,7 +85,17 @@ export class ServicoService {
 
   findAll() {
     try {
-      return this.servicoRepository.find({ relations: { idFornecedor: true, idCategoria: true, idSubcategoria: true, tagSeo: true } });
+      return this.servicoRepository.find({
+        relations: {
+          idFornecedor: true,
+          idCategoria: true,
+          idSubcategoria: true,
+          servicosSeguimentados: true,
+          informacoesAdcionais: true,
+          informacoesPrincipais: true,
+          tagSeo: true
+        }
+      });
     } catch (error) {
       console.log(error);
       throw new HttpException(error, 500);
@@ -174,7 +189,10 @@ export class ServicoService {
       await queryRunner.connect();
       await queryRunner.startTransaction();
       const servico = this.infoServicoPrincipaisRepository.create({
-
+        idServico: await this.servicoRepository.findOneBy({ id: createInfoPrincipal.idServico }),
+        inicioEnvio: createInfoPrincipal.inicioEnvio,
+        qualidade: createInfoPrincipal.qualidade,
+        velocidade: createInfoPrincipal.velocidade
       });
       await queryRunner.manager.save(servico);
       await queryRunner.commitTransaction();
