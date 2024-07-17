@@ -1,5 +1,6 @@
+import { Optional } from "@nestjs/common";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean, IsNotEmpty, IsPositive, IsString } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsOptional, IsPositive, IsString } from "class-validator";
 
 export class CreateSubcategoriaDto {
 
@@ -48,8 +49,8 @@ export class CreateSubcategoriaDto {
             type: String
         }
     )
+    @IsOptional({ message: 'Url da imagem não pode ser vazio' })
     @IsString({ message: 'Url da imagem deve ser uma string' })
-    @IsNotEmpty({ message: 'Url da imagem não pode ser vazio' })
     imagemUrl: string
 
 }
