@@ -41,5 +41,15 @@ export class CreateSubcategoriaDto {
     @IsPositive({ message: 'Id da categoria deve ser um número positivo' })
     idCategoria: number;
 
+    @ApiProperty(
+        {
+            description: 'Url da imagem',
+            example: 'url da imagem',
+            type: String
+        }
+    )
+    @IsString({ message: 'Url da imagem deve ser uma string' })
+    @IsNotEmpty({ message: 'Url da imagem não pode ser vazio' })
+    imagemUrl: string
 
 }

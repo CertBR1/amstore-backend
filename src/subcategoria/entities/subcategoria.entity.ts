@@ -16,8 +16,12 @@ export class Subcategoria {
     @Column()
     status: boolean;
 
+    @Column({ nullable: true })
+    imagemUrl: string;
+
     @ManyToOne(() => Categoria, categoria => categoria.subcategorias)
     idCategoria: Categoria;
+
 
     @OneToMany(() => Servico, servico => servico.idSubcategoria)
     servicos: Servico[];

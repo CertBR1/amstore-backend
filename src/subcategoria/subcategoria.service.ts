@@ -83,7 +83,7 @@ export class SubcategoriaService {
         status: updateSubcategoriaDto.status,
       });
       await queryRunner.commitTransaction();
-      return await this.subcategoriaRepository.findOneBy({ id });
+      return await this.subcategoriaRepository.find({ where: { id }, relations: { idCategoria: true } });
     } catch (error) {
       console.log(error);
       await queryRunner.rollbackTransaction();

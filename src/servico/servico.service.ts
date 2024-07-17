@@ -56,7 +56,15 @@ export class ServicoService {
       });
       if (createServicoDto.infoPrincipais) {
         createServicoDto.infoPrincipais.idServico = servico.id;
-        await this.createInfoPrincipais(createServicoDto.infoPrincipais);
+        const info = await this.createInfoPrincipais(createServicoDto.infoPrincipais);
+        servico.informacoesPrincipais.push(info);
+      }
+      if (createServicoDto.infoAdcionais) {
+        createServicoDto.infoAdcionais.forEach(async (element) => {
+          element.idServico = servico.id;
+          const info = await this.createInfoAdicionais(element);
+          servico.informacoesAdcionais.push(info);
+        });
       }
       await queryRunner.manager.save(servico);
       await queryRunner.commitTransaction();
