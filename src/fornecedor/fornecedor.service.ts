@@ -43,7 +43,22 @@ export class FornecedorService {
   }
 
   async findAll() {
+    const queryRunner = this.dataSource.createQueryRunner();
     try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+      const fornecedores = await this.fornecedorRepository.find();
+      const fornecedoresComSaldoAtualizado = await Promise.all(
+        fornecedores.map(async (f) => {
+          const resposta = await this.axiosClient.obterSaldo(f.url, f.key);
+          await queryRunner.manager.update(Fornecedor, f.id, {
+            saldo: resposta.balance,
+            moeda: resposta.currency,
+          })
+          return await this.fornecedorRepository.findOneBy({ id: f.id });
+        })
+      )
+      await queryRunner.commitTransaction();
       return await this.fornecedorRepository.find();
     } catch (error) {
       console.log(error);
