@@ -11,6 +11,7 @@ import { Fornecedor } from 'src/fornecedor/entities/fornecedor.entity';
 import { Categoria } from 'src/categoria/entities/categoria.entity';
 import { Subcategoria } from 'src/subcategoria/entities/subcategoria.entity';
 import { TagSeo } from './entities/tag-seo.entity';
+import { CreateInfoServicoAdcionaisDto } from './dto/create-info-servico-adcionais';
 
 @Injectable()
 export class ServicoService {
@@ -53,6 +54,10 @@ export class ServicoService {
         status: createServicoDto.status,
         tipo: createServicoDto.tipo
       });
+      if (createServicoDto.infoPrincipais) {
+        createServicoDto.infoPrincipais.idServico = servico.id;
+        await this.createInfoPrincipais(createServicoDto.infoPrincipais);
+      }
       await queryRunner.manager.save(servico);
       await queryRunner.commitTransaction();
       return servico;
@@ -120,8 +125,27 @@ export class ServicoService {
     return `This action removes a #${id} servico`;
   }
 
-  createInfoAdicionais(createServicoDto: CreateServicoDto) {
-    return 'This action adds a new servico';
+  async createInfoAdicionais(createServicoDto: CreateInfoServicoAdcionaisDto) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+      const info = this.infoServicoAdcionaisRepository.create({
+        descricao: createServicoDto.descricao,
+        pergunta: createServicoDto.pergunta,
+        resposta: createServicoDto.resposta,
+        idServico: await this.servicoRepository.findOneBy({ id: createServicoDto.idServico })
+      })
+      await queryRunner.manager.save(info);
+      await queryRunner.commitTransaction();
+      return info;
+    } catch (error) {
+      console.log(error);
+      await queryRunner.rollbackTransaction();
+      throw new HttpException(error, 500);
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   findAllInfoAdicionais() {

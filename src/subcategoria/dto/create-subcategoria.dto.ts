@@ -40,4 +40,6 @@ export class CreateSubcategoriaDto {
     @IsNotEmpty({ message: 'Id da categoria não pode ser vazio' })
     @IsPositive({ message: 'Id da categoria deve ser um número positivo' })
     idCategoria: number;
+
+
 }

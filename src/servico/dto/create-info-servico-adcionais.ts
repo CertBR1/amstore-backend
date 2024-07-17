@@ -21,7 +21,7 @@ export class CreateInfoServicoAdcionaisDto {
     )
     @IsString({ message: 'Resposta deve ser uma string' })
     @IsNotEmpty({ message: 'Resposta não pode ser vazio' })
-    reposta: string;
+    resposta: string;
 
 
     @ApiProperty(

@@ -63,6 +63,7 @@ export class SubcategoriaService {
 
   async update(id: number, updateSubcategoriaDto: UpdateSubcategoriaDto) {
     const queryRunner = this.dataSource.createQueryRunner();
+    console.log('atualizando subcategoria ', id, ' com ', updateSubcategoriaDto)
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
@@ -70,9 +71,12 @@ export class SubcategoriaService {
       if (!subcategoria) {
         throw new HttpException('Subcategoria não encontrada', 404);
       }
-      const categoria = await this.categoriaRepository.findOneBy({
-        id: updateSubcategoriaDto.idCategoria
-      })
+      let categoria = null
+      if (updateSubcategoriaDto.idCategoria) {
+        categoria = await this.categoriaRepository.findOneBy({
+          id: updateSubcategoriaDto.idCategoria
+        })
+      }
       await queryRunner.manager.update(Subcategoria, id, {
         descricao: updateSubcategoriaDto.descricao,
         idCategoria: categoria || subcategoria.idCategoria,

@@ -1,4 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { CreateInfoServicoPrincipaisDto } from "./create-info-servico-principal";
+import { CreateInfoServicoAdcionaisDto } from "./create-info-servico-adcionais";
 
 export class CreateServicoDto {
     @ApiProperty(
@@ -101,4 +103,6 @@ export class CreateServicoDto {
 
     reposicao: number;
     status: boolean;
+    infoPrincipais: CreateInfoServicoPrincipaisDto
+    infoAdcionais: CreateInfoServicoAdcionaisDto[]
 }
