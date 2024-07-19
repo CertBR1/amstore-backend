@@ -132,18 +132,28 @@ export class ServicoService {
       let idCategoriaEntity = undefined;
       if (idCategoria) {
         idCategoriaEntity = await this.categoriaRepository.findOne({ where: { id: idCategoria } });
+        if (!idCategoriaEntity) {
+          throw new HttpException('Categorias inexistentes', 400);
+        }
       }
-      const idFornecedor = await this.fornecedorRepository.findOneBy({ id: updateServicoDto.idFornecedor });
-      console.log('UPDATE SERVICO idFornecedor Entity: ', idFornecedor)
-      console.log('UPDATE SERVICO idCategoria Entity: ', idCategoriaEntity)
-      const idSubcategoria = await this.subcategoriaRepository.findOneBy({ id: updateServicoDto.idSubcategoria });
-      if (!idFornecedor || !idCategoriaEntity || !idSubcategoria) {
-        throw new HttpException('Fornecedores, Categorias ou Subcategorias inexistentes', 400);
+      let idFornecedorEntity = undefined;
+      if (idFornecedor) {
+        idFornecedorEntity = await this.fornecedorRepository.findOne({ where: { id: idFornecedor } });
+        if (!idFornecedorEntity) {
+          throw new HttpException('Fornecedores inexistentes', 400);
+        }
+      }
+      let idSubcategoriaEntity = undefined;
+      if (idSubcategoria) {
+        idSubcategoriaEntity = await this.subcategoriaRepository.findOne({ where: { id: idSubcategoria } });
+        if (!idSubcategoriaEntity) {
+          throw new HttpException('Subcategorias inexistentes', 400);
+        }
       }
       const retonro = await this.servicoRepository.update({ id }, {
-        idFornecedor: idFornecedor || servico.idFornecedor,
+        idFornecedor: idFornecedorEntity || servico.idFornecedor,
         idCategoria: idCategoriaEntity || servico.idCategoria,
-        idSubcategoria: idSubcategoria || servico.idSubcategoria,
+        idSubcategoria: idSubcategoriaEntity || servico.idSubcategoria,
         idServicoFornecedor: updateServicoDto.idServicoFornecedor,
         descricao: updateServicoDto.descricao,
         multiplo: updateServicoDto.multiplo,
