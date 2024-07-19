@@ -46,7 +46,7 @@ export class AuthService {
       const payload = { id: usuario.id, nome: usuario.nome, usuario: usuario.usuario };
       const secret = `${process.env.JWT_SECRET}admin`;
       const jwt = await this.jwtService.sign(payload, { secret: secret });
-      return { access_token: jwt };
+      return { access_token: jwt, nome: usuario.nome, id: usuario.id };
     } catch (error) {
       console.log(error);
       throw new HttpException(error, 500);
