@@ -50,6 +50,9 @@ export class ServicoService {
       }
       const servico = this.servicoRepository.create({
         tagSeo: tags,
+        idFornecedor,
+        idCategoria,
+        idSubcategoria,
         idServicoFornecedor: createServicoDto.idServicoFornecedor,
         descricao: createServicoDto.descricao,
         multiplo: createServicoDto.multiplo,
