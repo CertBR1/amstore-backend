@@ -124,7 +124,7 @@ export class ServicoService {
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
-      const servico = await this.findOne(id);
+      const servico = await this.servicoRepository.findOneBy({ id });
       if (!servico) {
         throw new HttpException('Servico inexistente', 400);
       }
@@ -134,7 +134,7 @@ export class ServicoService {
       if (!idFornecedor || !idCategoria || !idSubcategoria) {
         throw new HttpException('Fornecedores, Categorias ou Subcategorias inexistentes', 400);
       }
-      this.servicoRepository.update({ id }, {
+      const retonro = await this.servicoRepository.update({ id }, {
         idFornecedor,
         idCategoria,
         idSubcategoria,
@@ -150,6 +150,7 @@ export class ServicoService {
         status: updateServicoDto.status,
         tipo: updateServicoDto.tipo
       });
+      console.log('UPDATE SERVICO', retonro)
       await queryRunner.commitTransaction();
       return await this.findOne(id);
     }
