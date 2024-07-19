@@ -130,6 +130,7 @@ export class ServicoService {
       }
       const idFornecedor = await this.fornecedorRepository.findOneBy({ id: updateServicoDto.idFornecedor });
       const idCategoria = await this.categoriaRepository.findOneBy({ id: updateServicoDto.idCategoria });
+      console.log('UPDATE SERVICO idCategoria Entity: ', idCategoria)
       const idSubcategoria = await this.subcategoriaRepository.findOneBy({ id: updateServicoDto.idSubcategoria });
       if (!idFornecedor || !idCategoria || !idSubcategoria) {
         throw new HttpException('Fornecedores, Categorias ou Subcategorias inexistentes', 400);
