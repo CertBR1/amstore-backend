@@ -120,17 +120,24 @@ export class ServicoService {
   async update(id: number, updateServicoDto: UpdateServicoDto) {
     const queryRunner = this.dataSource.createQueryRunner();
     console.log('UPDATE SERVICO', updateServicoDto)
+    console.log('UPDATE SERVICO', updateServicoDto.idCategoria)
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
-      const idFornecedor = await this.fornecedorRepository.findOneBy({ id: updateServicoDto.idFornecedor })
-      const idCategoria = await this.categoriaRepository.findOneBy({ id: updateServicoDto.idCategoria })
-      const idSubcategoria = await this.subcategoriaRepository.findOneBy({ id: updateServicoDto.idSubcategoria })
-      console.log(idFornecedor, idCategoria, idSubcategoria)
+      const servico = await this.findOne(id);
+      if (!servico) {
+        throw new HttpException('Servico inexistente', 400);
+      }
+      const idFornecedor = await this.fornecedorRepository.findOneBy({ id: updateServicoDto.idFornecedor });
+      const idCategoria = await this.categoriaRepository.findOneBy({ id: updateServicoDto.idCategoria });
+      const idSubcategoria = await this.subcategoriaRepository.findOneBy({ id: updateServicoDto.idSubcategoria });
       if (!idFornecedor || !idCategoria || !idSubcategoria) {
         throw new HttpException('Fornecedores, Categorias ou Subcategorias inexistentes', 400);
       }
-      await queryRunner.manager.update(Servico, id, {
+      this.servicoRepository.update({ id }, {
+        idFornecedor,
+        idCategoria,
+        idSubcategoria,
         idServicoFornecedor: updateServicoDto.idServicoFornecedor,
         descricao: updateServicoDto.descricao,
         multiplo: updateServicoDto.multiplo,
@@ -141,10 +148,7 @@ export class ServicoService {
         precoPromocional: updateServicoDto.precoPromocional,
         reposicao: updateServicoDto.reposicao,
         status: updateServicoDto.status,
-        tipo: updateServicoDto.tipo,
-        idFornecedor,
-        idCategoria,
-        idSubcategoria
+        tipo: updateServicoDto.tipo
       });
       await queryRunner.commitTransaction();
       return await this.findOne(id);
