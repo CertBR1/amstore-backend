@@ -21,6 +21,10 @@ export class SeguimentoService {
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
+      const seguimentoExistente = await this.seguimentoRepository.findOneBy({ nome: createSeguimentoDto.nome });
+      if (seguimentoExistente) {
+        return seguimentoExistente;
+      }
       const seguimento = this.seguimentoRepository.create(createSeguimentoDto);
       await queryRunner.manager.save(seguimento);
       await queryRunner.commitTransaction();

@@ -39,7 +39,7 @@ export class ServicoService {
       await queryRunner.connect();
       await queryRunner.startTransaction();
       let tags = undefined;
-      if (createServicoDto.tagSeo.length > 0) {
+      if (createServicoDto.tagSeo && createServicoDto.tagSeo.length > 0) {
         tags = await this.createTagSeo(createServicoDto.tagSeo);
       }
       const idFornecedor = await this.fornecedorRepository.findOneBy({ id: createServicoDto.idFornecedor });
@@ -119,9 +119,17 @@ export class ServicoService {
 
   async update(id: number, updateServicoDto: UpdateServicoDto) {
     const queryRunner = this.dataSource.createQueryRunner();
+    console.log('UPDATE SERVICO', updateServicoDto)
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
+      const idFornecedor = await this.fornecedorRepository.findOneBy({ id: updateServicoDto.idFornecedor })
+      const idCategoria = await this.categoriaRepository.findOneBy({ id: updateServicoDto.idCategoria })
+      const idSubcategoria = await this.subcategoriaRepository.findOneBy({ id: updateServicoDto.idSubcategoria })
+      console.log(idFornecedor, idCategoria, idSubcategoria)
+      if (!idFornecedor || !idCategoria || !idSubcategoria) {
+        throw new HttpException('Fornecedores, Categorias ou Subcategorias inexistentes', 400);
+      }
       await queryRunner.manager.update(Servico, id, {
         idServicoFornecedor: updateServicoDto.idServicoFornecedor,
         descricao: updateServicoDto.descricao,
@@ -134,9 +142,9 @@ export class ServicoService {
         reposicao: updateServicoDto.reposicao,
         status: updateServicoDto.status,
         tipo: updateServicoDto.tipo,
-        idFornecedor: await this.fornecedorRepository.findOneBy({ id: updateServicoDto.idFornecedor }),
-        idCategoria: await this.categoriaRepository.findOneBy({ id: updateServicoDto.idCategoria }),
-        idSubcategoria: await this.subcategoriaRepository.findOneBy({ id: updateServicoDto.idSubcategoria }),
+        idFornecedor,
+        idCategoria,
+        idSubcategoria
       });
       await queryRunner.commitTransaction();
       return await this.findOne(id);

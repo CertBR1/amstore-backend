@@ -26,6 +26,7 @@ export class ServicoSeguimentadoService {
   ) { }
   async create(createServicoSeguimentadoDto: CreateServicoSeguimentadoDto) {
     const queryRunner = this.dataSource.createQueryRunner();
+    console.log(createServicoSeguimentadoDto)
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
