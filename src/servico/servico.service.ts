@@ -129,7 +129,8 @@ export class ServicoService {
         throw new HttpException('Servico inexistente', 400);
       }
       const idFornecedor = await this.fornecedorRepository.findOneBy({ id: updateServicoDto.idFornecedor });
-      const idCategoria = await this.categoriaRepository.findOneBy({ id: updateServicoDto.idCategoria });
+      console.log('UPDATE SERVICO idFornecedor Entity: ', idFornecedor)
+      const idCategoria = await this.categoriaRepository.findOne({ where: { id: updateServicoDto.idCategoria } });
       console.log('UPDATE SERVICO idCategoria Entity: ', idCategoria)
       const idSubcategoria = await this.subcategoriaRepository.findOneBy({ id: updateServicoDto.idSubcategoria });
       if (!idFornecedor || !idCategoria || !idSubcategoria) {
