@@ -39,13 +39,16 @@ export class ServicoService {
       await queryRunner.connect();
       await queryRunner.startTransaction();
       let tags = undefined;
-      if (createServicoDto.tagSeo) {
+      if (createServicoDto.tagSeo.length > 0) {
         tags = await this.createTagSeo(createServicoDto.tagSeo);
       }
+      const idFornecedor = await this.fornecedorRepository.findOneBy({ id: createServicoDto.idFornecedor });
+      const idCategoria = await this.categoriaRepository.findOneBy({ id: createServicoDto.idCategoria });
+      const idSubcategoria = await this.subcategoriaRepository.findOneBy({ id: createServicoDto.idSubcategoria });
+      if (!idFornecedor || !idCategoria || !idSubcategoria) {
+        throw new HttpException('Fornecedores, Categorias ou Subcategorias inexistentes', 400);
+      }
       const servico = this.servicoRepository.create({
-        idFornecedor: await this.fornecedorRepository.findOneBy({ id: createServicoDto.idFornecedor }),
-        idCategoria: await this.categoriaRepository.findOneBy({ id: createServicoDto.idCategoria }),
-        idSubcategoria: await this.subcategoriaRepository.findOneBy({ id: createServicoDto.idSubcategoria }),
         tagSeo: tags,
         idServicoFornecedor: createServicoDto.idServicoFornecedor,
         descricao: createServicoDto.descricao,
@@ -56,7 +59,7 @@ export class ServicoService {
         preco: createServicoDto.preco,
         precoPromocional: createServicoDto.precoPromocional,
         reposicao: createServicoDto.reposicao,
-        status: createServicoDto.status,
+        status: true,
         tipo: createServicoDto.tipo
       });
       if (createServicoDto.infoPrincipais) {

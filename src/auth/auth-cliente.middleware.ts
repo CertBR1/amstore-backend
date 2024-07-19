@@ -13,7 +13,7 @@ export class ClienteAuthMiddleware implements NestMiddleware {
         throw new HttpException('Token de cliente não informado', 401);
       }
       const token = req.headers.authorization.split(' ')[1];
-      const decoded = this.jwtService.verify(token);
+      const decoded = this.jwtService.verify(token, { secret: process.env.JWT_SECRET });
       req.body['cliente'] = decoded;
       if (!decoded) throw new HttpException('Token de cliente inválido', 401);
       next();

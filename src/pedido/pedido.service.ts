@@ -55,13 +55,7 @@ export class PedidoService {
         }
       });
       if (!clienteEncontrado) {
-        const novoCliente = this.clienteRepository.create({
-          ...createPedidoDto.cliente,
-          status: true,
-          dataUltimaCompra: new Date(),
-          dataCriacao: new Date()
-        });
-        clienteEncontrado = await this.clienteRepository.save(novoCliente);
+        throw new HttpException('Cliente não encontrado', 404);
       }
       clienteEncontrado.dataUltimaCompra = new Date();
       const pedido = this.pedidoRepository.create(
@@ -80,22 +74,40 @@ export class PedidoService {
             id: servico.idServico
           },
           relations: {
-            idFornecedor: true
+            idFornecedor: true,
+            servicosSeguimentados: true
           }
         });
         if (!servicoEntity) {
           throw new HttpException(`Serviço não ${servico.idServico} encontrado`, 404);
         }
-        await this.pedidoRepository.save(pedido);
-        const servicoPedido = this.servicoPedidoRepository.create({
-          idPedido: pedido,
-          idServico: servicoEntity,
-          link: createPedidoDto.link,
-          quantidadeSolicitada: servico.quantidadeSolicitada,
-        });
-        descricao += `${servicoEntity.descricao} - Quantidade: ${servico.quantidadeSolicitada} \n`;
-        valor += servicoEntity.precoPromocional == 0 ? (servicoEntity.preco / 1000) * servico.quantidadeSolicitada : (servicoEntity.precoPromocional / 1000) * servico.quantidadeSolicitada;
-        await this.servicoPedidoRepository.save(servicoPedido);
+        if (servico.idSeguimento) {
+          console.log(servicoEntity.servicosSeguimentados);
+          console.log(servico.idSeguimento)
+          const servicoSeguimentado = servicoEntity.servicosSeguimentados.find(x => x.id == servico.idSeguimento);
+          await this.pedidoRepository.save(pedido);
+          const servicoPedido = this.servicoPedidoRepository.create({
+            idPedido: pedido,
+            idServico: servicoEntity,
+            idSeguimento: servicoSeguimentado,
+            link: createPedidoDto.link,
+            quantidadeSolicitada: servico.quantidadeSolicitada,
+          });
+          descricao += `${servicoEntity.descricao} - Quantidade: ${servico.quantidadeSolicitada} \n`;
+          valor += servicoEntity.precoPromocional == 0 ? (servicoEntity.preco / 1000) * servico.quantidadeSolicitada : (servicoEntity.precoPromocional / 1000) * servico.quantidadeSolicitada;
+          await this.servicoPedidoRepository.save(servicoPedido);
+        } else {
+          await this.pedidoRepository.save(pedido);
+          const servicoPedido = this.servicoPedidoRepository.create({
+            idPedido: pedido,
+            idServico: servicoEntity,
+            link: createPedidoDto.link,
+            quantidadeSolicitada: servico.quantidadeSolicitada,
+          });
+          descricao += `${servicoEntity.descricao} - Quantidade: ${servico.quantidadeSolicitada} \n`;
+          valor += servicoEntity.precoPromocional == 0 ? (servicoEntity.preco / 1000) * servico.quantidadeSolicitada : (servicoEntity.precoPromocional / 1000) * servico.quantidadeSolicitada;
+          await this.servicoPedidoRepository.save(servicoPedido);
+        }
       }
       await queryRunner.manager.update(Pedido, pedido.id, { valor });
       const formaPagamento = await this.formaPagamentoRepository.findOne({

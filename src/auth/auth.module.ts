@@ -19,7 +19,6 @@ import { WhastappClientModule } from 'src/whastapp-client/whastapp-client.module
     }),
     TypeOrmModule.forFeature([AdminCred, Cliente, ConfigSistema]),
     JwtModule.register({
-      secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1d' },
     }),
     AxiosClientModule,

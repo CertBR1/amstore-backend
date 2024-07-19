@@ -12,6 +12,7 @@ import { HistoricoTransacao } from 'src/transacao/entities/historico-transcao.en
 import { Fornecedor } from 'src/fornecedor/entities/fornecedor.entity';
 import { AxiosClientService } from 'src/axios-client/axios-client.service';
 import { ConfigFormaPagamento } from 'src/pedido/entities/config-forma-pagamento.entity';
+import { ServicoSeguimentado } from 'src/servico-seguimentado/entities/servico-seguimentado.entity';
 
 @Controller('webhook')
 export class WebhookController {
@@ -28,6 +29,8 @@ export class WebhookController {
     private readonly configFormaPagamentoRepository: Repository<ConfigFormaPagamento>,
     @InjectRepository(Fornecedor)
     private readonly fornecedorRepository: Repository<Fornecedor>,
+    @InjectRepository(ServicoSeguimentado)
+    private readonly servicoSeguimentadoRepository: Repository<ServicoSeguimentado>,
     private readonly dataSource: DataSource,
     private readonly mercadoPagoService: MercadoPagoService,
     private readonly webhookService: WebhookService,
@@ -57,12 +60,19 @@ export class WebhookController {
                 for (let i = 0; i < pedido.length; i++) {
                   const pedidoEntity = pedido[i];
                   const servicoPedido = await this.servicoPedidoRepository.findOne({ where: { idPedido: pedidoEntity }, relations: ['idServico.idFornecedor'] });
-                  const fornecedor = servicoPedido.idServico.idFornecedor;
+                  let fornecedor = null
+                  let seguimento = null
+                  if (servicoPedido.idSeguimento) {
+                    seguimento = this.servicoSeguimentadoRepository.findOneBy({ id: servicoPedido.idSeguimento.id });
+                    fornecedor = await this.fornecedorRepository.findOneBy({ id: seguimento.idFornecedor.id });
+                  } else {
+                    fornecedor = await this.fornecedorRepository.findOneBy({ id: servicoPedido.idServico.idFornecedor.id });
+                  }
                   console.log('Executando pedido:' + pedidoEntity.id + new Date().getUTCMilliseconds());
                   console.log('Chamando painel de seguidores com o id de servico: ' + servicoPedido.idServico.idFornecedor + 'no painel de seguidores: ' + fornecedor.url);
                   const repostaPainel = await this.axiosClient.criarPedido(fornecedor.url, fornecedor.key, {
                     link: servicoPedido.link,
-                    service: servicoPedido.idServico.idServicoFornecedor,
+                    service: seguimento ? seguimento.idServicoFornecedor : servicoPedido.idServico.idServicoFornecedor,
                     quantity: servicoPedido.quantidadeSolicitada,
                   })
                   console.log("Resposta do painel: " + repostaPainel, + "para o pedido: " + pedidoEntity.id);

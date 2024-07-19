@@ -21,6 +21,7 @@ export class CreatePedidoDto {
     servicos: [
         {
             idServico: number,
+            idSeguimento?: number,
             quantidadeSolicitada: number
         }
     ];

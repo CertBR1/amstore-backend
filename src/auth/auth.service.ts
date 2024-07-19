@@ -44,7 +44,8 @@ export class AuthService {
         throw new HttpException('Senha inválida', 401);
       }
       const payload = { id: usuario.id, nome: usuario.nome, usuario: usuario.usuario };
-      const jwt = await this.jwtService.sign(payload, { secret: `${process.env.JWT_SECRET}admin` });
+      const secret = `${process.env.JWT_SECRET}admin`;
+      const jwt = await this.jwtService.sign(payload, { secret: secret });
       return { access_token: jwt };
     } catch (error) {
       console.log(error);
@@ -67,7 +68,11 @@ export class AuthService {
       if (!cliente) {
         throw new HttpException('Cliente não encontrado', 404);
       }
-      return { cliente_token: this.jwtService.sign({ id: cliente.id, nome: cliente.nome, email: cliente.email }) };
+      return {
+        cliente_token: this.jwtService.sign({ id: cliente.id, nome: cliente.nome, email: cliente.email }, { secret: process.env.JWT_SECRET }),
+        nome: cliente.nome,
+        id: cliente.id
+      };
     } catch (error) {
       console.log(error);
       throw new HttpException(error, 500);

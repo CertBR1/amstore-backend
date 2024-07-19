@@ -1,4 +1,5 @@
 import { Pedido } from "src/pedido/entities/pedido.entity";
+import { ServicoSeguimentado } from "src/servico-seguimentado/entities/servico-seguimentado.entity";
 import { Servico } from "src/servico/entities/servico.entity";
 import { Transacao } from "src/transacao/entities/transacao.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
@@ -10,7 +11,11 @@ export class ServicoPedido {
 
     @ManyToOne(() => Servico)
     @JoinColumn({ name: 'idServico' })
-    idServico: Servico;
+    idServico: Servico
+
+    @ManyToOne(() => ServicoSeguimentado)
+    @JoinColumn({ name: 'idSeguimento', })
+    idSeguimento?: ServicoSeguimentado
 
     @ManyToOne(() => Pedido)
     @JoinColumn({ name: 'idPedido' })
