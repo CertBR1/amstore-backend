@@ -50,7 +50,7 @@ export class CategoriaService {
 
   async findOne(id: number) {
     try {
-      return await this.categoriaRepository.findOneBy({ id });
+      return await this.categoriaRepository.findOne({ where: { id }, relations: { subcategorias: true, servicos: true } });
     } catch (error) {
       console.log(error);
       throw new HttpException(error, 500);
