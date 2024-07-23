@@ -74,7 +74,7 @@ export class ServicoService {
         servico.informacoesPrincipais = [info];
       }
       await queryRunner.manager.save(servico);
-      if (createServicoDto.infoAdicionais.length > 0) {
+      if (createServicoDto.infoAdicionais && createServicoDto.infoAdicionais.length > 0) {
         createServicoDto.infoAdicionais.forEach(async (element) => {
           console.log(element);
           element.idServico = servico.id;
