@@ -50,7 +50,7 @@ import { ClienteAuthMiddleware } from './auth/auth-cliente.middleware';
       database: process.env.DATABASE_NAME,
       autoLoadEntities: true,
       synchronize: true,
-      logging: ['query', 'error', 'warn', 'log', 'info'],
+      logging: ['error', 'warn', 'log', 'info'],
     }),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
