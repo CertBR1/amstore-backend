@@ -29,7 +29,9 @@ export class SubcategoriaService {
       const subcategoria = this.subcategoriaRepository.create({
         descricao: createSubcategoriaDto.descricao,
         status: createSubcategoriaDto.status,
-        idCategoria: categoria
+        idCategoria: categoria,
+        imagemUrl: createSubcategoriaDto.imagemUrl,
+        dataCriacao: new Date()
       });
       await queryRunner.manager.save(subcategoria);
       await queryRunner.commitTransaction();

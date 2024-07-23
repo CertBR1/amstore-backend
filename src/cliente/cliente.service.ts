@@ -68,6 +68,8 @@ export class ClienteService {
     } catch (error) {
       console.log(error);
       throw new HttpException(error, 500);
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -90,6 +92,8 @@ export class ClienteService {
     } catch (error) {
       console.log(error);
       throw new HttpException(error, 500);
+    } finally {
+      await queryRunner.release();
     }
   }
   login(createClienteDto: CreateClienteDto) {

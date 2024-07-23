@@ -217,7 +217,11 @@ export class PedidoService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} pedido`;
+    try {
+      return this.pedidoRepository.findOne({ where: { id }, relations: { idCliente: true, historicoTransacao: true } });
+    } catch (error) {
+      throw new HttpException(error, 500);
+    }
   }
 
   update(id: number, updatePedidoDto: UpdatePedidoDto) {
@@ -247,6 +251,8 @@ export class PedidoService {
       console.log(error);
       await queryRunner.rollbackTransaction();
       throw new HttpException(error, 500);
+    } finally {
+      await queryRunner.release();
     }
   }
   async findAllFormaPagamento() {

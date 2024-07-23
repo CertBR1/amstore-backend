@@ -73,6 +73,8 @@ export class SeguimentoService {
     } catch (error) {
       console.log(error)
       throw new HttpException(error, 500)
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -118,6 +120,8 @@ export class SeguimentoService {
     } catch (error) {
       console.log(error)
       throw new HttpException(error, 500)
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -127,6 +131,30 @@ export class SeguimentoService {
     } catch (error) {
       console.log(error)
       throw new HttpException(error, 500)
+    }
+  }
+
+  async removeTipoSeguimento(id: number) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+      const tipoSeguimento = await this.tipoSeguimentoRepository.findOneBy({ id });
+      if (!tipoSeguimento) {
+        throw new HttpException('Tipo de seguimento não encontrado', 404);
+      }
+      await queryRunner.manager.delete(TipoSeguimento, id);
+      await queryRunner.commitTransaction();
+      return {
+        message: 'Tipo de seguimento deletado com sucesso',
+        nome: tipoSeguimento.nome
+      };
+    } catch (error) {
+      console.log(error)
+      await queryRunner.rollbackTransaction();
+      throw new HttpException(error, 500)
+    } finally {
+      await queryRunner.release();
     }
   }
 

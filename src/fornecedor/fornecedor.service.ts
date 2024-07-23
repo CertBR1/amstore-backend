@@ -63,6 +63,8 @@ export class FornecedorService {
     } catch (error) {
       console.log(error);
       throw new HttpException(error, 500);
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -118,6 +120,8 @@ export class FornecedorService {
     } catch (error) {
       console.log(error);
       throw new HttpException(error, 500);
+    } finally {
+      await queryRunner.release();
     }
   }
 
