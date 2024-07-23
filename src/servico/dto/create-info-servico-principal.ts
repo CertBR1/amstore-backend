@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { IsNotEmpty, IsPositive } from "class-validator"
+import { IsNotEmpty, IsOptional, IsPositive, IsString } from "class-validator"
 
 export class CreateInfoServicoPrincipaisDto {
     @ApiProperty({
@@ -30,4 +30,28 @@ export class CreateInfoServicoPrincipaisDto {
     })
     @IsNotEmpty({ message: 'Velocidade do Serviço é obrigatório' })
     velocidade: string
+
+    @ApiProperty({
+        example: 'Excelente',
+        description: 'Descrição do Serviço'
+    })
+    @IsOptional()
+    @IsString({ message: 'Descrição do Serviço deve ser uma string' })
+    descricaoInicioEnvio: string;
+
+    @ApiProperty({
+        example: 'Excelente',
+        description: 'Descrição da Qualidade'
+    })
+    @IsOptional()
+    @IsString({ message: 'Descrição da Qualidade deve ser uma string' })
+    descricaoQualidade: string;
+
+    @ApiProperty({
+        example: 'Excelente',
+        description: 'Descrição da Velocidade'
+    })
+    @IsOptional()
+    @IsString({ message: 'Descrição da Velocidade deve ser uma string' })
+    descricaoVelocidade: string;
 }

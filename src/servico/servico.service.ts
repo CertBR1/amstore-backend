@@ -275,7 +275,10 @@ export class ServicoService {
         idServico: await this.servicoRepository.findOneBy({ id: createInfoPrincipal.idServico }),
         inicioEnvio: createInfoPrincipal.inicioEnvio,
         qualidade: createInfoPrincipal.qualidade,
-        velocidade: createInfoPrincipal.velocidade
+        velocidade: createInfoPrincipal.velocidade,
+        descricaoQualidade: createInfoPrincipal.descricaoQualidade,
+        descricaoVelocidade: createInfoPrincipal.descricaoVelocidade,
+        descricaoInicioEnvio: createInfoPrincipal.descricaoInicioEnvio
       });
       await queryRunner.manager.save(servico);
       await queryRunner.commitTransaction();
