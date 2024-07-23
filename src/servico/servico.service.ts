@@ -12,6 +12,7 @@ import { Categoria } from 'src/categoria/entities/categoria.entity';
 import { Subcategoria } from 'src/subcategoria/entities/subcategoria.entity';
 import { TagSeo } from './entities/tag-seo.entity';
 import { CreateInfoServicoAdcionaisDto } from './dto/create-info-servico-adcionais';
+import { ServicoSeguimentado } from 'src/servico-seguimentado/entities/servico-seguimentado.entity';
 
 @Injectable()
 export class ServicoService {
@@ -30,6 +31,8 @@ export class ServicoService {
     private subcategoriaRepository: Repository<Subcategoria>,
     @InjectRepository(TagSeo)
     private tagSeoRepository: Repository<TagSeo>,
+    @InjectRepository(ServicoSeguimentado)
+    private servicoSeguimentadoRepository: Repository<ServicoSeguimentado>,
     private dataSource: DataSource
   ) { }
   async create(createServicoDto: CreateServicoDto) {
@@ -70,16 +73,30 @@ export class ServicoService {
         const info = await this.createInfoPrincipais(createServicoDto.infoPrincipais);
         servico.informacoesPrincipais = [info];
       }
-      if (createServicoDto.infoAdcionais) {
-        createServicoDto.infoAdcionais.forEach(async (element) => {
+      await queryRunner.manager.save(servico);
+      if (createServicoDto.infoAdicionais.length > 0) {
+        createServicoDto.infoAdicionais.forEach(async (element) => {
+          console.log(element);
           element.idServico = servico.id;
           const info = await this.createInfoAdicionais(element);
-          servico.informacoesAdcionais = [info];
+          servico.informacoesAdicionais = [info];
         });
       }
       await queryRunner.manager.save(servico);
       await queryRunner.commitTransaction();
-      return servico;
+      return await this.servicoRepository.findOne({
+        where: { id: servico.id }, relations: [
+          'idFornecedor',
+          'idCategoria',
+          'idSubcategoria',
+          'servicosSeguimentados.idSeguimento',
+          'servicosSeguimentados.idTipoSeguimento',
+          'servicosSeguimentados.idFornecedor',
+          'informacoesAdicionais',
+          'informacoesPrincipais',
+          'tagSeo'
+        ]
+      });
     } catch (error) {
       console.log(error);
       await queryRunner.rollbackTransaction();
@@ -97,7 +114,7 @@ export class ServicoService {
           idCategoria: true,
           idSubcategoria: true,
           servicosSeguimentados: true,
-          informacoesAdcionais: true,
+          informacoesAdicionais: true,
           informacoesPrincipais: true,
           tagSeo: true
         }
@@ -108,9 +125,35 @@ export class ServicoService {
     }
   }
 
-  findOne(id: number) {
+  async findOne(id: number) {
     try {
-      return this.servicoRepository.findOne({ where: { id }, relations: { idFornecedor: true, idCategoria: true, idSubcategoria: true, tagSeo: true } });
+      const servico = await this.servicoRepository.findOne({
+        where: { id },
+        relations: [
+          'idFornecedor',
+          'idCategoria',
+          'idSubcategoria',
+          'servicosSeguimentados.idSeguimento',
+          'servicosSeguimentados.idTipoSeguimento',
+          'servicosSeguimentados.idFornecedor',
+          'informacoesAdicionais',
+          'informacoesPrincipais',
+          'tagSeo'
+        ]
+      })
+      console.log('servico encontrado: =>', servico)
+      // const servicoSeguimentado = await this.servicoSeguimentadoRepository.find({
+      //   where: { idServico: servico },
+      //   relations: {
+      //     idSeguimento: true,
+      //     idTipoSeguimento: true,
+      //     idFornecedor: true,
+      //     idServico: true
+      //   }
+      // })
+      // console.log('servicoSeguimentadoEncontrado: =>', servicoSeguimentado)
+      // servico.servicosSeguimentados = servicoSeguimentado
+      return servico
     } catch (error) {
       console.log(error);
       throw new HttpException(error, 500);
@@ -184,15 +227,20 @@ export class ServicoService {
   }
 
   async createInfoAdicionais(createServicoDto: CreateInfoServicoAdcionaisDto) {
+    console.log('createServicoDto', createServicoDto)
     const queryRunner = this.dataSource.createQueryRunner();
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
+      const servico = await this.servicoRepository.findOneBy({ id: createServicoDto.idServico })
+      if (!servico) {
+        throw new HttpException('Servico inexistente', 400);
+      }
       const info = this.infoServicoAdcionaisRepository.create({
         descricao: createServicoDto.descricao,
         pergunta: createServicoDto.pergunta,
         resposta: createServicoDto.resposta,
-        idServico: await this.servicoRepository.findOneBy({ id: createServicoDto.idServico })
+        idServico: servico
       })
       await queryRunner.manager.save(info);
       await queryRunner.commitTransaction();

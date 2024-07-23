@@ -15,6 +15,6 @@ export class InfoServicoAdcionais {
     @Column()
     descricao: string;
 
-    @ManyToOne(() => Servico, (servico) => servico.informacoesAdcionais)
+    @ManyToOne(() => Servico, (servico) => servico.informacoesAdicionais)
     idServico: Servico
 }

@@ -30,9 +30,11 @@ export class ServicoSeguimentadoService {
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
+      console.log(createServicoSeguimentadoDto.idServico)
       const servico = await this.servicoRepository.findOneBy({
-        id: createServicoSeguimentadoDto.idSevico
+        id: createServicoSeguimentadoDto.idServico
       })
+      console.log(servico)
       if (!servico) {
         throw new HttpException('Serviço não encontrado', 404);
       }
@@ -54,6 +56,7 @@ export class ServicoSeguimentadoService {
       if (!seguimento) {
         throw new HttpException('Seguimento não encontrado', 404);
       }
+      console.log(servico, fornecedor, tipoSeguimento, seguimento)
       const servicoSeguimentado = this.servicoSeguimentadoRepository.create({
         idServico: servico,
         idTipoSeguimento: tipoSeguimento,
@@ -117,9 +120,9 @@ export class ServicoSeguimentadoService {
       if (!servicoSeguimentado) {
         throw new HttpException('Serviço não encontrado', 404);
       }
-      if (updateServicoSeguimentadoDto.idSevico) {
+      if (updateServicoSeguimentadoDto.idServico) {
         const servico = await this.servicoRepository.findOneBy({
-          id: updateServicoSeguimentadoDto.idSevico
+          id: updateServicoSeguimentadoDto.idServico
         })
         if (!servico) {
           throw new HttpException('Serviço não encontrado', 404);

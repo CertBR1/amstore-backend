@@ -9,6 +9,7 @@ import { Fornecedor } from 'src/fornecedor/entities/fornecedor.entity';
 import { Categoria } from 'src/categoria/entities/categoria.entity';
 import { Subcategoria } from 'src/subcategoria/entities/subcategoria.entity';
 import { TagSeo } from './entities/tag-seo.entity';
+import { ServicoSeguimentado } from 'src/servico-seguimentado/entities/servico-seguimentado.entity';
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import { TagSeo } from './entities/tag-seo.entity';
       Fornecedor,
       Categoria,
       Subcategoria,
-      TagSeo
+      TagSeo,
+      ServicoSeguimentado
     ]),
   ],
   controllers: [ServicoController],

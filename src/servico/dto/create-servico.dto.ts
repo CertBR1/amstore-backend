@@ -104,5 +104,5 @@ export class CreateServicoDto {
     reposicao: number;
     status: boolean;
     infoPrincipais: CreateInfoServicoPrincipaisDto
-    infoAdcionais: CreateInfoServicoAdcionaisDto[]
+    infoAdicionais: CreateInfoServicoAdcionaisDto[]
 }

@@ -62,7 +62,7 @@ export class Servico {
     informacoesPrincipais: InfoServicoPrincipais[];
 
     @OneToMany(() => InfoServicoAdcionais, informacao => informacao.idServico)
-    informacoesAdcionais: InfoServicoAdcionais[];
+    informacoesAdicionais: InfoServicoAdcionais[];
 
     @OneToMany(() => ServicoSeguimentado, servicoSeguimentado => servicoSeguimentado.idServico)
     servicosSeguimentados: ServicoSeguimentado[];
