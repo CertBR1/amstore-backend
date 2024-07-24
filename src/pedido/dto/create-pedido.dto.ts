@@ -22,17 +22,10 @@ export class CreatePedidoDto {
         {
             idServico: number,
             idSeguimento?: number,
-            quantidadeSolicitada: number
+            quantidadeSolicitada: number,
+            link: string;
         }
     ];
-
-    @ApiProperty(
-        {
-            example: 'instagram.com/perfil',
-            description: 'Link da rede social que ira receber o Servico',
-        }
-    )
-    link: string;
 
     @ApiProperty(
         {

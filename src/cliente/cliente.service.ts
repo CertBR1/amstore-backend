@@ -37,7 +37,7 @@ export class ClienteService {
 
   async findAll() {
     try {
-      return await this.clienteRepository.find();
+      return await this.clienteRepository.find({ relations: { pedidos: true } });
     } catch (error) {
       console.log(error);
       throw new HttpException(error, 500);

@@ -81,27 +81,27 @@ export class PedidoService {
         if (!servicoEntity) {
           throw new HttpException(`Serviço não ${servico.idServico} encontrado`, 404);
         }
-        if (servico.idSeguimento) {
-          console.log(servicoEntity.servicosSeguimentados);
-          console.log(servico.idSeguimento)
+        if (servico.idSeguimento && servico.idSeguimento > 0) {
+          console.log('=>', servicoEntity.servicosSeguimentados);
           const servicoSeguimentado = servicoEntity.servicosSeguimentados.find(x => x.id == servico.idSeguimento);
+          console.log(servicoSeguimentado)
           await this.pedidoRepository.save(pedido);
           const servicoPedido = this.servicoPedidoRepository.create({
             idPedido: pedido,
             idServico: servicoEntity,
             idSeguimento: servicoSeguimentado,
-            link: createPedidoDto.link,
+            link: servico.link,
             quantidadeSolicitada: servico.quantidadeSolicitada,
           });
           descricao += `${servicoEntity.descricao} - Quantidade: ${servico.quantidadeSolicitada} \n`;
-          valor += servicoEntity.precoPromocional == 0 ? (servicoEntity.preco / 1000) * servico.quantidadeSolicitada : (servicoEntity.precoPromocional / 1000) * servico.quantidadeSolicitada;
+          valor += servicoSeguimentado.precoPromocional == 0 ? (servicoSeguimentado.preco / 1000) * servico.quantidadeSolicitada : (servicoSeguimentado.precoPromocional / 1000) * servico.quantidadeSolicitada;
           await this.servicoPedidoRepository.save(servicoPedido);
         } else {
           await this.pedidoRepository.save(pedido);
           const servicoPedido = this.servicoPedidoRepository.create({
             idPedido: pedido,
             idServico: servicoEntity,
-            link: createPedidoDto.link,
+            link: servico.link,
             quantidadeSolicitada: servico.quantidadeSolicitada,
           });
           descricao += `${servicoEntity.descricao} - Quantidade: ${servico.quantidadeSolicitada} \n`;
@@ -211,7 +211,6 @@ export class PedidoService {
             idCliente: true,
             historicoTransacao: true,
             servicoPedidos: true,
-
           }
         });
       return pedidos

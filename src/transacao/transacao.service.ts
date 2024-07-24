@@ -48,10 +48,11 @@ export class TransacaoService {
   async findAll() {
     try {
       return await this.transacaoRepository.find({
-        relations: {
-          idFormaPagamento: true,
-          idPedido: true,
-        },
+        relations: [
+          'idPedido.idServico',
+          'idPedido.idPedido',
+          'idFormaPagamento'
+        ],
       });
     } catch (error) {
       console.log(error);
