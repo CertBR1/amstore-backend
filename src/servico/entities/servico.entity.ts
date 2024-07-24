@@ -6,6 +6,8 @@ import { InfoServicoPrincipais } from "./info-servico-principais";
 import { InfoServicoAdcionais } from "./info-servico-adcionais";
 import { ServicoSeguimentado } from "src/servico-seguimentado/entities/servico-seguimentado.entity";
 import { TagSeo } from "./tag-seo.entity";
+import { Pedido } from "src/pedido/entities/pedido.entity";
+import { ServicoPedido } from "src/servico-pedido/entities/servico-pedido.entity";
 
 @Entity({ name: 'servicos' })
 export class Servico {
@@ -53,6 +55,10 @@ export class Servico {
 
     @Column()
     status: boolean;
+
+
+    @OneToMany(() => ServicoPedido, servicoPedido => servicoPedido.idServico)
+    servicoPedidos: ServicoPedido[];
 
     @ManyToMany(() => TagSeo, tag => tag.servicos)
     @JoinTable()

@@ -203,15 +203,20 @@ export class PedidoService {
     }
   }
 
-  findAll() {
+  async findAll() {
     try {
-      return this.pedidoRepository.find({
-        relations: {
-          idCliente: true,
-          historicoTransacao: true,
-        }
-      });
+      const pedidos = await this.pedidoRepository.find(
+        {
+          relations: {
+            idCliente: true,
+            historicoTransacao: true,
+            servicoPedidos: true,
+
+          }
+        });
+      return pedidos
     } catch (error) {
+      console.log(error);
       throw new HttpException(error, 500);
     }
   }

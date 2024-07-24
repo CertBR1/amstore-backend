@@ -1,7 +1,9 @@
 
 import { Cliente } from "src/cliente/entities/cliente.entity";
+import { ServicoPedido } from "src/servico-pedido/entities/servico-pedido.entity";
+import { Servico } from "src/servico/entities/servico.entity";
 import { HistoricoTransacao } from "src/transacao/entities/historico-transcao.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: 'pedidos' })
 export class Pedido {
@@ -29,4 +31,7 @@ export class Pedido {
     @OneToOne(() => HistoricoTransacao)
     @JoinColumn()
     historicoTransacao: HistoricoTransacao;
+
+    @OneToMany(() => ServicoPedido, servicoPedido => servicoPedido.idPedido)
+    servicoPedidos: ServicoPedido[];
 }

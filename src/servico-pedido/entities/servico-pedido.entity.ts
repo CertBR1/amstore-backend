@@ -2,7 +2,7 @@ import { Pedido } from "src/pedido/entities/pedido.entity";
 import { ServicoSeguimentado } from "src/servico-seguimentado/entities/servico-seguimentado.entity";
 import { Servico } from "src/servico/entities/servico.entity";
 import { Transacao } from "src/transacao/entities/transacao.entity";
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: "SevicoPedido" })
 export class ServicoPedido {
@@ -35,4 +35,5 @@ export class ServicoPedido {
 
     @OneToOne(() => Transacao, transacao => transacao.idPedido, { nullable: true, eager: false })
     idTransacao: Transacao;
+
 }
