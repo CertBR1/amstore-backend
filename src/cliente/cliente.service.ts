@@ -21,7 +21,6 @@ export class ClienteService {
       const cliente = this.clienteRepository.create({
         ...createClienteDto,
         dataUltimaCompra: new Date(),
-        status: true
       });
       await queryRunner.manager.save(cliente);
       await queryRunner.commitTransaction();
