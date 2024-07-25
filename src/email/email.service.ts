@@ -12,7 +12,8 @@ export class EmailService {
             const info = await this.mailerService.sendMail({
                 to: email,
                 subject: 'Código de verificação login',
-                text: 'Código de verificação: ' + cod
+                text: 'Código de verificação: ' + cod,
+                from: process.env.EMAIL_FROM
             })
             return info
         } catch (error) {

@@ -35,9 +35,7 @@ export class WhastappClientService {
         console.log(url, token);
         const resposta = await this.axiosClient.post(url, { "Authorization": `Bearer ${token}`, "X-Token": token }, dados);
         console.log(resposta);
-        if (resposta.status === 200) {
-          return resposta.data;
-        }
+        return true;
       }
     } catch (error) {
       console.log(error);
