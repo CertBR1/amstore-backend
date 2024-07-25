@@ -46,15 +46,30 @@ export class WhastappClientService {
   }
 
   findAll() {
-    return `This action returns all whastappClient`;
+    try {
+      return this.whastappClientRepository.find();
+    } catch (error) {
+      console.log(error);
+      throw new HttpException('Erro ao buscar paineis', 500);
+    }
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} whastappClient`;
+    try {
+      return this.whastappClientRepository.findOne({ where: { id } });
+    } catch (error) {
+      console.log(error);
+      throw new HttpException('Erro ao buscar paineis', 500);
+    }
   }
 
   update(id: number, updateWhastappClientDto: UpdateWhastappClientDto) {
-    return `This action updates a #${id} whastappClient`;
+    try {
+      return this.whastappClientRepository.update(id, updateWhastappClientDto);
+    } catch (error) {
+      console.log(error);
+      throw new HttpException('Erro ao atualizar painel', 500);
+    }
   }
 
   remove(id: number) {
