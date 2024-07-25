@@ -53,7 +53,7 @@ export class CreateConfigSistemaDto {
         description: 'Status da loja',
         example: 'Ativo'
     })
-    @IsBoolean({ message: 'O status da loja deve ser uma string' })
+    @IsBoolean({ message: 'O status da loja deve ser um boolean' })
     @IsNotEmpty({ message: 'O status da loja não pode ser vazio' })
     status: boolean;
 }

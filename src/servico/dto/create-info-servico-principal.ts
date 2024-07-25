@@ -2,6 +2,7 @@ import { ApiProperty } from "@nestjs/swagger"
 import { IsNotEmpty, IsOptional, IsPositive, IsString } from "class-validator"
 
 export class CreateInfoServicoPrincipaisDto {
+    id?: number
     @ApiProperty({
         example: '1',
         description: 'Id do Serviço'

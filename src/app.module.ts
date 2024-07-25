@@ -91,6 +91,9 @@ export class AppModule implements NestModule {
       .exclude({ path: '/(.*)', method: RequestMethod.GET, })
       .exclude({ path: '/pedido', method: RequestMethod.POST, })
       .exclude({ path: '/admin', method: RequestMethod.POST, })
+      .exclude({ path: '/auth/cliente-login', method: RequestMethod.POST, })
+      .exclude({ path: '/auth/validar-codigo', method: RequestMethod.POST, })
+      .exclude({ path: '/cliente', method: RequestMethod.POST, })
       .forRoutes(
         ServicoController,
         SeguimentoController,

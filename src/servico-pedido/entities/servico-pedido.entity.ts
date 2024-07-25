@@ -24,6 +24,9 @@ export class ServicoPedido {
     @Column()
     link: string;
 
+    @Column({ nullable: true })
+    quantidadeInicial: number;
+
     @Column()
     quantidadeSolicitada: number;
 

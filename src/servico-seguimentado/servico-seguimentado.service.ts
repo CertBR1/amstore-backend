@@ -178,12 +178,12 @@ export class ServicoSeguimentadoService {
       if (!servicoSeguimentado) {
         throw new HttpException('Serviço não encontrado', 404);
       }
-      await queryRunner.manager.delete(ServicoSeguimentado, id);
+      await queryRunner.manager.softDelete(ServicoSeguimentado, id);
       await queryRunner.commitTransaction();
       return {
         message: 'Serviço deletado com sucesso',
-        id: id
-      }
+        nome: servicoSeguimentado.idServico
+      };
     } catch (error) {
       console.log(error);
       throw new HttpException(error, 500);

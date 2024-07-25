@@ -2,6 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, IsPositive, IsString } from "class-validator";
 
 export class CreateInfoServicoAdcionaisDto {
+    id?: number;
     @ApiProperty(
         {
             example: 'Pode ser dividido em 2 contas?',

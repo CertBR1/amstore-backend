@@ -2,7 +2,7 @@ import { Fornecedor } from "src/fornecedor/entities/fornecedor.entity";
 import { Seguimento } from "src/seguimento/entities/seguimento.entity";
 import { TipoSeguimento } from "src/seguimento/entities/tipo-seguimento.entity";
 import { Servico } from "src/servico/entities/servico.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, DeleteDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: "ServicoSeguimentado" })
 export class ServicoSeguimentado {
@@ -29,4 +29,7 @@ export class ServicoSeguimentado {
 
     @Column({ nullable: true })
     idServicoFornecedor: string;
+
+    @DeleteDateColumn()
+    deletadoEm: Date;
 }

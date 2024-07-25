@@ -164,7 +164,9 @@ export class ServicoService {
     const queryRunner = this.dataSource.createQueryRunner();
     console.log('UPDATE SERVICO', updateServicoDto)
     const { idCategoria, idFornecedor, idSubcategoria } = updateServicoDto
-    console.log('UPDATE SERVICO', idCategoria)
+    console.log('idCategoria', idCategoria)
+    console.log('idFornecedor', idFornecedor)
+    console.log('idSubcategoria', idSubcategoria)
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
@@ -193,6 +195,28 @@ export class ServicoService {
           throw new HttpException('Subcategorias inexistentes', 400);
         }
       }
+      if (updateServicoDto.infoAdicionais && updateServicoDto.infoAdicionais.length > 0) {
+        for (let i = 0; i < updateServicoDto.infoAdicionais.length; i++) {
+          const item = updateServicoDto.infoAdicionais[i];
+          const itemEntity = await this.infoServicoAdcionaisRepository.update({ id: item.id }, {
+            pergunta: item.pergunta,
+            resposta: item.resposta,
+            descricao: item.descricao
+          });
+          await queryRunner.manager.save(itemEntity);
+        }
+      }
+      if (updateServicoDto.infoPrincipais) {
+        const itemEntity = await this.infoServicoPrincipaisRepository.update({ id: updateServicoDto.infoPrincipais.id }, {
+          qualidade: updateServicoDto.infoPrincipais.qualidade,
+          velocidade: updateServicoDto.infoPrincipais.velocidade,
+          inicioEnvio: updateServicoDto.infoPrincipais.inicioEnvio,
+          descricaoInicioEnvio: updateServicoDto.infoPrincipais.descricaoInicioEnvio,
+          descricaoQualidade: updateServicoDto.infoPrincipais.descricaoQualidade,
+          descricaoVelocidade: updateServicoDto.infoPrincipais.descricaoVelocidade
+        })
+        await queryRunner.manager.save(itemEntity);
+      }
       const retonro = await this.servicoRepository.update({ id }, {
         idFornecedor: idFornecedorEntity || servico.idFornecedor,
         idCategoria: idCategoriaEntity || servico.idCategoria,
@@ -207,7 +231,8 @@ export class ServicoService {
         precoPromocional: updateServicoDto.precoPromocional,
         reposicao: updateServicoDto.reposicao,
         status: updateServicoDto.status,
-        tipo: updateServicoDto.tipo
+        tipo: updateServicoDto.tipo,
+
       });
       console.log('UPDATE SERVICO', retonro)
       await queryRunner.commitTransaction();

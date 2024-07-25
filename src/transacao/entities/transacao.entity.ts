@@ -29,4 +29,7 @@ export class Transacao {
 
     @ManyToOne(() => FormaPagamento, formaPagamento => formaPagamento.transacoes)
     idFormaPagamento: FormaPagamento;
+
+    @Column({ default: 'pendente' })
+    status: string;
 }
