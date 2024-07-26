@@ -24,6 +24,9 @@ export class ConfigSistema {
     logo: string;
 
     @Column()
+    logoBranca: string;
+
+    @Column()
     status: boolean;
 
     @CreateDateColumn()

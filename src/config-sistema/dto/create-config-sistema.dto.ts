@@ -34,6 +34,14 @@ export class CreateConfigSistemaDto {
     cor: string;
 
     @ApiProperty({
+        description: 'Logo da loja branca',
+        example: 'https://example.com/logo.png'
+    })
+    @IsUrl({}, { message: 'O logo da loja branca deve ser uma url válida' })
+    @IsNotEmpty({ message: 'O logo da loja branca não pode ser vazio' })
+    logoBranca: string;
+
+    @ApiProperty({
         description: 'Icone da loja',
         example: 'https://example.com/icon.png'
     })
