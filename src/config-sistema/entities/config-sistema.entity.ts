@@ -23,7 +23,7 @@ export class ConfigSistema {
     @Column()
     logo: string;
 
-    @Column()
+    @Column({ nullable: true })
     logoBranca: string;
 
     @Column()
