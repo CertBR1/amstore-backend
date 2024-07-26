@@ -248,7 +248,16 @@ export class ServicoService {
   }
 
   remove(id: number) {
-    return `This action removes a #${id} servico`;
+    try {
+      const retonro = this.servicoRepository.softDelete({ id });
+      return {
+        message: 'Servico removido com sucesso',
+        retonro
+      }
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, 500);
+    }
   }
 
   async createInfoAdicionais(createServicoDto: CreateInfoServicoAdcionaisDto) {

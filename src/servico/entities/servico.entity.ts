@@ -1,7 +1,7 @@
 import { Categoria } from "src/categoria/entities/categoria.entity";
 import { Fornecedor } from "src/fornecedor/entities/fornecedor.entity";
 import { Subcategoria } from "src/subcategoria/entities/subcategoria.entity";
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, DeleteDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { InfoServicoPrincipais } from "./info-servico-principais";
 import { InfoServicoAdcionais } from "./info-servico-adcionais";
 import { ServicoSeguimentado } from "src/servico-seguimentado/entities/servico-seguimentado.entity";
@@ -56,6 +56,8 @@ export class Servico {
     @Column()
     status: boolean;
 
+    @DeleteDateColumn()
+    deletadoEm: Date;
 
     @OneToMany(() => ServicoPedido, servicoPedido => servicoPedido.idServico)
     servicoPedidos: ServicoPedido[];
