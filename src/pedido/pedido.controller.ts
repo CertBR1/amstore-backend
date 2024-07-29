@@ -4,14 +4,24 @@ import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
 import { CreateFormaPagamentoDto } from './dto/create-forma-pagamento.dto';
 import { CreateConfigPagamentoDto } from './dto/create-config-pagamento.dto';
+import { UpdateConfigPagamentoDto } from './dto/update-config-pagamento-dto';
 
 @Controller('pedido')
 export class PedidoController {
   constructor(private readonly pedidoService: PedidoService) { }
 
+  @Patch('config-pagamento/:id')
+  updateConfigPagamento(@Param('id') id: string, @Body() updateConfigPagamento: UpdateConfigPagamentoDto) {
+    return this.pedidoService.updateConfigPagamento(+id, updateConfigPagamento);
+  }
   @Post('config-pagamento')
   createConfigPagamento(@Body() createConfigPagamento: CreateConfigPagamentoDto) {
     return this.pedidoService.createConfigPagamento(createConfigPagamento);
+  }
+
+  @Get('config-pagamento')
+  findAllConfigPagamento() {
+    return this.pedidoService.findAllConfigPagamento();
   }
 
   @Post('forma-pagamento')

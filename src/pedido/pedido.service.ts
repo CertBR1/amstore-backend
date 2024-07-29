@@ -316,6 +316,8 @@ export class PedidoService {
       }
       await this.configFormaPagamentoRepository.update({ id }, {
         status: updateConfigPagamento.status,
+        key: updateConfigPagamento.key,
+        nome: updateConfigPagamento.nome
       });
       await queryRunner.commitTransaction();
       return await this.configFormaPagamentoRepository.findOne({ where: { id } });
@@ -325,6 +327,15 @@ export class PedidoService {
       throw new HttpException(error, 500);
     } finally {
       await queryRunner.release();
+    }
+  }
+
+  async findAllConfigPagamento() {
+    try {
+      return await this.configFormaPagamentoRepository.find();
+    } catch (error) {
+      console.error(error);
+      throw new HttpException(error, 500);
     }
   }
 }
