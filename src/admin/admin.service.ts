@@ -30,7 +30,7 @@ export class AdminService {
     } catch (error) {
       console.log(error)
       await queryRunner.rollbackTransaction();
-      if (error.code === 'ER_DUP_ENTRY') {
+      if (error.code === '23505') {
         throw new HttpException('Usuário ja existe', 400)
       }
       throw new HttpException(error, 500)

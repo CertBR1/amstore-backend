@@ -3,10 +3,16 @@ import { PedidoService } from './pedido.service';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
 import { CreateFormaPagamentoDto } from './dto/create-forma-pagamento.dto';
+import { CreateConfigPagamentoDto } from './dto/create-config-pagamento.dto';
 
 @Controller('pedido')
 export class PedidoController {
   constructor(private readonly pedidoService: PedidoService) { }
+
+  @Post('config-pagamento')
+  createConfigPagamento(@Body() createConfigPagamento: CreateConfigPagamentoDto) {
+    return this.pedidoService.createConfigPagamento(createConfigPagamento);
+  }
 
   @Post('forma-pagamento')
   createFormaPagamento(@Body() createFormaPagamento: CreateFormaPagamentoDto) {

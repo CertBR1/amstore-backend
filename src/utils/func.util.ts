@@ -1,3 +1,4 @@
+import { v4 as uuid } from 'uuid';
 export class Functions {
     static async sleep(ms: number) { }
 
@@ -8,5 +9,11 @@ export class Functions {
             randomNumbers.push(randomNumber);
         }
         return randomNumbers.map((number) => number.toString()).join('');
+    }
+
+    static generateToken(lenght: number) {
+        const uuidv4 = uuid();
+        const token = uuidv4.replace(/-/g, '').slice(0, 25);
+        return token;
     }
 }

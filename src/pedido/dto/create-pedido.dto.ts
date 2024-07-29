@@ -1,5 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { IsEnum } from "class-validator";
 import { CreateClienteDto } from "src/cliente/dto/create-cliente.dto";
+import { MeioPagamento } from "src/utils/enums/MeioPagamento.enum";
 
 export class CreatePedidoDto {
 
@@ -46,6 +48,15 @@ export class CreatePedidoDto {
     cliente: CreateClienteDto;
 
     quantidadeEntregue?: number;
+
+    @IsEnum(MeioPagamento, { message: 'Metodo de Pagamento Invalido, Escolha entre: ' + Object.values(MeioPagamento).join(', ') })
+    @ApiProperty(
+        {
+            example: MeioPagamento.PIX,
+            description: 'Metodo de Pagamento',
+        }
+    )
+    meioPagamento?: MeioPagamento;
 
     numeroOrdem?: number;
 

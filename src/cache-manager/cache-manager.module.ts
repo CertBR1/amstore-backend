@@ -7,7 +7,7 @@ import { CacheModule } from '@nestjs/cache-manager';
   imports: [CacheModule.register({
     isGlobal: true,
     store: 'memory',
-    ttl: 60 * 1000,
+    ttl: 300 * 1000,
     max: 100,
     isCacheableValue: (val) => val !== null
   })],

@@ -24,6 +24,10 @@ export class TransacaoService {
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
+      const idConfigFormaPagamento = await this.formaPagamentoRepository.findOneBy({ id: createTransacaoDto.idFormaPagamento });
+      if (!idConfigFormaPagamento) {
+        throw new HttpException('Forma de pagamento não encontrada', 404);
+      }
       const transacao = this.transacaoRepository.create({
         idTransacao: createTransacaoDto.idTransacao,
         idPedido: await this.pedidoRepository.findOneBy({ id: createTransacaoDto.idPedido }),
@@ -31,7 +35,7 @@ export class TransacaoService {
         dataSolicitacao: createTransacaoDto.dataSolicitacao,
         dataStatus: createTransacaoDto.dataStatus,
         dataAprovacao: createTransacaoDto.dataAprovacao,
-        idFormaPagamento: await this.formaPagamentoRepository.findOneBy({ id: createTransacaoDto.idFormaPagamento }),
+        idConfigFormaPagamento: idConfigFormaPagamento,
       });
       await queryRunner.manager.save(transacao);
       await queryRunner.commitTransaction();

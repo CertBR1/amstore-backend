@@ -1,3 +1,4 @@
+import { ConfigFormaPagamento } from "src/pedido/entities/config-forma-pagamento.entity";
 import { FormaPagamento } from "src/pedido/entities/forma-pagamento";
 import { Pedido } from "src/pedido/entities/pedido.entity";
 import { ServicoPedido } from "src/servico-pedido/entities/servico-pedido.entity";
@@ -27,8 +28,8 @@ export class Transacao {
     @Column({ nullable: true })
     dataAprovacao: Date;
 
-    @ManyToOne(() => FormaPagamento, formaPagamento => formaPagamento.transacoes)
-    idFormaPagamento: FormaPagamento;
+    @ManyToOne(() => ConfigFormaPagamento, formaPagamento => formaPagamento.transacoes)
+    idConfigFormaPagamento: ConfigFormaPagamento;
 
     @Column({ default: 'pendente' })
     status: string;

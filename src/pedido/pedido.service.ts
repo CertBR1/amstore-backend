@@ -16,9 +16,13 @@ import { Cliente } from 'src/cliente/entities/cliente.entity';
 import { HistoricoTransacao } from 'src/transacao/entities/historico-transcao.entity';
 import { PreferenceResponse } from 'mercadopago/dist/clients/preference/commonTypes';
 import { PaymentResponse } from 'mercadopago/dist/clients/payment/commonTypes';
+import { CreateConfigPagamentoDto } from './dto/create-config-pagamento.dto';
+import { UpdateConfigPagamentoDto } from './dto/update-config-pagamento-dto';
+import { MeioPagamento } from 'src/utils/enums/MeioPagamento.enum';
 
 @Injectable()
 export class PedidoService {
+
 
   constructor(
     @InjectRepository(Pedido)
@@ -44,7 +48,6 @@ export class PedidoService {
   async create(createPedidoDto: CreatePedidoDto, cliente: any) {
     const queryRunner = this.dataSource.createQueryRunner();
     try {
-
       await queryRunner.connect();
       await queryRunner.startTransaction();
       let valor = 0;
@@ -82,9 +85,9 @@ export class PedidoService {
           throw new HttpException(`Serviço não ${servico.idServico} encontrado`, 404);
         }
         if (servico.idSeguimento && servico.idSeguimento > 0) {
-          console.log('=>', servicoEntity.servicosSeguimentados);
+          console.log('=>', servicoEntity.servicosSeguimentados, '=>', servico.idSeguimento);
           const servicoSeguimentado = servicoEntity.servicosSeguimentados.find(x => x.id == servico.idSeguimento);
-          console.log(servicoSeguimentado)
+          console.log('Servico Selecionado=>', servicoSeguimentado)
           await this.pedidoRepository.save(pedido);
           const servicoPedido = this.servicoPedidoRepository.create({
             idPedido: pedido,
@@ -110,11 +113,6 @@ export class PedidoService {
         }
       }
       await queryRunner.manager.update(Pedido, pedido.id, { valor });
-      const formaPagamento = await this.formaPagamentoRepository.findOne({
-        where: {
-          id: createPedidoDto.idFormaPagamento
-        }
-      })
       const configFormaPagamento = await this.configFormaPagamentoRepository.findOne({
         where: {
           status: true,
@@ -122,7 +120,7 @@ export class PedidoService {
       })
       const clientePagamento = this.mercadoPagoService.createClient(configFormaPagamento.key)
       let pagamento = {} as any
-      if (formaPagamento.metodoPagamento === 'pix') {
+      if (createPedidoDto.meioPagamento === MeioPagamento.PIX) {
         console.log(createPedidoDto, cliente);
         pagamento = await this.mercadoPagoService.criarPagamentoPix(
           clientePagamento,
@@ -139,7 +137,7 @@ export class PedidoService {
         const transacao = this.transacaoRepository.create({
           idTransacao: pagamento.id.toString(),
           dataSolicitacao: new Date(),
-          idFormaPagamento: formaPagamento,
+          idConfigFormaPagamento: configFormaPagamento,
           valor: valor,
           idPedido: pedido
         });
@@ -159,7 +157,7 @@ export class PedidoService {
 
         // };
         return pagamento;
-      } else if (formaPagamento.metodoPagamento === 'cartao') {
+      } else if (createPedidoDto.meioPagamento === MeioPagamento.CARTAO) {
         pagamento = await this.mercadoPagoService.criarPagamentoCartao(
           clientePagamento,
           {
@@ -177,7 +175,7 @@ export class PedidoService {
         const transacao = this.transacaoRepository.create({
           dataSolicitacao: new Date(),
           idTransacao: pagamento.merchantOrder.id.toString(),
-          idFormaPagamento: formaPagamento,
+          idConfigFormaPagamento: configFormaPagamento,
           valor: valor,
           idPedido: pedido
         });
@@ -192,7 +190,7 @@ export class PedidoService {
         await queryRunner.commitTransaction();
         return pagamento;
       } else {
-        throw new HttpException('Forma de pagamento inválida', 404);
+        throw new HttpException('Forma de pagamento inválida, formas de pagamento suportadas: ' + MeioPagamento, 404);
       }
     } catch (error) {
       console.log(error);
@@ -242,13 +240,6 @@ export class PedidoService {
       await queryRunner.startTransaction();
       const formaPagamento = this.formaPagamentoRepository.create(createFormaPagamento);
       await this.formaPagamentoRepository.save(formaPagamento);
-      const configFormaPagamento = this.configFormaPagamentoRepository.create({
-        formaPagamento: formaPagamento,
-        key: createFormaPagamento.configuracao.key,
-        nome: createFormaPagamento.configuracao.nome,
-        status: createFormaPagamento.status,
-      })
-      await this.configFormaPagamentoRepository.save(configFormaPagamento);
       await queryRunner.commitTransaction();
       return formaPagamento;
     } catch (error) {
@@ -260,7 +251,7 @@ export class PedidoService {
     }
   }
   async findAllFormaPagamento() {
-    return await this.formaPagamentoRepository.find({ relations: { configuracao: true } });
+    return await this.formaPagamentoRepository.find();
   }
 
 
@@ -269,18 +260,64 @@ export class PedidoService {
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
-      const formaPagamento = await this.formaPagamentoRepository.findOne({ where: { id }, relations: { configuracao: true } });
+      const formaPagamento = await this.formaPagamentoRepository.findOne({ where: { id } });
       if (!formaPagamento) {
         throw new HttpException('Forma de pagamento não encontrada', 404);
       }
       await this.formaPagamentoRepository.update({ id }, {
         descricao: updateFormaPagamento.descricao,
-        status: updateFormaPagamento.status,
+        status: true,
       });
       await queryRunner.commitTransaction();
-      return await this.formaPagamentoRepository.findOne({ where: { id }, relations: { configuracao: true } });
+      return await this.formaPagamentoRepository.findOne({ where: { id } });
     } catch (error) {
       console.log(error);
+      await queryRunner.rollbackTransaction();
+      throw new HttpException(error, 500);
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  async createConfigPagamento(createConfigPagamento: CreateConfigPagamentoDto) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+      const configPagamentoAtivo = await this.configFormaPagamentoRepository.findOne({ where: { status: true } });
+      if (configPagamentoAtivo) {
+        await this.configFormaPagamentoRepository.update({ id: configPagamentoAtivo.id }, {
+          status: false,
+        })
+      }
+      const configPagamento = this.configFormaPagamentoRepository.create(createConfigPagamento);
+      await this.configFormaPagamentoRepository.save(configPagamento);
+      await queryRunner.commitTransaction();
+      return configPagamento;
+    } catch (error) {
+      console.error(error);
+      throw new HttpException(error, 500);
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  async updateConfigPagamento(id: number, updateConfigPagamento: UpdateConfigPagamentoDto) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+      const configPagamento = await this.configFormaPagamentoRepository.findOne({ where: { id } });
+      if (!configPagamento) {
+        throw new HttpException('Configuração de forma de pagamento não encontrada', 404);
+      }
+      await this.configFormaPagamentoRepository.update({ id }, {
+        status: updateConfigPagamento.status,
+      });
+      await queryRunner.commitTransaction();
+      return await this.configFormaPagamentoRepository.findOne({ where: { id } });
+    } catch (error) {
+      console.error(error);
       await queryRunner.rollbackTransaction();
       throw new HttpException(error, 500);
     } finally {

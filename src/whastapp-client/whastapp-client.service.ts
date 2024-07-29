@@ -5,6 +5,7 @@ import { WhastappClient } from './entities/whastapp-client.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AxiosClientService } from 'src/axios-client/axios-client.service';
+import { Functions } from 'src/utils/func.util';
 
 @Injectable()
 export class WhastappClientService {
@@ -16,7 +17,12 @@ export class WhastappClientService {
   ) { }
   create(createWhastappClientDto: CreateWhastappClientDto) {
     try {
-      const whastappClient = this.whastappClientRepository.create(createWhastappClientDto);
+      const token = Functions.generateToken(25);
+      const whastappClient = this.whastappClientRepository.create({
+        ...createWhastappClientDto,
+        whatsappKey: token,
+        status: true
+      })
       return this.whastappClientRepository.save(whastappClient);
     } catch (error) {
       console.log(error);

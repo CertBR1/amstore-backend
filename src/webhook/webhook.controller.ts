@@ -117,7 +117,6 @@ export class WebhookController {
               }
             } catch (error) {
               console.log(error);
-
               throw new HttpException('Erro ao processar o pedido', 500);
             } finally {
               await queryRunner.release();

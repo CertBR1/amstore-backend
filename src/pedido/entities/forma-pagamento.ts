@@ -16,9 +16,7 @@ export class FormaPagamento {
     @Column({ nullable: true })
     metodoPagamento: string;
 
-    @OneToOne(() => ConfigFormaPagamento, configuracao => configuracao.formaPagamento, { nullable: true })
-    configuracao: ConfigFormaPagamento;
+    // @Column({ nullable: true })
+    // configuracao: JSON;
 
-    @OneToMany(() => Transacao, transacao => transacao.idFormaPagamento)
-    transacoes: Transacao[];
 }
