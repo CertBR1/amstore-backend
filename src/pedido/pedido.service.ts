@@ -290,7 +290,10 @@ export class PedidoService {
           status: false,
         })
       }
-      const configPagamento = this.configFormaPagamentoRepository.create(createConfigPagamento);
+      const configPagamento = this.configFormaPagamentoRepository.create({
+        ...createConfigPagamento,
+        status: true
+      });
       await this.configFormaPagamentoRepository.save(configPagamento);
       await queryRunner.commitTransaction();
       return configPagamento;

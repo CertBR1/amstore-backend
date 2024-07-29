@@ -18,7 +18,6 @@ export class ConfigFormaPagamento {
     @Column()
     status: boolean;
 
-
     @OneToMany(() => Transacao, transacao => transacao.idConfigFormaPagamento)
     transacoes: Transacao[];
 }
