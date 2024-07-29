@@ -15,18 +15,31 @@ export class WhastappClientService {
     private axiosClient: AxiosClientService
 
   ) { }
-  create(createWhastappClientDto: CreateWhastappClientDto) {
+  async create(createWhastappClientDto: CreateWhastappClientDto) {
+    const queryRunner = this.whastappClientRepository.manager.connection.createQueryRunner();
     try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
       const token = Functions.generateToken(25);
+      const whatsappAtivo = await this.whastappClientRepository.findOne({ where: { status: true } });
+      if (whatsappAtivo) {
+        await queryRunner.manager.update(WhastappClient, whatsappAtivo, {
+          status: false
+        })
+      }
       const whastappClient = this.whastappClientRepository.create({
         ...createWhastappClientDto,
         whatsappKey: token,
         status: true
       })
-      return this.whastappClientRepository.save(whastappClient);
+      await queryRunner.manager.save(whastappClient);
+      await queryRunner.commitTransaction();
+      return whastappClient;
     } catch (error) {
       console.log(error);
       throw new HttpException('Erro ao criar painel', 500);
+    } finally {
+      await queryRunner.release();
     }
   }
   async enviarMensagem(dados: { number: string, body: string }): Promise<any> {
@@ -77,6 +90,7 @@ export class WhastappClientService {
   }
 
   remove(id: number) {
-    return `This action removes a #${id} whastappClient`;
+    const retorno = this.whastappClientRepository.delete(id);
+    return retorno
   }
 }
