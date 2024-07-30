@@ -39,91 +39,36 @@ export class WebhookController {
 
   @Post()
   async create(@Req() req: any, @Query('id') id: string) {
-    const body = JSON.parse(Buffer.from(req.body, 'base64').toString());
-    console.log('Webhook request: ', body);
-    switch (body.type) {
-      case 'payment': {
-        const queryRunner = this.dataSource.createQueryRunner();
-        const idPayment = body.data.id;
-        const configFormaPagamento = await this.configFormaPagamentoRepository.findOne({ where: { status: true } });
-        const client = this.mercadoPagoService.createClient(configFormaPagamento.key);
-        const payment = await this.mercadoPagoService.obterPagamento(client, idPayment);
-        switch (payment.status) {
-          case 'approved': {
-            try {
-              await queryRunner.connect();
-              await queryRunner.startTransaction();
-              console.log('Processando pedido: ' + payment.external_reference + '-' + new Date());
-              const pedido = await this.pedidoRepository.findOne({ where: { id: +payment.external_reference }, relations: { idCliente: true, historicoTransacao: true, servicoPedidos: true } });
-              if (pedido) {
-                const resposta = []
-                for (let i = 0; i < pedido.servicoPedidos.length; i++) {
-                  const servicoPedido = pedido.servicoPedidos[i];
-                  let fornecedor = null
-                  let seguimento = null
-                  if (servicoPedido.idSeguimento) {
-                    seguimento = this.servicoSeguimentadoRepository.findOneBy({ id: servicoPedido.idSeguimento.id });
-                    fornecedor = await this.fornecedorRepository.findOneBy({ id: seguimento.idFornecedor.id });
-                  } else {
-                    fornecedor = await this.fornecedorRepository.findOneBy({ id: servicoPedido.idServico.idFornecedor.id });
-                  }
-                  console.log('Executando pedido:' + servicoPedido.id + new Date().getUTCMilliseconds());
-                  console.log('Chamando painel de seguidores com o id de servico: ' + servicoPedido.idServico.idFornecedor + 'no painel de seguidores: ' + fornecedor.url);
-                  const repostaPainel = await this.axiosClient.criarPedido(fornecedor.url, fornecedor.key, {
-                    link: servicoPedido.link,
-                    service: seguimento ? seguimento.idServicoFornecedor : servicoPedido.idServico.idServicoFornecedor,
-                    quantity: servicoPedido.quantidadeSolicitada,
-                  })
-                  console.log("Resposta do painel: " + repostaPainel, + "para o pedido: " + servicoPedido.id);
-                  if (!repostaPainel.error) {
-                    await queryRunner.manager.update(Pedido, servicoPedido.id, {
-                      statusPedido: 'Aprovado',
-                      statusPagamento: 'Aprovado',
-                    })
-                    await queryRunner.manager.save(HistoricoTransacao, {
-                      idTransacao: idPayment,
-                      status: 'Aprovado',
-                      idPedido: servicoPedido,
-                      data: new Date(),
-                    })
-                    await queryRunner.manager.update(Transacao, pedido.id, {
-                      dataAprovacao: new Date(),
-                      dataStatus: new Date(),
-                    })
-                    await queryRunner.manager.update(ServicoPedido, servicoPedido.id, {
-                      numeroOrdem: repostaPainel.order,
-                    })
-                    console.log("Adicionado o numero de ordem: " + repostaPainel.id + "para o servico: " + servicoPedido.idServico.idFornecedor);
-                    resposta.push({
-                      link: servicoPedido.link,
-                      numeroDeOrdem: repostaPainel.order,
-                    });
-                  } else {
-                    await queryRunner.manager.update(Pedido, pedido.id, {
-                      statusPedido: 'ERRO',
-                      statusPagamento: 'ERRO',
-                    })
-                    await queryRunner.manager.save(HistoricoTransacao, {
-                      idTransacao: idPayment,
-                      status: 'ERRO',
-                      idPedido: pedido,
-                      data: new Date(),
-                    })
-                  }
-                  await queryRunner.commitTransaction();
-                  return resposta;
-                }
-              }
-            } catch (error) {
-              console.log(error);
-              throw new HttpException('Erro ao processar o pedido', 500);
-            } finally {
-              await queryRunner.release();
-            }
-          }
-            break;
-        }
-      }
-    }
+    // const body = JSON.parse(Buffer.from(req.body, 'base64').toString());
+    // console.log('Webhook request: ', body);
+    // switch (body.type) {
+    //   case 'payment': {
+    //     const queryRunner = this.dataSource.createQueryRunner();
+    //     try {
+    //       const idPayment = body.data.id;
+    //       const configFormaPagamento = await this.configFormaPagamentoRepository.findOne({ where: { status: true } });
+    //       const mercadoPagoClient = this.mercadoPagoService.createClient(configFormaPagamento.key);
+    //       const payment = await this.mercadoPagoService.obterPagamento(mercadoPagoClient, idPayment);
+    //       switch (payment.status) {
+    //         case 'approved': {
+    //           await queryRunner.connect();
+    //           await queryRunner.startTransaction();
+    //           const pedido = await this.pedidoRepository.findOne({ where: { id: +payment.external_reference }, relations: ['servicosPedidos.servico', 'servicosPedidos.idSeguimento'] });
+    //           if (!pedido) {
+    //             throw new HttpException('Pedido não encontrado', 404);
+    //           }
+    //           const transacao = await this.transacaoRepository.findOne({ where: { id: +payment.transaction_id } });
+    //           break;
+    //         }
+    //       } catch (error) {
+    //         console.log(error);
+    //         throw new HttpException('Erro ao processar o pedido', 500);
+    //       } finally {
+    //         await queryRunner.release();
+    //       }
+    //     }
+    // }
+    // }
   }
+
 }
