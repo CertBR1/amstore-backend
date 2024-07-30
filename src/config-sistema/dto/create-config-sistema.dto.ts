@@ -64,4 +64,13 @@ export class CreateConfigSistemaDto {
     @IsBoolean({ message: 'O status da loja deve ser um boolean' })
     @IsNotEmpty({ message: 'O status da loja não pode ser vazio' })
     status: boolean;
+
+    @ApiProperty({
+        description: 'Url do video',
+        example: 'https://example.com/video.mp4'
+    })
+    @IsUrl({}, { message: 'A url do video deve ser uma url válida' })
+    @IsNotEmpty({ message: 'A url do video não pode ser vazio' })
+    urlVideo: string;
+
 }

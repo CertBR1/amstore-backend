@@ -85,7 +85,8 @@ export class SubcategoriaService {
         descricao: updateSubcategoriaDto.descricao,
         idCategoria: categoria || subcategoria.idCategoria,
         status: updateSubcategoriaDto.status,
-        imagemUrl: updateSubcategoriaDto.imagemUrl
+        imagemUrl: updateSubcategoriaDto.imagemUrl,
+        bannerUrl: updateSubcategoriaDto.bannerUrl
       });
       await queryRunner.commitTransaction();
       return await this.subcategoriaRepository.find({ where: { id }, relations: { idCategoria: true } });

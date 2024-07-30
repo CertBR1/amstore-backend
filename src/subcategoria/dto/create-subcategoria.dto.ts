@@ -53,4 +53,16 @@ export class CreateSubcategoriaDto {
     @IsString({ message: 'Url da imagem deve ser uma string' })
     imagemUrl: string
 
+    @ApiProperty(
+        {
+            description: 'Url do banner',
+            example: 'http://url.com/banner.gif',
+            type: String
+        }
+    )
+    @IsOptional({ message: 'Url do banner não pode ser vazio' })
+    @IsString({ message: 'Url do banner deve ser uma string' })
+    bannerUrl: string;
+
+
 }

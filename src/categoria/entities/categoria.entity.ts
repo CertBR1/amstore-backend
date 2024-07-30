@@ -13,6 +13,9 @@ export class Categoria {
     @Column()
     imagemUrl: string;
 
+    @Column({ nullable: true })
+    bannerUrl: string;
+
     @CreateDateColumn()
     dataCriacao: Date;
 

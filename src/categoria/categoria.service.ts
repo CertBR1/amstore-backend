@@ -22,6 +22,7 @@ export class CategoriaService {
           nome: createCategoriaDto.nome,
           status: true,
           imagemUrl: createCategoriaDto.imagemUrl,
+          bannerUrl: createCategoriaDto.bannerUrl,
           dataCriacao: new Date(),
         }
       );

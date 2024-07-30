@@ -14,6 +14,9 @@ export class ConfigSistema {
     @Column()
     keyWhatsapp: string;
 
+    @Column({ nullable: true })
+    urlVideo: string;
+
     @Column()
     cor: string;
 
@@ -22,6 +25,7 @@ export class ConfigSistema {
 
     @Column()
     logo: string;
+
 
     @Column({ nullable: true })
     logoBranca: string;

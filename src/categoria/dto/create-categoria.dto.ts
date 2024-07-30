@@ -28,4 +28,13 @@ export class CreateCategoriaDto {
         required: true
     })
     status: boolean;
+
+
+    @ApiProperty({
+        example: 'https://placehold.co/80x80/orange/white',
+        description: 'Url do banner da categoria',
+        required: true
+    })
+    bannerUrl: string;
+
 }
