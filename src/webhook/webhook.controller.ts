@@ -54,12 +54,11 @@ export class WebhookController {
               await queryRunner.connect();
               await queryRunner.startTransaction();
               console.log('Processando pedido: ' + payment.external_reference + '-' + new Date());
-              const pedido = await this.pedidoRepository.find({ where: { id: +payment.external_reference } });
+              const pedido = await this.pedidoRepository.findOne({ where: { id: +payment.external_reference } });
               if (pedido) {
                 const resposta = []
-                for (let i = 0; i < pedido.length; i++) {
-                  const pedidoEntity = pedido[i];
-                  const servicoPedido = await this.servicoPedidoRepository.findOne({ where: { idPedido: pedidoEntity }, relations: ['idServico.idFornecedor'] });
+                for (let i = 0; i < pedido.servicoPedidos.length; i++) {
+                  const servicoPedido = pedido.servicoPedidos[i];
                   let fornecedor = null
                   let seguimento = null
                   if (servicoPedido.idSeguimento) {
@@ -68,26 +67,26 @@ export class WebhookController {
                   } else {
                     fornecedor = await this.fornecedorRepository.findOneBy({ id: servicoPedido.idServico.idFornecedor.id });
                   }
-                  console.log('Executando pedido:' + pedidoEntity.id + new Date().getUTCMilliseconds());
+                  console.log('Executando pedido:' + servicoPedido.id + new Date().getUTCMilliseconds());
                   console.log('Chamando painel de seguidores com o id de servico: ' + servicoPedido.idServico.idFornecedor + 'no painel de seguidores: ' + fornecedor.url);
                   const repostaPainel = await this.axiosClient.criarPedido(fornecedor.url, fornecedor.key, {
                     link: servicoPedido.link,
                     service: seguimento ? seguimento.idServicoFornecedor : servicoPedido.idServico.idServicoFornecedor,
                     quantity: servicoPedido.quantidadeSolicitada,
                   })
-                  console.log("Resposta do painel: " + repostaPainel, + "para o pedido: " + pedidoEntity.id);
+                  console.log("Resposta do painel: " + repostaPainel, + "para o pedido: " + servicoPedido.id);
                   if (!repostaPainel.error) {
-                    await queryRunner.manager.update(Pedido, pedidoEntity.id, {
+                    await queryRunner.manager.update(Pedido, servicoPedido.id, {
                       statusPedido: 'Aprovado',
                       statusPagamento: 'Aprovado',
                     })
                     await queryRunner.manager.save(HistoricoTransacao, {
                       idTransacao: idPayment,
                       status: 'Aprovado',
-                      idPedido: pedidoEntity,
+                      idPedido: servicoPedido,
                       data: new Date(),
                     })
-                    await queryRunner.manager.update(Transacao, servicoPedido.id, {
+                    await queryRunner.manager.update(Transacao, pedido.id, {
                       dataAprovacao: new Date(),
                       dataStatus: new Date(),
                     })
@@ -100,19 +99,19 @@ export class WebhookController {
                       numeroDeOrdem: repostaPainel.order,
                     });
                   } else {
-                    await queryRunner.manager.update(Pedido, pedidoEntity.id, {
+                    await queryRunner.manager.update(Pedido, pedido.id, {
                       statusPedido: 'ERRO',
                       statusPagamento: 'ERRO',
                     })
                     await queryRunner.manager.save(HistoricoTransacao, {
                       idTransacao: idPayment,
                       status: 'ERRO',
-                      idPedido: pedidoEntity,
+                      idPedido: pedido,
                       data: new Date(),
                     })
                   }
                   await queryRunner.commitTransaction();
-                  return 'OK';
+                  return resposta;
                 }
               }
             } catch (error) {

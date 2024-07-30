@@ -96,7 +96,7 @@ export class PedidoService {
             link: servico.link,
             quantidadeSolicitada: servico.quantidadeSolicitada,
           });
-          descricao += `${servicoEntity.descricao} - Quantidade: ${servico.quantidadeSolicitada} \n`;
+          descricao += `${servicoEntity.nome} - Quantidade: ${servico.quantidadeSolicitada} \n`;
           valor += servicoSeguimentado.precoPromocional == 0 ? (servicoSeguimentado.preco / 1000) * servico.quantidadeSolicitada : (servicoSeguimentado.precoPromocional / 1000) * servico.quantidadeSolicitada;
           await this.servicoPedidoRepository.save(servicoPedido);
         } else {
@@ -107,7 +107,7 @@ export class PedidoService {
             link: servico.link,
             quantidadeSolicitada: servico.quantidadeSolicitada,
           });
-          descricao += `${servicoEntity.descricao} - Quantidade: ${servico.quantidadeSolicitada} \n`;
+          descricao += `${servicoEntity.nome} - Quantidade: ${servico.quantidadeSolicitada} \n`;
           valor += servicoEntity.precoPromocional == 0 ? (servicoEntity.preco / 1000) * servico.quantidadeSolicitada : (servicoEntity.precoPromocional / 1000) * servico.quantidadeSolicitada;
           await this.servicoPedidoRepository.save(servicoPedido);
         }
