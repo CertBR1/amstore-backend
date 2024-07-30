@@ -34,4 +34,7 @@ export class Pedido {
 
     @OneToMany(() => ServicoPedido, servicoPedido => servicoPedido.idPedido)
     servicoPedidos: ServicoPedido[];
+
+    @Column({ nullable: true })
+    dataConclusao: Date;
 }

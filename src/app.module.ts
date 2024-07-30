@@ -36,6 +36,7 @@ import { AdminController } from './admin/admin.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { WhastappClientModule } from './whastapp-client/whastapp-client.module';
 import { ClienteAuthMiddleware } from './auth/auth-cliente.middleware';
+import { ScheduleModule } from '@nestjs/schedule';
 
 
 @Module({
@@ -57,6 +58,7 @@ import { ClienteAuthMiddleware } from './auth/auth-cliente.middleware';
       signOptions: { expiresIn: '1d' },
       global: true
     }),
+    ScheduleModule.forRoot(),
     ServicoModule,
     FornecedorModule,
     ClienteModule,

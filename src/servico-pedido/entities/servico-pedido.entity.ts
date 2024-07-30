@@ -21,11 +21,17 @@ export class ServicoPedido {
     @JoinColumn({ name: 'idPedido' })
     idPedido: Pedido;
 
+    @Column({ nullable: true })
+    custo: string
+
     @Column()
     link: string;
 
     @Column({ nullable: true })
     quantidadeInicial: number;
+
+    @Column({ nullable: true, type: 'float' })
+    valorServico: number
 
     @Column()
     quantidadeSolicitada: number;
@@ -38,5 +44,11 @@ export class ServicoPedido {
 
     @OneToOne(() => Transacao, transacao => transacao.idPedido, { nullable: true, eager: false })
     idTransacao: Transacao;
+
+    @Column({ nullable: true })
+    status: string
+
+    @Column({ nullable: true })
+    dataConclusao: Date
 
 }

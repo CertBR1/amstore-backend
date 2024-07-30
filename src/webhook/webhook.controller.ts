@@ -13,6 +13,8 @@ import { Fornecedor } from 'src/fornecedor/entities/fornecedor.entity';
 import { AxiosClientService } from 'src/axios-client/axios-client.service';
 import { ConfigFormaPagamento } from 'src/pedido/entities/config-forma-pagamento.entity';
 import { ServicoSeguimentado } from 'src/servico-seguimentado/entities/servico-seguimentado.entity';
+import { StatusPagamento } from 'src/utils/enums/StatusPagamento.enum';
+import { StatusPedido } from 'src/utils/enums/StatusPedido.enum';
 
 @Controller('webhook')
 export class WebhookController {
@@ -58,24 +60,36 @@ export class WebhookController {
                 throw new HttpException('Pedido não encontrado', 404);
               }
               console.log('Pedido encontrado: ', pedido);
-              // const transacao = this.transacaoRepository.findOne({
-              //   where: {
-              //     idPedido: pedido
-              //   }
-              // })
               for (const servico of pedido.servicoPedidos) {
                 if (servico.idSeguimento) {
                   const seguimento = await this.servicoSeguimentadoRepository.findOne({ where: { id: servico.idSeguimento.id }, relations: ['idFornecedor'] });
                   const fornecedor = await this.fornecedorRepository.findOne({ where: { id: seguimento.idFornecedor.id } });
+                  //EXECUTAR A CRIAÇÃO DO PEDIDO NO PAINEL ADICIONAR COMENTARIOS FUTURAMENTE
                   const respostaPainel = await this.axiosClient.criarPedido(fornecedor.url, fornecedor.key, {
                     link: servico.link,
                     quantity: servico.quantidadeSolicitada,
                     service: seguimento.idServicoFornecedor,
                   })
-                  console.log(respostaPainel);
+                  if (respostaPainel.order) {
+                    await this.historicoTransacaoRepository.save({
+                      idPedido: pedido,
+                      idTransacao: idPayment,
+                      idServico: respostaPainel.order,
+                    });
+                    await this.servicoPedidoRepository.save({
+                      idTransacao: idPayment,
+                      numeroOrdem: respostaPainel.order,
+                      ...servico
+                    })
+                    await queryRunner.manager.update(Pedido, pedido.id, {
+                      statusPagamento: StatusPagamento.PAGO,
+                      statusPedido: StatusPedido.PENDENTE,
+                    })
+                  }
                 }
               }
-              break;
+              await queryRunner.commitTransaction();
+              return 'ok';
             }
           }
         } catch (error) {

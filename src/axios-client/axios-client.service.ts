@@ -95,6 +95,22 @@ export class AxiosClientService {
         }
     }
 
+    async obterStatusDeServico(url: string, key: string, order: string): Promise<{
+        status: string
+    }> {
+        try {
+            const resposta = await this.axiosService.axiosRef.post(url, {
+                "key": key,
+                "action": "status",
+                "order": order
+            });
+            return resposta.data;
+        } catch (error) {
+            console.log(error);
+            throw new HttpException('Erro ao obter um serviço do painel', 500);
+        }
+    }
+
     async post(url: string, headers: any, dados: any): Promise<any> {
         try {
             const resposta = await this.axiosService.axiosRef.post(url, dados, { headers: headers });

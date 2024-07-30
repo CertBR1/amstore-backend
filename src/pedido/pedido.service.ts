@@ -19,6 +19,8 @@ import { PaymentResponse } from 'mercadopago/dist/clients/payment/commonTypes';
 import { CreateConfigPagamentoDto } from './dto/create-config-pagamento.dto';
 import { UpdateConfigPagamentoDto } from './dto/update-config-pagamento-dto';
 import { MeioPagamento } from 'src/utils/enums/MeioPagamento.enum';
+import { StatusPedido } from 'src/utils/enums/StatusPedido.enum';
+import { StatusPagamento } from 'src/utils/enums/StatusPagamento.enum';
 
 @Injectable()
 export class PedidoService {
@@ -64,8 +66,8 @@ export class PedidoService {
       const pedido = this.pedidoRepository.create(
         {
           data: new Date(),
-          statusPedido: 'Pendente',
-          statusPagamento: 'Pendente',
+          statusPedido: StatusPedido.AGUARDANDO_PAGAMENTO,
+          statusPagamento: StatusPagamento.PENDENTE,
           valor: 0,
           idCliente: clienteEncontrado,
           origem: createPedidoDto.origem || 'SITE'
@@ -95,6 +97,7 @@ export class PedidoService {
             idSeguimento: servicoSeguimentado,
             link: servico.link,
             quantidadeSolicitada: servico.quantidadeSolicitada,
+            valorServico: servicoSeguimentado.precoPromocional == 0 ? (servicoSeguimentado.preco / 1000) : (servicoSeguimentado.precoPromocional / 1000),
           });
           descricao += `${servicoEntity.nome} - Quantidade: ${servico.quantidadeSolicitada} \n`;
           valor += servicoSeguimentado.precoPromocional == 0 ? (servicoSeguimentado.preco / 1000) * servico.quantidadeSolicitada : (servicoSeguimentado.precoPromocional / 1000) * servico.quantidadeSolicitada;
