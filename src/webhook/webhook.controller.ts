@@ -39,36 +39,53 @@ export class WebhookController {
 
   @Post()
   async create(@Req() req: any, @Query('id') id: string) {
-    // const body = JSON.parse(Buffer.from(req.body, 'base64').toString());
-    // console.log('Webhook request: ', body);
-    // switch (body.type) {
-    //   case 'payment': {
-    //     const queryRunner = this.dataSource.createQueryRunner();
-    //     try {
-    //       const idPayment = body.data.id;
-    //       const configFormaPagamento = await this.configFormaPagamentoRepository.findOne({ where: { status: true } });
-    //       const mercadoPagoClient = this.mercadoPagoService.createClient(configFormaPagamento.key);
-    //       const payment = await this.mercadoPagoService.obterPagamento(mercadoPagoClient, idPayment);
-    //       switch (payment.status) {
-    //         case 'approved': {
-    //           await queryRunner.connect();
-    //           await queryRunner.startTransaction();
-    //           const pedido = await this.pedidoRepository.findOne({ where: { id: +payment.external_reference }, relations: ['servicosPedidos.servico', 'servicosPedidos.idSeguimento'] });
-    //           if (!pedido) {
-    //             throw new HttpException('Pedido não encontrado', 404);
-    //           }
-    //           const transacao = await this.transacaoRepository.findOne({ where: { id: +payment.transaction_id } });
-    //           break;
-    //         }
-    //       } catch (error) {
-    //         console.log(error);
-    //         throw new HttpException('Erro ao processar o pedido', 500);
-    //       } finally {
-    //         await queryRunner.release();
-    //       }
-    //     }
-    // }
-    // }
+    const body = JSON.parse(Buffer.from(req.body, 'base64').toString());
+    console.log('Webhook request: ', body);
+    switch (body.type) {
+      case 'payment': {
+        const queryRunner = this.dataSource.createQueryRunner();
+        try {
+          const idPayment = body.data.id;
+          const configFormaPagamento = await this.configFormaPagamentoRepository.findOne({ where: { status: true } });
+          const mercadoPagoClient = this.mercadoPagoService.createClient(configFormaPagamento.key);
+          const payment = await this.mercadoPagoService.obterPagamento(mercadoPagoClient, idPayment);
+          switch (payment.status) {
+            case 'approved': {
+              await queryRunner.connect();
+              await queryRunner.startTransaction();
+              const pedido = await this.pedidoRepository.findOne({ where: { id: +payment.external_reference }, relations: ['servicoPedidos.idServico', 'servicoPedidos.idSeguimento', 'servicoPedidos.idTransacao'] });
+              if (!pedido) {
+                throw new HttpException('Pedido não encontrado', 404);
+              }
+              console.log('Pedido encontrado: ', pedido);
+              // const transacao = this.transacaoRepository.findOne({
+              //   where: {
+              //     idPedido: pedido
+              //   }
+              // })
+              for (const servico of pedido.servicoPedidos) {
+                if (servico.idSeguimento) {
+                  const seguimento = await this.servicoSeguimentadoRepository.findOne({ where: { id: servico.idSeguimento.id }, relations: ['idFornecedor'] });
+                  const fornecedor = await this.fornecedorRepository.findOne({ where: { id: seguimento.idFornecedor.id } });
+                  const respostaPainel = await this.axiosClient.criarPedido(fornecedor.url, fornecedor.key, {
+                    link: servico.link,
+                    quantity: servico.quantidadeSolicitada,
+                    service: seguimento.idServicoFornecedor,
+                  })
+                  console.log(respostaPainel);
+                }
+              }
+              break;
+            }
+          }
+        } catch (error) {
+          console.log(error);
+          throw new HttpException('Erro ao processar o pedido', 500);
+        } finally {
+          await queryRunner.release();
+        }
+      }
+    }
   }
 
 }

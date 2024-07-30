@@ -45,7 +45,7 @@ export class ClienteService {
 
   async findOne(id: number) {
     try {
-      return await this.clienteRepository.findOne({ where: { id }, relations: { pedidos: true } });
+      return await this.clienteRepository.findOne({ where: { id }, relations: ['pedidos.servicoPedidos'] });
     } catch (error) {
       console.log(error);
       throw new HttpException(error, 500);
