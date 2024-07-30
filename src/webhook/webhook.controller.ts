@@ -54,7 +54,7 @@ export class WebhookController {
               await queryRunner.connect();
               await queryRunner.startTransaction();
               console.log('Processando pedido: ' + payment.external_reference + '-' + new Date());
-              const pedido = await this.pedidoRepository.findOne({ where: { id: +payment.external_reference } });
+              const pedido = await this.pedidoRepository.findOne({ where: { id: +payment.external_reference }, relations: { idCliente: true, historicoTransacao: true, servicoPedidos: true } });
               if (pedido) {
                 const resposta = []
                 for (let i = 0; i < pedido.servicoPedidos.length; i++) {
