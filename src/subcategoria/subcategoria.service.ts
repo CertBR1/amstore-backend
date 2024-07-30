@@ -17,6 +17,7 @@ export class SubcategoriaService {
   ) { }
   async create(createSubcategoriaDto: CreateSubcategoriaDto) {
     const queryRunner = this.dataSource.createQueryRunner();
+    console.log('criando subcategoria ', createSubcategoriaDto)
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
@@ -34,6 +35,7 @@ export class SubcategoriaService {
         dataCriacao: new Date()
       });
       await queryRunner.manager.save(subcategoria);
+      console.log('subcategoria criada: ', subcategoria)
       await queryRunner.commitTransaction();
       return subcategoria;
     } catch (error) {
