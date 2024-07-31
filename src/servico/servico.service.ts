@@ -84,6 +84,7 @@ export class ServicoService {
       await queryRunner.manager.save(servico);
       if (createServicoDto.infoAdicionais && createServicoDto.infoAdicionais.length > 0) {
         createServicoDto.infoAdicionais.forEach(async (element) => {
+          console.log('INFO ADICIONAIS: ', element)
           element.idServico = servico.id;
           const info = await this.createInfoAdicionais(element);
           servico.informacoesAdicionais = [info];
@@ -91,7 +92,7 @@ export class ServicoService {
       }
       await queryRunner.manager.save(servico);
       await queryRunner.commitTransaction();
-      return await this.servicoRepository.findOne({
+      const servicoCriado = await this.servicoRepository.findOne({
         where: { id: servico.id }, relations: [
           'idFornecedor',
           'idCategoria',
@@ -104,6 +105,8 @@ export class ServicoService {
           'tagSeo'
         ]
       });
+      console.log('SERVICO CRIADO: ', servicoCriado)
+      return servicoCriado;
     } catch (error) {
       console.log(error);
       await queryRunner.rollbackTransaction();
