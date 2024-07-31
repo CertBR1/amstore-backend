@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, DeleteDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Servico } from "./servico.entity";
 
 @Entity({ name: 'infoServicoAdcionais' })
@@ -17,4 +17,7 @@ export class InfoServicoAdcionais {
 
     @ManyToOne(() => Servico, (servico) => servico.informacoesAdicionais)
     idServico: Servico
+
+    @DeleteDateColumn()
+    deletadoEm: Date
 }

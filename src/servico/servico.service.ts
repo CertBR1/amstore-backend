@@ -299,6 +299,19 @@ export class ServicoService {
     return `This action updates a #${id} servico`;
   }
 
+  async removeInfoAdicionais(id: number) {
+    try {
+      const retorno = await this.infoServicoAdcionaisRepository.softDelete({ id });
+      return {
+        message: 'Info adicionais removido com sucesso',
+        retorno
+      }
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, 500);
+    }
+  }
+
   async createInfoPrincipais(createInfoPrincipal: CreateInfoServicoPrincipaisDto) {
     const queryRunner = this.dataSource.createQueryRunner();
     try {
