@@ -37,8 +37,8 @@ export class ServicoService {
   ) { }
   async create(createServicoDto: CreateServicoDto) {
     const queryRunner = this.dataSource.createQueryRunner();
-    console.log('CREATE SERVICO', createServicoDto)
-    console.log('CREATE SERVIÇO: ', createServicoDto.idSubCategoria)
+    console.log('CREATE SERVICO PAARA CADASTRO: ', createServicoDto)
+    console.log('CREATE SERVIÇO ID SUBCATEGORIA: ', createServicoDto.idSubCategoria)
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
@@ -48,7 +48,7 @@ export class ServicoService {
       }
       const idFornecedor = await this.fornecedorRepository.findOneBy({ id: createServicoDto.idFornecedor });
       const idCategoria = await this.categoriaRepository.findOneBy({ id: createServicoDto.idCategoria });
-      const idSubcategoria = await this.subcategoriaRepository.findOneBy({ id: Number(createServicoDto.idSubCategoria) });
+      const idSubcategoria = await this.subcategoriaRepository.findOneBy({ id: createServicoDto.idSubCategoria });
       if (!idFornecedor) {
         throw new HttpException('Fornecedor inexistente', 400);
       }
@@ -75,6 +75,7 @@ export class ServicoService {
         status: true,
         tipo: createServicoDto.tipo
       });
+      await queryRunner.manager.save(servico);
       if (createServicoDto.infoPrincipais) {
         createServicoDto.infoPrincipais.idServico = servico.id;
         const info = await this.createInfoPrincipais(createServicoDto.infoPrincipais);
@@ -148,19 +149,10 @@ export class ServicoService {
           'informacoesPrincipais',
           'tagSeo'
         ]
-      })
-      console.log('servico encontrado: =>', servico)
-      // const servicoSeguimentado = await this.servicoSeguimentadoRepository.find({
-      //   where: { idServico: servico },
-      //   relations: {
-      //     idSeguimento: true,
-      //     idTipoSeguimento: true,
-      //     idFornecedor: true,
-      //     idServico: true
-      //   }
-      // })
-      // console.log('servicoSeguimentadoEncontrado: =>', servicoSeguimentado)
-      // servico.servicosSeguimentados = servicoSeguimentado
+      });
+      if (!servico) {
+        throw new HttpException('Servico não encontrado', 404);
+      }
       return servico
     } catch (error) {
       console.log(error);
@@ -170,11 +162,7 @@ export class ServicoService {
 
   async update(id: number, updateServicoDto: UpdateServicoDto) {
     const queryRunner = this.dataSource.createQueryRunner();
-    console.log('UPDATE SERVICO', updateServicoDto)
     const { idCategoria, idFornecedor, idSubCategoria } = updateServicoDto
-    console.log('idCategoria', idCategoria)
-    console.log('idFornecedor', idFornecedor)
-    console.log('idSubcategoria', idSubCategoria)
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
@@ -269,7 +257,7 @@ export class ServicoService {
   }
 
   async createInfoAdicionais(createServicoDto: CreateInfoServicoAdcionaisDto) {
-    console.log('createServicoDto', createServicoDto)
+    console.log('create info adicionais', createServicoDto)
     const queryRunner = this.dataSource.createQueryRunner();
     try {
       await queryRunner.connect();

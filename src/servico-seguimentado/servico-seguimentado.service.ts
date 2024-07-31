@@ -26,7 +26,7 @@ export class ServicoSeguimentadoService {
   ) { }
   async create(createServicoSeguimentadoDto: CreateServicoSeguimentadoDto) {
     const queryRunner = this.dataSource.createQueryRunner();
-    console.log(createServicoSeguimentadoDto)
+    console.log('Serviço seguimentado para criação: ', createServicoSeguimentadoDto)
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
@@ -64,7 +64,7 @@ export class ServicoSeguimentadoService {
         idFornecedor: fornecedor,
         preco: createServicoSeguimentadoDto.preco,
         precoPromocional: createServicoSeguimentadoDto.precoPromocional,
-        idServicoFornecedor: servico.idServicoFornecedor
+        idServicoFornecedor: createServicoSeguimentadoDto.idServicoFornecedor
       });
       await queryRunner.manager.save(servicoSeguimentado);
       await queryRunner.commitTransaction();
