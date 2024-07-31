@@ -7,6 +7,11 @@ import { UpdateServicoDto } from './dto/update-servico.dto';
 export class ServicoController {
   constructor(private readonly servicoService: ServicoService) { }
 
+  @Delete('info-adcional/:id')
+  async removeInfoAdcional(@Param('id') id: string) {
+    return this.servicoService.removeInfoAdicionais(+id);
+  }
+
   @Post()
   create(@Body() createServicoDto: CreateServicoDto) {
     return this.servicoService.create(createServicoDto);
