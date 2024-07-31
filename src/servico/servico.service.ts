@@ -38,6 +38,7 @@ export class ServicoService {
   async create(createServicoDto: CreateServicoDto) {
     const queryRunner = this.dataSource.createQueryRunner();
     console.log('CREATE SERVICO', createServicoDto)
+    console.log('CREATE SERVIÇO: ', createServicoDto.idSubCategoria)
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
@@ -47,9 +48,15 @@ export class ServicoService {
       }
       const idFornecedor = await this.fornecedorRepository.findOneBy({ id: createServicoDto.idFornecedor });
       const idCategoria = await this.categoriaRepository.findOneBy({ id: createServicoDto.idCategoria });
-      const idSubcategoria = await this.subcategoriaRepository.findOneBy({ id: createServicoDto.idSubcategoria });
-      if (!idFornecedor || !idCategoria || !idSubcategoria) {
-        throw new HttpException('Fornecedores, Categorias ou Subcategorias inexistentes', 400);
+      const idSubcategoria = await this.subcategoriaRepository.findOneBy({ id: Number(createServicoDto.idSubCategoria) });
+      if (!idFornecedor) {
+        throw new HttpException('Fornecedor inexistente', 400);
+      }
+      if (!idCategoria) {
+        throw new HttpException('Categoria inexistente', 400);
+      }
+      if (!idSubcategoria) {
+        throw new HttpException('Subcategoria inexistente', 400);
       }
       const servico = this.servicoRepository.create({
         tagSeo: tags,
@@ -76,7 +83,6 @@ export class ServicoService {
       await queryRunner.manager.save(servico);
       if (createServicoDto.infoAdicionais && createServicoDto.infoAdicionais.length > 0) {
         createServicoDto.infoAdicionais.forEach(async (element) => {
-          console.log(element);
           element.idServico = servico.id;
           const info = await this.createInfoAdicionais(element);
           servico.informacoesAdicionais = [info];
@@ -109,15 +115,17 @@ export class ServicoService {
   findAll() {
     try {
       return this.servicoRepository.find({
-        relations: {
-          idFornecedor: true,
-          idCategoria: true,
-          idSubcategoria: true,
-          servicosSeguimentados: true,
-          informacoesAdicionais: true,
-          informacoesPrincipais: true,
-          tagSeo: true
-        }
+        relations: [
+          'idFornecedor',
+          'idCategoria',
+          'idSubcategoria',
+          'servicosSeguimentados.idSeguimento',
+          'servicosSeguimentados.idTipoSeguimento',
+          'servicosSeguimentados.idFornecedor',
+          'informacoesAdicionais',
+          'informacoesPrincipais',
+          'tagSeo'
+        ]
       });
     } catch (error) {
       console.log(error);
@@ -163,10 +171,10 @@ export class ServicoService {
   async update(id: number, updateServicoDto: UpdateServicoDto) {
     const queryRunner = this.dataSource.createQueryRunner();
     console.log('UPDATE SERVICO', updateServicoDto)
-    const { idCategoria, idFornecedor, idSubcategoria } = updateServicoDto
+    const { idCategoria, idFornecedor, idSubCategoria } = updateServicoDto
     console.log('idCategoria', idCategoria)
     console.log('idFornecedor', idFornecedor)
-    console.log('idSubcategoria', idSubcategoria)
+    console.log('idSubcategoria', idSubCategoria)
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
@@ -189,8 +197,8 @@ export class ServicoService {
         }
       }
       let idSubcategoriaEntity = undefined;
-      if (idSubcategoria) {
-        idSubcategoriaEntity = await this.subcategoriaRepository.findOne({ where: { id: idSubcategoria } });
+      if (idSubCategoria) {
+        idSubcategoriaEntity = await this.subcategoriaRepository.findOne({ where: { id: idSubCategoria } });
         if (!idSubcategoriaEntity) {
           throw new HttpException('Subcategorias inexistentes', 400);
         }

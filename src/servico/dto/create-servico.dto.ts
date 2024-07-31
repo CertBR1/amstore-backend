@@ -40,7 +40,7 @@ export class CreateServicoDto {
             example: '1',
         }
     )
-    idSubcategoria: number;
+    idSubCategoria: number;
 
     @ApiProperty(
         {
