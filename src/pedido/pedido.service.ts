@@ -91,12 +91,11 @@ export class PedidoService {
         if (servicoEntity.tipo === TipoServico.PERSONALIZADO) {
           console.log('Salvando comentarios para pedido com serviço personalizado', createPedidoDto.comentarios);
           comentarios = createPedidoDto.comentarios.join('\n');
-
         }
         if (servico.idSeguimento && servico.idSeguimento > 0) {
           console.log('=>', servicoEntity.servicosSeguimentados, '=>', servico.idSeguimento);
           const servicoSeguimentado = servicoEntity.servicosSeguimentados.find(x => x.id == servico.idSeguimento);
-          console.log('Servico Selecionado=>', servicoSeguimentado)
+          console.log('Servico Seguimentado Selecionado=>', servicoSeguimentado)
           await this.pedidoRepository.save(pedido);
           const servicoPedido = this.servicoPedidoRepository.create({
             idPedido: pedido,
@@ -105,6 +104,7 @@ export class PedidoService {
             link: servico.link,
             quantidadeSolicitada: servico.quantidadeSolicitada,
             valorServico: servicoSeguimentado.precoPromocional == 0 ? (servicoSeguimentado.preco / 1000) : (servicoSeguimentado.precoPromocional / 1000),
+            comentarios: comentarios !== '' ? comentarios : null
           });
           descricao += `${servicoEntity.nome} - Quantidade: ${servico.quantidadeSolicitada} \n`;
           valor += servicoSeguimentado.precoPromocional == 0 ? (servicoSeguimentado.preco / 1000) * servico.quantidadeSolicitada : (servicoSeguimentado.precoPromocional / 1000) * servico.quantidadeSolicitada;
@@ -116,6 +116,8 @@ export class PedidoService {
             idServico: servicoEntity,
             link: servico.link,
             quantidadeSolicitada: servico.quantidadeSolicitada,
+            comentarios: comentarios !== '' ? comentarios : null,
+            valorServico: servicoEntity.precoPromocional == 0 ? (servicoEntity.preco / 1000) : (servicoEntity.precoPromocional / 1000),
           });
           descricao += `${servicoEntity.nome} - Quantidade: ${servico.quantidadeSolicitada} \n`;
           valor += servicoEntity.precoPromocional == 0 ? (servicoEntity.preco / 1000) * servico.quantidadeSolicitada : (servicoEntity.precoPromocional / 1000) * servico.quantidadeSolicitada;

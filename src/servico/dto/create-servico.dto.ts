@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { CreateInfoServicoPrincipaisDto } from "./create-info-servico-principal";
 import { CreateInfoServicoAdcionaisDto } from "./create-info-servico-adcionais";
+import { TipoServico } from "src/utils/enums/TipoServico.enum";
 
 export class CreateServicoDto {
     @ApiProperty(
@@ -53,10 +54,10 @@ export class CreateServicoDto {
     @ApiProperty(
         {
             description: 'Tipo do Servico',
-            example: 'Seguidores',
+            example: TipoServico,
         }
     )
-    tipo: string;
+    tipo: TipoServico;
 
     @ApiProperty(
         {
@@ -102,7 +103,10 @@ export class CreateServicoDto {
     tagSeo: string[];
 
     reposicao: number;
+
     status: boolean;
+
     infoPrincipais: CreateInfoServicoPrincipaisDto
+
     infoAdicionais: CreateInfoServicoAdcionaisDto[]
 }

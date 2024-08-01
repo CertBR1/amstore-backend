@@ -3,6 +3,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AxiosClientService {
+
     constructor(
         private readonly axiosService: HttpService
     ) {
@@ -118,6 +119,22 @@ export class AxiosClientService {
         } catch (error) {
             console.log(error);
             throw new HttpException('Erro ao enviar mensagem no painel', 500);
+        }
+    }
+
+    async criarPersonalizado(url: string, key: string, servico: string, link: string, comentarios: string): Promise<any> {
+        try {
+            const resposta = await this.axiosService.axiosRef.post(url, {
+                "key": key,
+                "action": "add",
+                "service": servico,
+                "link": link,
+                "comments": comentarios
+            });
+            return resposta.data;
+        } catch (error) {
+            console.log(error);
+            throw new HttpException('Erro ao criar servico personalizado no painel', 500);
         }
     }
 }

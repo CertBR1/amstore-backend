@@ -15,6 +15,7 @@ import { ConfigFormaPagamento } from 'src/pedido/entities/config-forma-pagamento
 import { ServicoSeguimentado } from 'src/servico-seguimentado/entities/servico-seguimentado.entity';
 import { StatusPagamento } from 'src/utils/enums/StatusPagamento.enum';
 import { StatusPedido } from 'src/utils/enums/StatusPedido.enum';
+import { TipoServico } from 'src/utils/enums/TipoServico.enum';
 
 @Controller('webhook')
 export class WebhookController {
@@ -65,11 +66,44 @@ export class WebhookController {
                   const seguimento = await this.servicoSeguimentadoRepository.findOne({ where: { id: servico.idSeguimento.id }, relations: ['idFornecedor'] });
                   const fornecedor = await this.fornecedorRepository.findOne({ where: { id: seguimento.idFornecedor.id } });
                   //EXECUTAR A CRIAÇÃO DO PEDIDO NO PAINEL ADICIONAR COMENTARIOS FUTURAMENTE
-                  const respostaPainel = await this.axiosClient.criarPedido(fornecedor.url, fornecedor.key, {
-                    link: servico.link,
-                    quantity: servico.quantidadeSolicitada,
-                    service: seguimento.idServicoFornecedor,
-                  })
+                  let respostaPainel = null
+                  if (servico.idServico.tipo === TipoServico.PERSONALIZADO) {
+                    respostaPainel = await this.axiosClient.criarPersonalizado(fornecedor.url, fornecedor.key, seguimento.idServicoFornecedor, servico.link, servico.comentarios,)
+                  } else {
+                    respostaPainel = await this.axiosClient.criarPedido(fornecedor.url, fornecedor.key, {
+                      link: servico.link,
+                      quantity: servico.quantidadeSolicitada,
+                      service: seguimento.idServicoFornecedor,
+                    })
+                  }
+                  if (respostaPainel.order) {
+                    await this.historicoTransacaoRepository.save({
+                      idPedido: pedido,
+                      idTransacao: idPayment,
+                      idServico: respostaPainel.order,
+                    });
+                    await this.servicoPedidoRepository.save({
+                      idTransacao: idPayment,
+                      numeroOrdem: respostaPainel.order,
+                      ...servico
+                    })
+                    await queryRunner.manager.update(Pedido, pedido.id, {
+                      statusPagamento: StatusPagamento.PAGO,
+                      statusPedido: StatusPedido.PENDENTE,
+                    })
+                  }
+                } else {
+                  const fornecedor = await this.fornecedorRepository.findOne({ where: { id: servico.idServico.idFornecedor.id } });
+                  let respostaPainel = null
+                  if (servico.idServico.tipo === TipoServico.PERSONALIZADO) {
+                    respostaPainel = await this.axiosClient.criarPersonalizado(fornecedor.url, fornecedor.key, servico.idServico.idServicoFornecedor, servico.link, servico.comentarios,)
+                  } else {
+                    respostaPainel = await this.axiosClient.criarPedido(fornecedor.url, fornecedor.key, {
+                      link: servico.link,
+                      quantity: servico.quantidadeSolicitada,
+                      service: servico.idServico.idServicoFornecedor,
+                    })
+                  }
                   if (respostaPainel.order) {
                     await this.historicoTransacaoRepository.save({
                       idPedido: pedido,
@@ -87,9 +121,9 @@ export class WebhookController {
                     })
                   }
                 }
+                await queryRunner.commitTransaction();
+                return 'ok';
               }
-              await queryRunner.commitTransaction();
-              return 'ok';
             }
           }
         } catch (error) {
@@ -101,5 +135,4 @@ export class WebhookController {
       }
     }
   }
-
 }

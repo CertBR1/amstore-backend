@@ -166,6 +166,7 @@ export class ServicoService {
   async update(id: number, updateServicoDto: UpdateServicoDto) {
     const queryRunner = this.dataSource.createQueryRunner();
     const { idCategoria, idFornecedor, idSubCategoria } = updateServicoDto
+    console.log('UPDATE: ', updateServicoDto)
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
