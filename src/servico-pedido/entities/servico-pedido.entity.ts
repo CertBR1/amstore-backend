@@ -54,4 +54,6 @@ export class ServicoPedido {
     @Column({ nullable: true })
     comentarios?: string
 
+    @Column({ nullable: true })
+    quantidadeRestante: string;
 }

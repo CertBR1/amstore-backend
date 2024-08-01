@@ -96,9 +96,7 @@ export class AxiosClientService {
         }
     }
 
-    async obterStatusDeServico(url: string, key: string, order: string): Promise<{
-        status: string
-    }> {
+    async obterStatusDeServico(url: string, key: string, order: string): Promise<any> {
         try {
             const resposta = await this.axiosService.axiosRef.post(url, {
                 "key": key,

@@ -72,27 +72,81 @@ export class WebhookService {
             const servicoPedido = await this.servicoPedidoRepository.findOneBy({ id: servico.id })
             servicoPedido.status = StatusPedido.CANCELADO
             servicoPedido.dataConclusao = new Date()
+            if (response.charge) {
+              servico.custo = response.charge
+            }
+            if (response.start_count) {
+              servico.quantidadeInicial = response.start_count
+            }
+            if (response.remains) {
+              servico.quantidadeRestante = response.remains
+            }
             await this.servicoPedidoRepository.save(servicoPedido)
           } else if (response.status == 'complete' || response.status == 'completed') {
             const servicoPedido = await this.servicoPedidoRepository.findOneBy({ id: servico.id })
             servicoPedido.status = StatusPedido.FINALIZADO
             servicoPedido.dataConclusao = new Date()
+            if (response.charge) {
+              servico.custo = response.charge
+            }
+            if (response.start_count) {
+              servico.quantidadeInicial = response.start_count
+            }
+            if (response.remains) {
+              servico.quantidadeRestante = response.remains
+            }
             await this.servicoPedidoRepository.save(servicoPedido)
           } else if (response.status == 'pending' || response.status == 'fail') {
             const servicoPedido = await this.servicoPedidoRepository.findOneBy({ id: servico.id })
             servicoPedido.status = StatusPedido.PENDENTE
+            if (response.charge) {
+              servico.custo = response.charge
+            }
+            if (response.start_count) {
+              servico.quantidadeInicial = response.start_count
+            }
+            if (response.remains) {
+              servico.quantidadeRestante = response.remains
+            }
             await this.servicoPedidoRepository.save(servicoPedido)
           } else if (response.status == 'inprogress') {
             const servicoPedido = await this.servicoPedidoRepository.findOneBy({ id: servico.id })
             servicoPedido.status = StatusPedido.EM_PROGRESSO
+            if (response.charge) {
+              servico.custo = response.charge
+            }
+            if (response.start_count) {
+              servico.quantidadeInicial = response.start_count
+            }
+            if (response.remains) {
+              servico.quantidadeRestante = response.remains
+            }
             await this.servicoPedidoRepository.save(servicoPedido)
           } else if (response.status == 'processing') {
             const servicoPedido = await this.servicoPedidoRepository.findOneBy({ id: servico.id })
             servicoPedido.status = StatusPedido.EM_PROCESSAMENTO
+            if (response.charge) {
+              servico.custo = response.charge
+            }
+            if (response.start_count) {
+              servico.quantidadeInicial = response.start_count
+            }
+            if (response.remains) {
+              servico.quantidadeRestante = response.remains
+            }
             await this.servicoPedidoRepository.save(servicoPedido)
           } else if (response.status == "partial") {
             const servicoPedido = await this.servicoPedidoRepository.findOneBy({ id: servico.id })
             servicoPedido.status = StatusPedido.PARCIAL
+            if (response.charge) {
+              servico.custo = response.charge
+            }
+            if (response.start_count) {
+              servico.quantidadeInicial = response.start_count
+            }
+            if (response.remains) {
+              servico.quantidadeRestante = response.remains
+            }
             servicoPedido.dataConclusao = new Date()
             await this.servicoPedidoRepository.save(servicoPedido)
           }
