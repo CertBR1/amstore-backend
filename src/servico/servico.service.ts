@@ -229,9 +229,8 @@ export class ServicoService {
         preco: updateServicoDto.preco,
         precoPromocional: updateServicoDto.precoPromocional,
         reposicao: updateServicoDto.reposicao,
-        status: updateServicoDto.status,
+        status: updateServicoDto.status || servico.status,
         tipo: updateServicoDto.tipo,
-
       });
       console.log('UPDATE SERVICO', retonro)
       await queryRunner.commitTransaction();

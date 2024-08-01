@@ -50,11 +50,19 @@ export class FornecedorService {
       const fornecedores = await this.fornecedorRepository.find();
       const fornecedoresComSaldoAtualizado = await Promise.all(
         fornecedores.map(async (f) => {
-          const resposta = await this.axiosClient.obterSaldo(f.url, f.key);
-          await queryRunner.manager.update(Fornecedor, f.id, {
-            saldo: resposta.balance,
-            moeda: resposta.currency,
-          })
+          try {
+            const resposta = await this.axiosClient.obterSaldo(f.url, f.key);
+            await queryRunner.manager.update(Fornecedor, f.id, {
+              saldo: resposta.balance,
+              moeda: resposta.currency,
+            })
+          } catch (error) {
+            console.log(`Erro buscar o saldo do fornecedor ${f.id}`, error);
+            await queryRunner.manager.update(Fornecedor, f.id, {
+              saldo: 'Indisponível',
+              moeda: '',
+            });
+          }
           return await this.fornecedorRepository.findOneBy({ id: f.id });
         })
       )

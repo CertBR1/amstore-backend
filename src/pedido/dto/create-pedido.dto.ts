@@ -62,4 +62,11 @@ export class CreatePedidoDto {
 
     idTransacao?: number;
 
+    @ApiProperty(
+        {
+            example: ['Comentarios personalizados', 'Comentarios personalizados2'],
+            description: 'Comentarios personalizados',
+        }
+    )
+    comentarios?: string[];
 }

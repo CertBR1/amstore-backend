@@ -21,6 +21,7 @@ import { UpdateConfigPagamentoDto } from './dto/update-config-pagamento-dto';
 import { MeioPagamento } from 'src/utils/enums/MeioPagamento.enum';
 import { StatusPedido } from 'src/utils/enums/StatusPedido.enum';
 import { StatusPagamento } from 'src/utils/enums/StatusPagamento.enum';
+import { TipoServico } from 'src/utils/enums/TipoServico.enum';
 
 @Injectable()
 export class PedidoService {
@@ -85,6 +86,12 @@ export class PedidoService {
         });
         if (!servicoEntity) {
           throw new HttpException(`Serviço não ${servico.idServico} encontrado`, 404);
+        }
+        let comentarios = '';
+        if (servicoEntity.tipo === TipoServico.PERSONALIZADO) {
+          console.log('Salvando comentarios para pedido com serviço personalizado', createPedidoDto.comentarios);
+          comentarios = createPedidoDto.comentarios.join('\n');
+
         }
         if (servico.idSeguimento && servico.idSeguimento > 0) {
           console.log('=>', servicoEntity.servicosSeguimentados, '=>', servico.idSeguimento);

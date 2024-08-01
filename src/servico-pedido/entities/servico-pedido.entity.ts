@@ -51,4 +51,7 @@ export class ServicoPedido {
     @Column({ nullable: true })
     dataConclusao: Date
 
+    @Column({ nullable: true })
+    comentarios?: string
+
 }
