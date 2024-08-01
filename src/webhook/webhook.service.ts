@@ -64,7 +64,10 @@ export class WebhookService {
             servico.idServico.idFornecedor.key,
             servico.numeroOrdem
           )
-          response.status = response.status.toLowerCase()
+          console.log("Response do painel: ", response)
+          if (response.status && response.status !== '') {
+            response.status = response.status.toLowerCase()
+          }
           if (response.status == "canceled" || response.status == "cancel") {
             const servicoPedido = await this.servicoPedidoRepository.findOneBy({ id: servico.id })
             servicoPedido.status = StatusPedido.CANCELADO
