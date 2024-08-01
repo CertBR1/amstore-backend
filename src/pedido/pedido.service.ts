@@ -235,7 +235,7 @@ export class PedidoService {
 
   findOne(id: number) {
     try {
-      return this.pedidoRepository.findOne({ where: { id }, relations: { idCliente: true, historicoTransacao: true } });
+      return this.pedidoRepository.findOne({ where: { id }, relations: { idCliente: true, historicoTransacao: true, servicoPedidos: true } });
     } catch (error) {
       throw new HttpException(error, 500);
     }
