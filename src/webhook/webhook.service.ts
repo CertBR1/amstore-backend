@@ -64,7 +64,7 @@ export class WebhookService {
             servico.idServico.idFornecedor.key,
             servico.numeroOrdem
           )
-          console.log("Response do painel: ", response)
+          console.log("Response do painel: ", response, 'para o pedido: ', pedido.id, 'ordem de serviço: ', servico.numeroOrdem)
           if (response.status && response.status !== '') {
             response.status = response.status.toLowerCase()
           }

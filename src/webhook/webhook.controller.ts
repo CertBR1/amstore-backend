@@ -76,7 +76,6 @@ export class WebhookController {
                       service: seguimento.idServicoFornecedor,
                     })
                   }
-                  console.log("respostaPainel: ", respostaPainel, 'para o pedido: ', pedido.id + ' ordem : ', servico.numeroOrdem);
                   if (respostaPainel.order) {
                     await this.historicoTransacaoRepository.save({
                       idPedido: pedido,
@@ -84,10 +83,11 @@ export class WebhookController {
                       data: new Date(),
                       idServico: respostaPainel.order,
                     });
-                    await queryRunner.manager.update(ServicoPedido, servico.id, {
-                      status: StatusPagamento.PAGO,
+                    await this.servicoPedidoRepository.save({
+                      idTransacao: idPayment,
                       numeroOrdem: respostaPainel.order,
-                      dataConclusao: new Date(),
+                      status: StatusPedido.PENDENTE,
+                      ...servico
                     })
                     await queryRunner.manager.update(Pedido, pedido.id, {
                       statusPagamento: StatusPagamento.PAGO,
