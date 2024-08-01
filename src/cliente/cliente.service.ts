@@ -28,6 +28,9 @@ export class ClienteService {
     } catch (error) {
       console.log(error);
       await queryRunner.rollbackTransaction();
+      if (error.code === '23505') {
+        throw new HttpException('Whatsapp ja esta cadastrado', 400);
+      }
       throw new HttpException(error, 500);
     } finally {
       await queryRunner.release();
