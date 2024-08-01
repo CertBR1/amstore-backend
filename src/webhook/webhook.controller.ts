@@ -86,7 +86,7 @@ export class WebhookController {
                     await this.servicoPedidoRepository.save({
                       idTransacao: idPayment,
                       numeroOrdem: respostaPainel.order,
-                      status: StatusPagamento.PENDENTE,
+                      status: StatusPedido.PENDENTE,
                       ...servico
                     })
                     await queryRunner.manager.update(Pedido, pedido.id, {
@@ -115,7 +115,7 @@ export class WebhookController {
                     await this.servicoPedidoRepository.save({
                       idTransacao: idPayment,
                       numeroOrdem: respostaPainel.order,
-                      status: StatusPagamento.PENDENTE,
+                      status: StatusPedido.PENDENTE,
                       ...servico
                     })
                     await queryRunner.manager.update(Pedido, pedido.id, {
