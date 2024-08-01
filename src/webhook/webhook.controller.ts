@@ -80,14 +80,13 @@ export class WebhookController {
                     await this.historicoTransacaoRepository.save({
                       idPedido: pedido,
                       idTransacao: idPayment,
-
+                      data: new Date(),
                       idServico: respostaPainel.order,
                     });
-                    await this.servicoPedidoRepository.save({
-                      idTransacao: idPayment,
+                    await queryRunner.manager.update(ServicoPedido, servico.id, {
+                      status: StatusPagamento.PAGO,
                       numeroOrdem: respostaPainel.order,
-                      status: StatusPedido.PENDENTE,
-                      ...servico
+                      dataConclusao: new Date(),
                     })
                     await queryRunner.manager.update(Pedido, pedido.id, {
                       statusPagamento: StatusPagamento.PAGO,
@@ -107,6 +106,7 @@ export class WebhookController {
                     })
                   }
                   if (respostaPainel.order) {
+                    console.log('Resposta do painel: ', respostaPainel);
                     await this.historicoTransacaoRepository.save({
                       idPedido: pedido,
                       idTransacao: idPayment,
@@ -114,11 +114,10 @@ export class WebhookController {
                       status: StatusPagamento.PAGO,
                       data: new Date(),
                     });
-                    await this.servicoPedidoRepository.save({
-                      idTransacao: idPayment,
+                    await queryRunner.manager.update(ServicoPedido, servico.id, {
+                      status: StatusPagamento.PAGO,
                       numeroOrdem: respostaPainel.order,
-                      status: StatusPedido.PENDENTE,
-                      ...servico
+                      dataConclusao: new Date(),
                     })
                     await queryRunner.manager.update(Pedido, pedido.id, {
                       statusPagamento: StatusPagamento.PAGO,
