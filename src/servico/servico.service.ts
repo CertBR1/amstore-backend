@@ -72,6 +72,7 @@ export class ServicoService {
         preco: createServicoDto.preco,
         precoPromocional: createServicoDto.precoPromocional,
         reposicao: createServicoDto.reposicao,
+        promocional: createServicoDto.promocional,
         status: true,
         tipo: createServicoDto.tipo
       });
@@ -232,6 +233,7 @@ export class ServicoService {
         reposicao: updateServicoDto.reposicao,
         status: updateServicoDto.status || servico.status,
         tipo: updateServicoDto.tipo,
+        promocional: updateServicoDto.promocional || servico.promocional
       });
       console.log('UPDATE SERVICO', retonro)
       await queryRunner.commitTransaction();

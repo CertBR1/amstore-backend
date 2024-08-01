@@ -56,6 +56,9 @@ export class Servico {
     @Column()
     status: boolean;
 
+    @Column({ default: false })
+    promocional: boolean;
+
     @DeleteDateColumn()
     deletadoEm: Date;
 

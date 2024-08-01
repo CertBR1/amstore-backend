@@ -99,6 +99,14 @@ export class CreateServicoDto {
     )
     multiplo: number;
 
+    @ApiProperty(
+        {
+            description: 'Serviço promocional',
+            example: true,
+        }
+    )
+    promocional?: boolean;
+
 
     tagSeo: string[];
 

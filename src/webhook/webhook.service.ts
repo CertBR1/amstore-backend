@@ -43,6 +43,7 @@ export class WebhookService {
   @Cron(CronExpression.EVERY_10_MINUTES)
   async verificarStatusPedido() {
     const queryRunner = this.dataSource.createQueryRunner();
+    console.log("Verificar status de pedidos")
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
