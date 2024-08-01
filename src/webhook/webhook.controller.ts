@@ -111,6 +111,7 @@ export class WebhookController {
                       idPedido: pedido,
                       idTransacao: idPayment,
                       idServico: respostaPainel.order,
+                      status: StatusPagamento.PAGO,
                       data: new Date(),
                     });
                     await this.servicoPedidoRepository.save({
