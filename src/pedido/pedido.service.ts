@@ -68,7 +68,7 @@ export class PedidoService {
       const pedido = this.pedidoRepository.create(
         {
           data: new Date(),
-          statusPedido: StatusPedido.AGUARDANDO_PAGAMENTO,
+          statusPedido: StatusPedido.CRIADO,
           statusPagamento: StatusPagamento.PENDENTE,
           valor: 0,
           idCliente: clienteEncontrado,
@@ -102,6 +102,7 @@ export class PedidoService {
             idPedido: pedido,
             idServico: servicoEntity,
             idSeguimento: servicoSeguimentado,
+            status: StatusPedido.CRIADO,
             link: servico.link,
             quantidadeSolicitada: servico.quantidadeSolicitada,
             valorServico: servicoSeguimentado.precoPromocional == 0 ? (servicoSeguimentado.preco / 1000) : (servicoSeguimentado.precoPromocional / 1000),
@@ -115,6 +116,7 @@ export class PedidoService {
           const servicoPedido = this.servicoPedidoRepository.create({
             idPedido: pedido,
             idServico: servicoEntity,
+            status: StatusPedido.CRIADO,
             link: servico.link,
             quantidadeSolicitada: servico.quantidadeSolicitada,
             comentarios: comentarios !== '' ? comentarios : null,
@@ -158,7 +160,7 @@ export class PedidoService {
         const historico = await queryRunner.manager.create(HistoricoTransacao, {
           idTransacao: transacao.idTransacao,
           data: new Date(),
-          status: 'Pendente',
+          status: StatusPagamento.PENDENTE,
           idPedido: transacao.idPedido
         })
         await queryRunner.manager.save(historico);
@@ -196,7 +198,7 @@ export class PedidoService {
         const historico = await queryRunner.manager.create(HistoricoTransacao, {
           idTransacao: transacao.idTransacao,
           data: new Date(),
-          status: 'Pendente',
+          status: StatusPagamento.PENDENTE,
           idPedido: transacao.idPedido
         })
         await queryRunner.manager.save(historico);

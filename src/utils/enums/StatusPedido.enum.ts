@@ -6,4 +6,5 @@ export enum StatusPedido {
     AGUARDANDO_PAGAMENTO = 'Aguardando Pagamento',
     EM_PROGRESSO = 'Em Progresso',
     EM_PROCESSAMENTO = "Em Processamento",
+    CRIADO = "Criado"
 }
