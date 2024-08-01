@@ -32,6 +32,7 @@ export class SubcategoriaService {
         status: createSubcategoriaDto.status,
         idCategoria: categoria,
         imagemUrl: createSubcategoriaDto.imagemUrl,
+        bannerUrl: createSubcategoriaDto.bannerUrl,
         dataCriacao: new Date()
       });
       await queryRunner.manager.save(subcategoria);

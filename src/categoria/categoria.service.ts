@@ -71,6 +71,7 @@ export class CategoriaService {
         nome: updateCategoriaDto.nome,
         status: updateCategoriaDto.status,
         imagemUrl: updateCategoriaDto.imagemUrl,
+        bannerUrl: updateCategoriaDto.bannerUrl
       });
       await queryRunner.commitTransaction();
       return await this.categoriaRepository.findOneBy({ id });

@@ -21,7 +21,6 @@ export class CreateCategoriaDto {
     @IsString({ message: 'Url da imagem da categoria deve ser uma string' })
     imagemUrl: string
 
-
     @ApiProperty({
         example: 'true',
         description: 'Status da categoria',
@@ -29,12 +28,10 @@ export class CreateCategoriaDto {
     })
     status: boolean;
 
-
     @ApiProperty({
         example: 'https://placehold.co/80x80/orange/white',
         description: 'Url do banner da categoria',
         required: true
     })
     bannerUrl: string;
-
 }
