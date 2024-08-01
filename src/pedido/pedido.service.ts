@@ -50,6 +50,7 @@ export class PedidoService {
   ) { }
   async create(createPedidoDto: CreatePedidoDto, cliente: any) {
     const queryRunner = this.dataSource.createQueryRunner();
+    console.log("Criando pedido: ", createPedidoDto);
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
