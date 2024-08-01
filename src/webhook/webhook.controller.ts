@@ -56,12 +56,12 @@ export class WebhookController {
             case 'approved': {
               await queryRunner.connect();
               await queryRunner.startTransaction();
-              const pedido = await this.pedidoRepository.findOne({ where: { id: +payment.external_reference }, relations: ['servicoPedidos.idServico', 'servicoPedidos.idSeguimento', 'servicoPedidos.idTransacao'] });
+              const pedido = await this.pedidoRepository.findOne({ where: { id: +payment.external_reference }, relations: ['servicoPedidos.idServico', 'servicoPedidos.idSeguimento', 'servicoPedidos.idTransacao', 'servicoPedidos.idServico.idFornecedor'] });
               if (!pedido) {
                 throw new HttpException('Pedido não encontrado', 404);
               }
-              console.log('Pedido encontrado: ', pedido);
               for (const servico of pedido.servicoPedidos) {
+                console.log("Executando servico: ", servico);
                 if (servico.idSeguimento) {
                   const seguimento = await this.servicoSeguimentadoRepository.findOne({ where: { id: servico.idSeguimento.id }, relations: ['idFornecedor'] });
                   const fornecedor = await this.fornecedorRepository.findOne({ where: { id: seguimento.idFornecedor.id } });
@@ -80,6 +80,7 @@ export class WebhookController {
                     await this.historicoTransacaoRepository.save({
                       idPedido: pedido,
                       idTransacao: idPayment,
+
                       idServico: respostaPainel.order,
                     });
                     await this.servicoPedidoRepository.save({
