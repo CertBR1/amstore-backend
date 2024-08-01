@@ -90,8 +90,8 @@ export class PedidoService {
         }
         let comentarios = '';
         if (servicoEntity.tipo === TipoServico.PERSONALIZADO) {
-          console.log('Salvando comentarios para pedido com serviço personalizado', createPedidoDto.comentarios);
-          comentarios = createPedidoDto.comentarios.join('\n');
+          console.log('Salvando comentarios para pedido com serviço personalizado', servico.comentarios);
+          comentarios = servico.comentarios.join('\n');
         }
         if (servico.idSeguimento && servico.idSeguimento > 0) {
           console.log('=>', servicoEntity.servicosSeguimentados, '=>', servico.idSeguimento);
