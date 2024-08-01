@@ -76,7 +76,7 @@ export class WebhookController {
                       service: seguimento.idServicoFornecedor,
                     })
                   }
-                  console.log("respostaPainel: ", respostaPainel)
+                  console.log("respostaPainel: ", respostaPainel, 'para o pedido: ', pedido.id + ' ordem : ', servico.numeroOrdem);
                   if (respostaPainel.order) {
                     await this.historicoTransacaoRepository.save({
                       idPedido: pedido,
