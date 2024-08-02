@@ -231,7 +231,7 @@ export class ServicoService {
         preco: updateServicoDto.preco,
         precoPromocional: updateServicoDto.precoPromocional,
         reposicao: updateServicoDto.reposicao,
-        status: updateServicoDto.status || servico.status,
+        status: updateServicoDto.status,
         tipo: updateServicoDto.tipo,
         promocional: updateServicoDto.promocional || servico.promocional
       });
