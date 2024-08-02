@@ -72,6 +72,7 @@ export class PedidoService {
           statusPagamento: StatusPagamento.PENDENTE,
           valor: 0,
           idCliente: clienteEncontrado,
+          formaPagamento: createPedidoDto.meioPagamento,
           origem: createPedidoDto.origem || 'SITE'
         }
       );

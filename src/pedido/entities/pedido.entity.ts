@@ -37,4 +37,8 @@ export class Pedido {
 
     @Column({ nullable: true })
     dataConclusao: Date;
+
+    @Column({ nullable: true })
+    formaPagamento: string
+
 }
