@@ -221,11 +221,12 @@ export class PedidoService {
     try {
       const pedidos = await this.pedidoRepository.find(
         {
-          relations: {
-            idCliente: true,
-            historicoTransacao: true,
-            servicoPedidos: true,
-          }
+          relations: [
+            'idCliente',
+            'historicoTransacao',
+            'servicoPedidos.idServico',
+            'servicoPedidos.idSeguimento'
+          ]
         });
       return pedidos
     } catch (error) {
