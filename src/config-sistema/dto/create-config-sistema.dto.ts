@@ -14,15 +14,12 @@ export class CreateConfigSistemaDto {
         description: 'Url do chat do whatsapp',
         example: 'https://chat.whatsapp.com/'
     })
-    @IsUrl({}, { message: 'A url do whatsapp deve ser uma url válida' })
     urlWhatsapp: string;
 
     @ApiProperty({
         description: 'Key do chat do whatsapp',
         example: 'key'
     })
-    @IsString({ message: 'A key do whatsapp deve ser uma string' })
-    @IsNotEmpty({ message: 'A key do whatsapp não pode ser vazia' })
     keyWhatsapp: string;
 
     @ApiProperty({
@@ -37,8 +34,6 @@ export class CreateConfigSistemaDto {
         description: 'Logo da loja branca',
         example: 'https://example.com/logo.png'
     })
-    @IsUrl({}, { message: 'O logo da loja branca deve ser uma url válida' })
-    @IsNotEmpty({ message: 'O logo da loja branca não pode ser vazio' })
     logoBranca: string;
 
     @ApiProperty({
@@ -69,8 +64,8 @@ export class CreateConfigSistemaDto {
         description: 'Url do video',
         example: 'https://example.com/video.mp4'
     })
-    @IsUrl({}, { message: 'A url do video deve ser uma url válida' })
-    @IsNotEmpty({ message: 'A url do video não pode ser vazio' })
     urlVideo: string;
+    whatsappSuporte: string;
+    whatsappVendas: string;
 
 }

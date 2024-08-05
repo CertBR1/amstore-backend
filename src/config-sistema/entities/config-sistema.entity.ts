@@ -8,24 +8,29 @@ export class ConfigSistema {
     @Column({ unique: true })
     nomeLoja: string;
 
-    @Column()
+    @Column({ nullable: true })
     urlWhatsapp: string;
 
-    @Column()
+    @Column({ nullable: true })
     keyWhatsapp: string;
 
     @Column({ nullable: true })
     urlVideo: string;
 
-    @Column()
+    @Column({ nullable: true })
     cor: string;
 
-    @Column()
+    @Column({ nullable: true })
     icon: string;
 
-    @Column()
+    @Column({ nullable: true })
     logo: string;
 
+    @Column({ nullable: true })
+    whatsappSuporte: string;
+
+    @Column({ nullable: true })
+    whatsappVendas: string;
 
     @Column({ nullable: true })
     logoBranca: string;
