@@ -110,5 +110,11 @@ export class AppModule implements NestModule {
     consumer
       .apply(ClienteAuthMiddleware)
       .forRoutes({ path: '/pedido', method: RequestMethod.POST, })
+    consumer
+      .apply(ClienteAuthMiddleware)
+      .forRoutes(
+        { path: '/cliente', method: RequestMethod.GET, },
+        { path: '/cliente', method: RequestMethod.POST, }
+      )
   }
 }
