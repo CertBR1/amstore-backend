@@ -10,6 +10,7 @@ import { Functions } from 'src/utils/func.util';
 
 @Injectable()
 export class EmailService {
+
     constructor(
         @InjectRepository(EmailConfig)
         private readonly emailConfigRepository: Repository<EmailConfig>,
@@ -69,4 +70,24 @@ export class EmailService {
             throw new HttpException(error, 500)
         }
     }
+
+    async getConfiguracaoEmail() {
+        try {
+            return await this.emailConfigRepository.find()
+        } catch (error) {
+            console.log(error)
+            throw new HttpException(error, 500)
+        }
+    }
+
+    async updateConfiguracaoEmail(id: number, updateConfigEmailDto: CreateConfigEmailDto) {
+        try {
+            return await this.emailConfigRepository.update(id, updateConfigEmailDto)
+        } catch (error) {
+            console.log(error)
+            throw new HttpException(error, 500)
+        }
+    }
+
 }
+
