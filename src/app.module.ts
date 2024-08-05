@@ -101,7 +101,6 @@ export class AppModule implements NestModule {
         SeguimentoController,
         ServicoSeguimentadoController,
         PedidoController,
-        ClienteController,
         FornecedorController,
         CategoriaController,
         SubcategoriaController,
