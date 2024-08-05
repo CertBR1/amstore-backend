@@ -111,7 +111,7 @@ export class AuthService {
         throw new HttpException('Cliente não encontrado', 404);
       }
       const codigo = Functions.genetareCode(6);
-      const info = await this.emailService.enviarCodigo(codigo, cliente.email);
+      const info = await this.emailService.enviarCodigo(codigo, cliente.email, cliente.nome);
       await this.cacheManagerService.set(cliente.email, codigo);
       return info;
     } catch (error) {

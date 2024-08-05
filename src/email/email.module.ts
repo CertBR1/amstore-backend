@@ -5,6 +5,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmailConfig } from './entities/email-config';
+import { ConfigSistema } from 'src/config-sistema/entities/config-sistema.entity';
 
 @Module({
   imports: [
@@ -12,7 +13,8 @@ import { EmailConfig } from './entities/email-config';
       envFilePath: '.env'
     }),
     TypeOrmModule.forFeature([
-      EmailConfig
+      EmailConfig,
+      ConfigSistema
     ]),
   ],
   controllers: [EmailController],
