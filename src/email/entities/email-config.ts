@@ -21,6 +21,9 @@ export class EmailConfig {
     @Column()
     from: string;
 
+    @Column({ nullable: true })
+    template: string;
+
     @Column()
     status: boolean;
 
