@@ -108,6 +108,7 @@ export class AppModule implements NestModule {
       )
     consumer
       .apply(ClienteAuthMiddleware)
+      .exclude({ path: '/auth/validar-codigo', method: RequestMethod.POST })
       .forRoutes({ path: '/pedido', method: RequestMethod.POST, })
     consumer
       .apply(AuthAdminMiddleware)

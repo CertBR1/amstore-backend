@@ -116,7 +116,7 @@ export class WebhookController {
                       data: new Date(),
                     });
                     await queryRunner.manager.update(ServicoPedido, servico.id, {
-                      status: StatusPagamento.PAGO,
+                      status: StatusPagamento.PENDENTE,
                       numeroOrdem: respostaPainel.order,
                       dataConclusao: new Date(),
                     })

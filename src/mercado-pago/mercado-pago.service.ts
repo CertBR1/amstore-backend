@@ -34,6 +34,7 @@ export class MercadoPagoService {
                         notification_url: process.env.WEBHOOK_URL,
                         transaction_amount: data.transaction_amount,
                         external_reference: data.external_reference,
+
                         payer: {
                             email: data.payer.email
                         }
@@ -82,8 +83,14 @@ export class MercadoPagoService {
                     },
                     external_reference: itemData.external_reference,
                     notification_url: process.env.WEBHOOK_URL,
+                    date_of_expiration: '',
                     payer: {
                         email: itemData.payer.email
+                    },
+                    back_urls: {
+                        success: `${process.env.FRONTEND_URL}/thankyou?pedido=${itemData.external_reference}`,
+                        pending: `${process.env.FRONTEND_URL}/pending?pedido=${itemData.external_reference}`,
+                        failure: `${process.env.FRONTEND_URL}/error?pedido=${itemData.external_reference}`,
                     },
                     items: [
                         {
