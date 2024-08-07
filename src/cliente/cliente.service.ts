@@ -50,6 +50,7 @@ export class ClienteService {
 
   async findOne(id: number) {
     try {
+      console.log('findOne', id);
       return await this.clienteRepository.findOne({ where: { id }, relations: ['pedidos.servicoPedidos', 'pedidos.servicoPedidos.idServico', 'pedidos.servicoPedidos.idSeguimento'] });
     } catch (error) {
       console.log(error);

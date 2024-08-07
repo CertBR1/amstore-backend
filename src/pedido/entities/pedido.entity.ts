@@ -41,4 +41,10 @@ export class Pedido {
     @Column({ nullable: true })
     formaPagamento: string
 
+    @Column({ nullable: true })
+    linkPagamento: string
+
+    @Column({ nullable: true })
+    qrCode: string
+
 }

@@ -66,6 +66,8 @@ export class AuthService {
       const cliente = await this.clienteRepository.findOne({
         where: { email: codeDto.email },
       })
+      console.log('Auth service: validarCodigo cliente encontrado', cliente);
+
       if (!cliente) {
         throw new HttpException('Cliente não encontrado', 404);
       }
@@ -86,6 +88,7 @@ export class AuthService {
       const cliente = await this.clienteRepository.findOne({
         where: { whatsapp: LoginDto.whatsapp },
       })
+      console.log('Auth service: whatsappLogin cliente encontrado', cliente);
       if (!cliente) {
         throw new HttpException('Cliente não encontrado', 404);
       }
