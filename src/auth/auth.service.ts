@@ -15,6 +15,7 @@ import { CacheManagerService } from 'src/cache-manager/cache-manager.service';
 import { Functions } from 'src/utils/func.util';
 import { CodeVerificationDto } from './dto/code-verification.dto';
 import { ConfigSistema } from 'src/config-sistema/entities/config-sistema.entity';
+import { Cargos } from 'src/utils/enums/Cargos.enum';
 @Injectable()
 export class AuthService {
 
@@ -43,7 +44,7 @@ export class AuthService {
       if (!bcrypt.compareSync(createAuthDto.senha, usuario.senha)) {
         throw new HttpException('Senha inválida', 401);
       }
-      const payload = { id: usuario.id, nome: usuario.nome, usuario: usuario.usuario };
+      const payload = { id: usuario.id, nome: usuario.nome, usuario: usuario.usuario, cargo: Cargos.ADMINISTRADOR };
       const secret = `${process.env.JWT_SECRET}admin`;
       const jwt = await this.jwtService.sign(payload, { secret: secret });
       return { access_token: jwt, nome: usuario.nome, id: usuario.id };
@@ -69,7 +70,7 @@ export class AuthService {
         throw new HttpException('Cliente não encontrado', 404);
       }
       return {
-        cliente_token: this.jwtService.sign({ id: cliente.id, nome: cliente.nome, email: cliente.email }, { secret: process.env.JWT_SECRET }),
+        cliente_token: this.jwtService.sign({ id: cliente.id, nome: cliente.nome, email: cliente.email, cargo: Cargos.CLIENTE }, { secret: process.env.JWT_SECRET }),
         nome: cliente.nome,
         id: cliente.id
       };

@@ -16,7 +16,6 @@ export class Functions {
         const token = uuidv4.replace(/-/g, '').slice(0, 25);
         return token;
     }
-
     static replacePlaceholders(text: string, placeholders: any): string {
         return text.replace(/\{(.*?)\}/g, (match, p1) => placeholders[p1.trim()] || match);
     }

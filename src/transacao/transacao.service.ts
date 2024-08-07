@@ -55,7 +55,6 @@ export class TransacaoService {
         relations: [
           'idPedido.idServico',
           'idPedido.idPedido',
-          'idFormaPagamento'
         ],
       });
     } catch (error) {
