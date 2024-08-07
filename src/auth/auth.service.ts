@@ -64,7 +64,7 @@ export class AuthService {
         throw new HttpException('Código inválido', 401);
       }
       const cliente = await this.clienteRepository.findOne({
-        where: { email: codeDto.email },
+        where: codeDto.email ? { email: codeDto.email } : { whatsapp: codeDto.whatsapp },
       })
       console.log('Auth service: validarCodigo cliente encontrado', cliente);
 
