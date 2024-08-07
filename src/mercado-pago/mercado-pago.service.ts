@@ -73,6 +73,12 @@ export class MercadoPagoService {
         },
     }): Promise<{ merchantOrder: MerchantOrderResponse, preference: PreferenceResponse }> {
         try {
+            // Cria uma nova data com a data e hora atuais
+            const now = new Date();
+
+            // Adiciona 1 hora à data e hora atuais
+            const futureDate = new Date(now.getTime() + 1 * 60 * 60 * 1000);
+
             const preferenceClient = new Preference(client);
             const preference = await preferenceClient.create({
                 body: {
@@ -83,7 +89,7 @@ export class MercadoPagoService {
                     },
                     external_reference: itemData.external_reference,
                     notification_url: process.env.WEBHOOK_URL,
-                    date_of_expiration: ((new Date()).getTime() + 1 * 60 * 60 * 1000).toString(),
+                    date_of_expiration: futureDate.toISOString(),
                     payer: {
                         email: itemData.payer.email
                     },
