@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ClienteService } from './cliente.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
@@ -7,22 +7,15 @@ import { UpdateClienteDto } from './dto/update-cliente.dto';
 export class ClienteController {
   constructor(private readonly clienteService: ClienteService) { }
 
-  @Get('/admin')
-  findAll() {
-    return this.clienteService.findAll();
-  }
-
-  @Get('/self')
-  findAll2(@Req() req: any) {
-    const id = req.body.cliente.id
-    return this.clienteService.findOne(id);
-  }
-
   @Post()
   create(@Body() createClienteDto: CreateClienteDto) {
     return this.clienteService.create(createClienteDto);
   }
 
+  @Get()
+  findAll() {
+    return this.clienteService.findAll();
+  }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
