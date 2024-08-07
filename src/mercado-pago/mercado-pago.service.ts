@@ -83,7 +83,7 @@ export class MercadoPagoService {
                     },
                     external_reference: itemData.external_reference,
                     notification_url: process.env.WEBHOOK_URL,
-                    date_of_expiration: '',
+                    date_of_expiration: ((new Date()).getTime() + 1 * 60 * 60 * 1000).toString(),
                     payer: {
                         email: itemData.payer.email
                     },
