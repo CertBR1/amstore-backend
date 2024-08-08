@@ -26,5 +26,6 @@ import { ServicoSeguimentado } from 'src/servico-seguimentado/entities/servico-s
   ],
   controllers: [ServicoController],
   providers: [ServicoService],
+  exports: [ServicoService]
 })
 export class ServicoModule { }

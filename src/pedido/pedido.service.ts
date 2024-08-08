@@ -198,6 +198,7 @@ export class PedidoService {
           idPedido: pedido
         });
         await this.transacaoRepository.save(transacao);
+
         await queryRunner.manager.update(Pedido, pedido.id, {
           qrCode: pagamento.qrCode,
         })
