@@ -107,7 +107,7 @@ export class PedidoService {
             link: servico.link,
             quantidadeSolicitada: servico.quantidadeSolicitada,
             valorServico: servicoSeguimentado.precoPromocional == 0 ? (servicoSeguimentado.preco / 1000) : (servicoSeguimentado.precoPromocional / 1000),
-            comentarios: comentarios !== '' ? comentarios : null
+            comentarios: comentarios !== '' ? comentarios : null,
           });
           descricao += `${servicoEntity.nome} - Quantidade: ${servico.quantidadeSolicitada} \n`;
           valor += servicoSeguimentado.precoPromocional == 0 ? (servicoSeguimentado.preco / 1000) * servico.quantidadeSolicitada : (servicoSeguimentado.precoPromocional / 1000) * servico.quantidadeSolicitada;
@@ -158,6 +158,9 @@ export class PedidoService {
           idPedido: pedido
         });
         await this.transacaoRepository.save(transacao);
+        await queryRunner.manager.update(Pedido, pedido.id, {
+          linkPagamento: pagamento.init_point,
+        });
         const historico = await queryRunner.manager.create(HistoricoTransacao, {
           idTransacao: transacao.idTransacao,
           data: new Date(),
@@ -187,7 +190,6 @@ export class PedidoService {
             },
           }
         )
-        console.log(pagamento);
         const transacao = this.transacaoRepository.create({
           dataSolicitacao: new Date(),
           idTransacao: pagamento.merchantOrder.id.toString(),
@@ -196,6 +198,9 @@ export class PedidoService {
           idPedido: pedido
         });
         await this.transacaoRepository.save(transacao);
+        await queryRunner.manager.update(Pedido, pedido.id, {
+          qrCode: pagamento.qrCode,
+        })
         const historico = await queryRunner.manager.create(HistoricoTransacao, {
           idTransacao: transacao.idTransacao,
           data: new Date(),

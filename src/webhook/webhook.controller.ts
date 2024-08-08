@@ -63,13 +63,14 @@ export class WebhookController {
               for (const servico of pedido.servicoPedidos) {
                 console.log("Executando servico: ", servico);
                 if (servico.idSeguimento) {
+                  console.log("Executando servico seguimentado: ", servico.idSeguimento.id);
                   const seguimento = await this.servicoSeguimentadoRepository.findOne({ where: { id: servico.idSeguimento.id }, relations: ['idFornecedor'] });
                   const fornecedor = await this.fornecedorRepository.findOne({ where: { id: seguimento.idFornecedor.id } });
                   //EXECUTAR A CRIAÇÃO DO PEDIDO NO PAINEL ADICIONAR COMENTARIOS FUTURAMENTE
                   let respostaPainel = null
                   if (servico.idServico.tipo === TipoServico.PERSONALIZADO) {
                     respostaPainel = await this.axiosClient.criarPersonalizado(fornecedor.url, fornecedor.key, seguimento.idServicoFornecedor, servico.link, servico.comentarios,)
-                  } else {
+                  } else if (servico.idServico.tipo === TipoServico.PADRAO) {
                     respostaPainel = await this.axiosClient.criarPedido(fornecedor.url, fornecedor.key, {
                       link: servico.link,
                       quantity: servico.quantidadeSolicitada,
@@ -77,6 +78,7 @@ export class WebhookController {
                     })
                   }
                   if (respostaPainel.order) {
+                    console.log('Resposta Painel servico nao seguimentado: ', respostaPainel)
                     await this.historicoTransacaoRepository.save({
                       idPedido: pedido,
                       idTransacao: idPayment,
@@ -107,7 +109,7 @@ export class WebhookController {
                     })
                   }
                   if (respostaPainel.order) {
-                    console.log('Resposta do painel: ', respostaPainel);
+                    console.log('Resposta do painel nao seguimentado : ', respostaPainel);
                     await this.historicoTransacaoRepository.save({
                       idPedido: pedido,
                       idTransacao: idPayment,
@@ -115,10 +117,11 @@ export class WebhookController {
                       status: StatusPagamento.PAGO,
                       data: new Date(),
                     });
-                    await queryRunner.manager.update(ServicoPedido, servico.id, {
-                      status: StatusPagamento.PENDENTE,
+                    await this.servicoPedidoRepository.save({
+                      idTransacao: idPayment,
                       numeroOrdem: respostaPainel.order,
-                      dataConclusao: new Date(),
+                      status: StatusPedido.PENDENTE,
+                      ...servico
                     })
                     await queryRunner.manager.update(Pedido, pedido.id, {
                       statusPagamento: StatusPagamento.PAGO,

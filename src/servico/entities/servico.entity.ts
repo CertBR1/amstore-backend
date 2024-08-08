@@ -62,6 +62,9 @@ export class Servico {
     @DeleteDateColumn()
     deletadoEm: Date;
 
+    @Column({ nullable: true })
+    posicao: string
+
     @OneToMany(() => ServicoPedido, servicoPedido => servicoPedido.idServico)
     servicoPedidos: ServicoPedido[];
 

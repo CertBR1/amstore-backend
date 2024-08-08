@@ -63,6 +63,6 @@ export class CreatePedidoDto {
 
     idTransacao?: number;
 
-
+    posicao: string;
 
 }

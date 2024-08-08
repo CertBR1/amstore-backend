@@ -74,6 +74,7 @@ export class ServicoService {
         reposicao: createServicoDto.reposicao,
         promocional: createServicoDto.promocional,
         status: true,
+        posicao: createServicoDto.posicao,
         tipo: createServicoDto.tipo
       });
       await queryRunner.manager.save(servico);
@@ -233,6 +234,7 @@ export class ServicoService {
         reposicao: updateServicoDto.reposicao,
         status: updateServicoDto.status,
         tipo: updateServicoDto.tipo,
+        posicao: updateServicoDto.posicao,
         promocional: updateServicoDto.promocional || servico.promocional
       });
       console.log('UPDATE SERVICO', retonro)

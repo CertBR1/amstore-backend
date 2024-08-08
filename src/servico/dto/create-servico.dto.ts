@@ -117,4 +117,7 @@ export class CreateServicoDto {
     infoPrincipais: CreateInfoServicoPrincipaisDto
 
     infoAdicionais: CreateInfoServicoAdcionaisDto[]
+
+    posicao: string
+
 }
