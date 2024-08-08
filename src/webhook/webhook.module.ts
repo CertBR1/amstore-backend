@@ -11,6 +11,8 @@ import { Fornecedor } from 'src/fornecedor/entities/fornecedor.entity';
 import { AxiosClientModule } from 'src/axios-client/axios-client.module';
 import { ConfigFormaPagamento } from 'src/pedido/entities/config-forma-pagamento.entity';
 import { ServicoSeguimentado } from 'src/servico-seguimentado/entities/servico-seguimentado.entity';
+import { ServicoModule } from 'src/servico/servico.module';
+import { PedidoService } from 'src/pedido/pedido.service';
 
 @Module({
   imports: [
@@ -24,7 +26,9 @@ import { ServicoSeguimentado } from 'src/servico-seguimentado/entities/servico-s
       ServicoSeguimentado,
     ]),
     AxiosClientModule,
-    MercadoPagoModule
+    MercadoPagoModule,
+    ServicoModule,
+    PedidoService
   ],
   controllers: [WebhookController],
   providers: [WebhookService],

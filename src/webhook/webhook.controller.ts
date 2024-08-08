@@ -16,6 +16,8 @@ import { ServicoSeguimentado } from 'src/servico-seguimentado/entities/servico-s
 import { StatusPagamento } from 'src/utils/enums/StatusPagamento.enum';
 import { StatusPedido } from 'src/utils/enums/StatusPedido.enum';
 import { TipoServico } from 'src/utils/enums/TipoServico.enum';
+import { ServicoService } from 'src/servico/servico.service';
+import { PedidoService } from 'src/pedido/pedido.service';
 
 @Controller('webhook')
 export class WebhookController {
@@ -34,6 +36,7 @@ export class WebhookController {
     private readonly fornecedorRepository: Repository<Fornecedor>,
     @InjectRepository(ServicoSeguimentado)
     private readonly servicoSeguimentadoRepository: Repository<ServicoSeguimentado>,
+    private readonly pedidoService: PedidoService,
     private readonly dataSource: DataSource,
     private readonly mercadoPagoService: MercadoPagoService,
     private readonly webhookService: WebhookService,
@@ -56,7 +59,7 @@ export class WebhookController {
             case 'approved': {
               await queryRunner.connect();
               await queryRunner.startTransaction();
-              const pedido = await this.pedidoRepository.findOne({ where: { id: +payment.external_reference }, relations: ['servicoPedidos.idServico', 'servicoPedidos.idSeguimento', 'servicoPedidos.idTransacao', 'servicoPedidos.idServico.idFornecedor'] });
+              const pedido = await this.pedidoService.findOne(+payment.external_reference);
               if (!pedido) {
                 throw new HttpException('Pedido não encontrado', 404);
               }

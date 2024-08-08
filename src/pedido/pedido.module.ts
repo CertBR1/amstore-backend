@@ -32,5 +32,6 @@ import { HistoricoTransacao } from 'src/transacao/entities/historico-transcao.en
   ],
   controllers: [PedidoController],
   providers: [PedidoService],
+  exports: [PedidoService]
 })
 export class PedidoModule { }
