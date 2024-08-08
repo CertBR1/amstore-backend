@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { HttpException, Injectable } from '@nestjs/common';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
@@ -158,6 +159,7 @@ export class PedidoService {
           idPedido: pedido
         });
         await this.transacaoRepository.save(transacao);
+        await queryRunner.manager.save(pedido)
         await queryRunner.manager.update(Pedido, pedido.id, {
           linkPagamento: pagamento.init_point,
         });
@@ -198,9 +200,10 @@ export class PedidoService {
           idPedido: pedido
         });
         await this.transacaoRepository.save(transacao);
-        await queryRunner.manager.update(Pedido, pedido.id, {
-          qrCode: pagamento.qrCode,
-        })
+        const retorno = await queryRunner.manager.save(pedido);
+        // await queryRunner.manager.update(Pedido, retorno.id, {
+        //   qrCode: pagamento.qrCode,
+        // })
         const historico = await queryRunner.manager.create(HistoricoTransacao, {
           idTransacao: transacao.idTransacao,
           data: new Date(),
