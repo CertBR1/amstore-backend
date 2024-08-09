@@ -23,6 +23,7 @@ import { MeioPagamento } from 'src/utils/enums/MeioPagamento.enum';
 import { StatusPedido } from 'src/utils/enums/StatusPedido.enum';
 import { StatusPagamento } from 'src/utils/enums/StatusPagamento.enum';
 import { TipoServico } from 'src/utils/enums/TipoServico.enum';
+import { ServicoSeguimentado } from 'src/servico-seguimentado/entities/servico-seguimentado.entity';
 
 @Injectable()
 export class PedidoService {
@@ -45,6 +46,8 @@ export class PedidoService {
     private readonly historicoTransacaoRepository: Repository<HistoricoTransacao>,
     @InjectRepository(Cliente)
     private readonly clienteRepository: Repository<Cliente>,
+    @InjectRepository(ServicoSeguimentado)
+    private readonly servicoSeguimentadoRepository: Repository<ServicoSeguimentado>,
     private readonly axiosClient: AxiosClientService,
     private readonly mercadoPagoService: MercadoPagoService,
     private dataSource: DataSource
@@ -95,9 +98,9 @@ export class PedidoService {
           console.log('Salvando comentarios para pedido com serviço personalizado', servico.comentarios);
           comentarios = servico.comentarios.join('\n');
         }
-        if (servico.idSeguimento && servico.idSeguimento > 0) {
+        if (servico.idSeguimento && Number(servico.idSeguimento) > 0) {
           console.log('=>', servicoEntity.servicosSeguimentados, '=>', servico.idSeguimento);
-          const servicoSeguimentado = servicoEntity.servicosSeguimentados.find(x => x.id == servico.idSeguimento);
+          const servicoSeguimentado = await this.servicoSeguimentadoRepository.findOne({where:{id:servico.idSeguimento}})
           console.log('Servico Seguimentado Selecionado=>', servicoSeguimentado)
           await this.pedidoRepository.save(pedido);
           const servicoPedido = this.servicoPedidoRepository.create({

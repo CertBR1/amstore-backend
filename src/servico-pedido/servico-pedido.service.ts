@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { HttpException, Injectable } from '@nestjs/common';
 import { CreateServicoPedidoDto } from './dto/create-servico-pedido.dto';
 import { UpdateServicoPedidoDto } from './dto/update-servico-pedido.dto';
@@ -47,8 +48,15 @@ export class ServicoPedidoService {
     return `This action returns all servicoPedido`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} servicoPedido`;
+  async findOne(id: number) {
+    try{
+      const servicoPedido = await this.servicoPedidoRepository.findOne({where:{id:id},relations:['idServico.idFornecedor','idSeguimento.idFornecedor']});
+      return servicoPedido;
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, 500);
+    }
+    // return `This action returns a #${id} servicoPedido`;
   }
 
   update(id: number, updateServicoPedidoDto: UpdateServicoPedidoDto) {

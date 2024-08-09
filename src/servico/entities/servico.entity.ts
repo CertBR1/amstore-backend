@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Categoria } from "src/categoria/entities/categoria.entity";
 import { Fornecedor } from "src/fornecedor/entities/fornecedor.entity";
 import { Subcategoria } from "src/subcategoria/entities/subcategoria.entity";

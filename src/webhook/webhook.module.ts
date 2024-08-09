@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
 import { WebhookService } from './webhook.service';
 import { WebhookController } from './webhook.controller';
@@ -12,7 +13,8 @@ import { AxiosClientModule } from 'src/axios-client/axios-client.module';
 import { ConfigFormaPagamento } from 'src/pedido/entities/config-forma-pagamento.entity';
 import { ServicoSeguimentado } from 'src/servico-seguimentado/entities/servico-seguimentado.entity';
 import { ServicoModule } from 'src/servico/servico.module';
-import { PedidoService } from 'src/pedido/pedido.service';
+import { PedidoModule } from 'src/pedido/pedido.module';
+import { ServicoPedidoModule } from 'src/servico-pedido/servico-pedido.module';
 
 @Module({
   imports: [
@@ -28,7 +30,8 @@ import { PedidoService } from 'src/pedido/pedido.service';
     AxiosClientModule,
     MercadoPagoModule,
     ServicoModule,
-    PedidoService
+    PedidoModule,
+    ServicoPedidoModule
   ],
   controllers: [WebhookController],
   providers: [WebhookService],

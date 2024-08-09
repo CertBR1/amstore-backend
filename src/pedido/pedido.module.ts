@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
 import { PedidoService } from './pedido.service';
 import { PedidoController } from './pedido.controller';
@@ -13,6 +14,7 @@ import { AxiosClientModule } from 'src/axios-client/axios-client.module';
 import { MercadoPagoModule } from 'src/mercado-pago/mercado-pago.module';
 import { Cliente } from 'src/cliente/entities/cliente.entity';
 import { HistoricoTransacao } from 'src/transacao/entities/historico-transcao.entity';
+import { ServicoSeguimentado } from 'src/servico-seguimentado/entities/servico-seguimentado.entity';
 
 @Module({
   imports: [
@@ -25,7 +27,8 @@ import { HistoricoTransacao } from 'src/transacao/entities/historico-transcao.en
       Transacao,
       FormaPagamento,
       Cliente,
-      HistoricoTransacao
+      HistoricoTransacao,
+      ServicoSeguimentado
     ]),
     AxiosClientModule,
     MercadoPagoModule
