@@ -18,5 +18,6 @@ import { Servico } from 'src/servico/entities/servico.entity';
   ],
   controllers: [ServicoPedidoController],
   providers: [ServicoPedidoService],
+  exports: [ServicoPedidoService]
 })
 export class ServicoPedidoModule { }

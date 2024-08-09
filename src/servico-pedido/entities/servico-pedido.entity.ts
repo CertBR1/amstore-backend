@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Pedido } from "src/pedido/entities/pedido.entity";
 import { ServicoSeguimentado } from "src/servico-seguimentado/entities/servico-seguimentado.entity";
 import { Servico } from "src/servico/entities/servico.entity";
