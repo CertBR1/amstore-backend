@@ -63,6 +63,10 @@ export class WebhookController {
   async create(@Req() req: any, @Query('id') id: string) {
     const body = JSON.parse(Buffer.from(req.body, 'base64').toString());
     console.log('Webhook request: ', body);
+    function sleep(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
     switch (body.type) {
       case 'payment': {
         const queryRunner = this.dataSource.createQueryRunner();
@@ -81,18 +85,16 @@ export class WebhookController {
           );
           switch (payment.status) {
             case 'approved': {
-              await queryRunner.connect();
-              await queryRunner.startTransaction();
+              // await queryRunner.connect();
+              // await queryRunner.startTransaction();
               const pedido = await this.pedidoService.findOne(
                 +payment.external_reference,
               );
               if (!pedido) {
                 throw new HttpException('Pedido não encontrado', 404);
               }
-              console.log('pedido encontrado sp70: ', pedido);
-              for (let i = 0; i < pedido.servicoPedidos.length; i++) {
-                console.log('Passouuu: ', i);
-                const servicoRef = pedido.servicoPedidos[i];
+              console.log('pedido encontrado sp70: ', pedido.servicoPedidos);
+              for (const servicoRef of pedido.servicoPedidos) {
                 const servico = await this.servicoPedido.findOne(servicoRef.id);
                 console.log('Executando servico: ', servico);
                 if (servico.idSeguimento) {
@@ -131,24 +133,30 @@ export class WebhookController {
                   }
                   console.log(respostaPainel);
                   if (respostaPainel.order) {
-                    // console.log('Resposta Painel servico nao seguimentado: ', respostaPainel)
+                    console.log('Entrou serviço seguimentado resposta order');
+                    // console.log('Resposta do painel nao seguimentado : ', respostaPainel);
                     await this.historicoTransacaoRepository.save({
                       idPedido: pedido,
                       idTransacao: idPayment,
-                      data: new Date(),
-                      status: StatusPagamento.PAGO,
                       idServico: respostaPainel.order,
+                      status: StatusPagamento.PAGO,
+                      data: new Date(),
                     });
-                    await this.servicoPedidoRepository.save({
-                      idTransacao: idPayment,
-                      numeroOrdem: respostaPainel.order,
-                      status: StatusPedido.PENDENTE,
-                      ...servico,
-                    });
+                    console.log('CRIOU O HISTORICO');
+                    await queryRunner.manager.update(
+                      ServicoPedido,
+                      servico.id,
+                      {
+                        status: StatusPedido.PENDENTE,
+                        numeroOrdem: respostaPainel.order,
+                      },
+                    );
+                    console.log('ATUALIZOU O SERVICO PEDIDO');
                     await queryRunner.manager.update(Pedido, pedido.id, {
                       statusPagamento: StatusPagamento.PAGO,
                       statusPedido: StatusPedido.PENDENTE,
                     });
+                    console.log('ATUALIZOU O PEDIDO');
                   }
                 } else {
                   const fornecedor = await this.fornecedorRepository.findOne({
@@ -174,7 +182,11 @@ export class WebhookController {
                       },
                     );
                   }
+                  console.log('chegou 1');
                   if (respostaPainel.order) {
+                    console.log(
+                      'Entrou serviço sem seguimento resposnta order',
+                    );
                     // console.log('Resposta do painel nao seguimentado : ', respostaPainel);
                     await this.historicoTransacaoRepository.save({
                       idPedido: pedido,
@@ -183,20 +195,29 @@ export class WebhookController {
                       status: StatusPagamento.PAGO,
                       data: new Date(),
                     });
-                    await this.servicoPedidoRepository.save({
-                      idTransacao: idPayment,
-                      numeroOrdem: respostaPainel.order,
-                      status: StatusPedido.PENDENTE,
-                      ...servico,
-                    });
+                    console.log('CRIOU O HISTORICO');
+                    await queryRunner.manager.update(
+                      ServicoPedido,
+                      servico.id,
+                      {
+                        status: StatusPedido.PENDENTE,
+                        numeroOrdem: respostaPainel.order,
+                      },
+                    );
+                    console.log('ATUALIZOU O SERVICO PEDIDO');
                     await queryRunner.manager.update(Pedido, pedido.id, {
                       statusPagamento: StatusPagamento.PAGO,
                       statusPedido: StatusPedido.PENDENTE,
                     });
+                    console.log('ATUALIZOU O PEDIDO');
                   }
                 }
-                console.log('Finalizou o serviço: ', i);
+                console.log('esperando 1 segundo');
+                await sleep(1000);
+                console.log('foi');
               }
+
+              // await queryRunner.commitTransaction();
               return 'ok';
             }
           }
@@ -204,8 +225,7 @@ export class WebhookController {
           console.log(error);
           throw new HttpException('Erro ao processar o pedido', 500);
         } finally {
-          await queryRunner.commitTransaction();
-          await queryRunner.release();
+          // await queryRunner.release();
         }
       }
     }
