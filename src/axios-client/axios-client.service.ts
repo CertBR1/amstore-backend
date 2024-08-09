@@ -5,7 +5,7 @@ import { link } from 'fs';
 
 @Injectable()
 export class AxiosClientService {
-  constructor(private readonly axiosService: HttpService) {}
+  constructor(private readonly axiosService: HttpService) { }
   async obterSaldo(
     url: string,
     key: string,
@@ -78,6 +78,7 @@ export class AxiosClientService {
         runs: dados.runs,
         interval: dados.interval,
       });
+      console.log('resposta', resposta.data);
       return resposta.data;
     } catch (error) {
       console.log(error);
