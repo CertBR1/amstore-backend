@@ -57,7 +57,7 @@ export class WebhookController {
     private readonly axiosClient: AxiosClientService,
     private readonly servicoServico: ServicoService,
     private readonly servicoPedido: ServicoPedidoService,
-  ) {}
+  ) { }
 
   @Post()
   async create(@Req() req: any, @Query('id') id: string) {
@@ -157,6 +157,17 @@ export class WebhookController {
                       statusPedido: StatusPedido.PENDENTE,
                     });
                     console.log('ATUALIZOU O PEDIDO');
+                  } else if (respostaPainel.error) {
+                    await queryRunner.manager.update(Pedido, pedido.id, {
+                      statusPagamento: StatusPagamento.PAGO,
+                      statusPedido: respostaPainel.error,
+                    });
+                    await this.historicoTransacaoRepository.save({
+                      idPedido: pedido,
+                      idTransacao: idPayment,
+                      status: StatusPagamento.PAGO,
+                      data: new Date(),
+                    });
                   }
                 } else {
                   const fornecedor = await this.fornecedorRepository.findOne({
@@ -210,6 +221,17 @@ export class WebhookController {
                       statusPedido: StatusPedido.PENDENTE,
                     });
                     console.log('ATUALIZOU O PEDIDO');
+                  } else if (respostaPainel.error) {
+                    await queryRunner.manager.update(Pedido, pedido.id, {
+                      statusPagamento: StatusPagamento.PAGO,
+                      statusPedido: respostaPainel.error,
+                    });
+                    await this.historicoTransacaoRepository.save({
+                      idPedido: pedido,
+                      idTransacao: idPayment,
+                      status: StatusPagamento.PAGO,
+                      data: new Date(),
+                    });
                   }
                 }
                 console.log('esperando 1 segundo');
