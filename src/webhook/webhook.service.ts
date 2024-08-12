@@ -20,7 +20,7 @@ export class WebhookService {
     private readonly servicoPedidoRepository: Repository<ServicoPedido>,
     private axiosCliente: AxiosClientService,
     private dataSource: DataSource,
-  ) {}
+  ) { }
   create(createWebhookDto: CreateWebhookDto) {
     return 'This action adds a new webhook';
   }
@@ -41,7 +41,7 @@ export class WebhookService {
     return `This action removes a #${id} webhook`;
   }
 
-  @Cron(CronExpression.EVERY_30_SECONDS)
+  @Cron(CronExpression.EVERY_10_MINUTES)
   async verificarStatusPedido() {
     const queryRunner = this.dataSource.createQueryRunner();
     console.log('Verificar status de pedidos');
