@@ -91,7 +91,9 @@ export class AppModule implements NestModule {
     });
     consumer
       .apply(AuthAdminMiddleware)
-      .exclude({ path: '/(.*)', method: RequestMethod.GET, })
+      .exclude({ path: '/servico', method: RequestMethod.GET, })
+      .exclude({ path: '/categoria', method: RequestMethod.GET, })
+      .exclude({ path: '/subcategoria', method: RequestMethod.GET, })
       .exclude({ path: '/pedido', method: RequestMethod.POST, })
       .exclude({ path: '/admin', method: RequestMethod.POST, })
       .exclude({ path: '/auth/cliente-login', method: RequestMethod.POST, })
