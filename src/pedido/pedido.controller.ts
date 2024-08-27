@@ -9,7 +9,10 @@ import { UpdateConfigPagamentoDto } from './dto/update-config-pagamento-dto';
 @Controller('pedido')
 export class PedidoController {
   constructor(private readonly pedidoService: PedidoService) { }
-
+  @Get('exportar')
+  async exportarPedidos() {
+    return await this.pedidoService.exportarPedidos();
+  }
   @Patch('config-pagamento/:id')
   updateConfigPagamento(@Param('id') id: string, @Body() updateConfigPagamento: UpdateConfigPagamentoDto) {
     return this.pedidoService.updateConfigPagamento(+id, updateConfigPagamento);

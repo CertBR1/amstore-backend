@@ -27,6 +27,7 @@ import { ServicoSeguimentado } from 'src/servico-seguimentado/entities/servico-s
 
 @Injectable()
 export class PedidoService {
+
   constructor(
     @InjectRepository(Pedido)
     private readonly pedidoRepository: Repository<Pedido>,
@@ -49,7 +50,7 @@ export class PedidoService {
     private readonly axiosClient: AxiosClientService,
     private readonly mercadoPagoService: MercadoPagoService,
     private dataSource: DataSource,
-  ) {}
+  ) { }
   async create(createPedidoDto: CreatePedidoDto, cliente: any) {
     const queryRunner = this.dataSource.createQueryRunner();
     console.log('Criando pedido: ', createPedidoDto);
@@ -125,18 +126,18 @@ export class PedidoService {
             valorServico:
               servicoSeguimentado.precoPromocional == 0
                 ? (servicoSeguimentado.preco / 1000) *
-                  servico.quantidadeSolicitada
+                servico.quantidadeSolicitada
                 : (servicoSeguimentado.precoPromocional / 1000) *
-                  servico.quantidadeSolicitada,
+                servico.quantidadeSolicitada,
             comentarios: comentarios !== '' ? comentarios : null,
           });
           descricao += `${servicoEntity.nome} - Quantidade: ${servico.quantidadeSolicitada} \n`;
           valor +=
             servicoSeguimentado.precoPromocional == 0
               ? (servicoSeguimentado.preco / 1000) *
-                servico.quantidadeSolicitada
+              servico.quantidadeSolicitada
               : (servicoSeguimentado.precoPromocional / 1000) *
-                servico.quantidadeSolicitada;
+              servico.quantidadeSolicitada;
           await this.servicoPedidoRepository.save(servicoPedido);
         } else {
           await this.pedidoRepository.save(pedido);
@@ -151,14 +152,14 @@ export class PedidoService {
               servicoEntity.precoPromocional == 0
                 ? (servicoEntity.preco / 1000) * servico.quantidadeSolicitada
                 : (servicoEntity.precoPromocional / 1000) *
-                  servico.quantidadeSolicitada,
+                servico.quantidadeSolicitada,
           });
           descricao += `${servicoEntity.nome} - Quantidade: ${servico.quantidadeSolicitada} \n`;
           valor +=
             servicoEntity.precoPromocional == 0
               ? (servicoEntity.preco / 1000) * servico.quantidadeSolicitada
               : (servicoEntity.precoPromocional / 1000) *
-                servico.quantidadeSolicitada;
+              servico.quantidadeSolicitada;
           await this.servicoPedidoRepository.save(servicoPedido);
         }
       }
@@ -279,7 +280,7 @@ export class PedidoService {
       } else {
         throw new HttpException(
           'Forma de pagamento inválida, formas de pagamento suportadas: ' +
-            MeioPagamento,
+          MeioPagamento,
           404,
         );
       }
@@ -292,6 +293,34 @@ export class PedidoService {
     }
   }
 
+  async exportarPedidos() {
+    const queryRunner = this.dataSource.createQueryRunner();
+    try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+      const pedidos = await this.pedidoRepository.find({
+        where: {
+          enviado: false,
+          statusPagamento: StatusPagamento.PAGO,
+        },
+        relations: [
+          'idCliente',
+          'historicoTransacao',
+          'servicoPedidos.idServico',
+          'servicoPedidos.idSeguimento',
+        ],
+      });
+      pedidos.forEach(async element => {
+        element.enviado = true;
+        await this.pedidoRepository.save(element);
+      });
+      await queryRunner.commitTransaction();
+      return pedidos;
+    } catch (error) {
+      console.error(error);
+      throw new HttpException(error, 500);
+    }
+  }
   async findAll() {
     try {
       const pedidos = await this.pedidoRepository.find({

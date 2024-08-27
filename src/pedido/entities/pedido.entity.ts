@@ -47,4 +47,7 @@ export class Pedido {
     @Column({ nullable: true })
     qrCode: string
 
+    @Column({ nullable: true, default: false })
+    enviado: boolean
+
 }
