@@ -308,6 +308,7 @@ export class PedidoService {
           'historicoTransacao',
           'servicoPedidos.idServico',
           'servicoPedidos.idSeguimento',
+          'servicoPedidos.idServico.idFornecedor',
         ],
       });
       pedidos.forEach(async element => {
@@ -319,6 +320,8 @@ export class PedidoService {
     } catch (error) {
       console.error(error);
       throw new HttpException(error, 500);
+    } finally {
+      await queryRunner.release();
     }
   }
   async findAll() {
