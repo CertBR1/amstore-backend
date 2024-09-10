@@ -22,6 +22,11 @@ export class ClienteController {
     return this.clienteService.findOne(+id);
   }
 
+  @Get('pedido/:id')
+  findOneWithPedidos(@Param('id') id: string) {
+    return this.clienteService.findOnePedido(+id);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateClienteDto: UpdateClienteDto) {
     return this.clienteService.update(+id, updateClienteDto);

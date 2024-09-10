@@ -1,9 +1,11 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cliente } from './entities/cliente.entity';
 import { DataSource, Repository } from 'typeorm';
+import { ServicoPedidoService } from 'src/servico-pedido/servico-pedido.service';
+import { PedidoService } from 'src/pedido/pedido.service';
 
 @Injectable()
 export class ClienteService {
@@ -11,7 +13,9 @@ export class ClienteService {
   constructor(
     @InjectRepository(Cliente)
     private clienteRepository: Repository<Cliente>,
-    private dataSource: DataSource
+    private dataSource: DataSource,
+    private readonly ServicoPedidoService: ServicoPedidoService,
+    private readonly PedidoService: PedidoService
   ) { }
   async create(createClienteDto: CreateClienteDto) {
     const queryRunner = this.dataSource.createQueryRunner();
@@ -52,6 +56,15 @@ export class ClienteService {
     try {
       console.log('findOne', id);
       return await this.clienteRepository.findOne({ where: { id }, relations: ['pedidos.servicoPedidos', 'pedidos.servicoPedidos.idServico', 'pedidos.servicoPedidos.idSeguimento'] });
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, 500);
+    }
+  }
+
+  async findOnePedido(id: number) {
+    try {
+      return await this.PedidoService.findOne(+id);
     } catch (error) {
       console.log(error);
       throw new HttpException(error, 500);
